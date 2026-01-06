@@ -1,8 +1,9 @@
-# 🚀 프로젝트 이름
 
-![배너 이미지 또는 로고](링크)
+# 🚀 심터(SYM:心)
 
-> 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
+
+
+> 불안·우울을 겪는 이들이 장벽 없이 자신의 상태를 확인하고, 지속적으로 관리할 수 있도록 돕는 디지털 멘탈케어 서비스
 
 [![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)]()
 [![Xcode](https://img.shields.io/badge/Xcode-16.0-blue.svg)]()
@@ -13,33 +14,43 @@
 <br>
 
 ## 👥 멤버
-| 팀원 1 | 팀원 2 | 팀원 3 | 팀원 4 |
-|:------:|:------:|:------:|:------:|
-| 사진1 | 사진2 | 사진3 | 사진4 |
-| PL | FE | FE | FE |
-| [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) | [GitHub](깃허브 링크) |
+| 김지우 | 박병선 | 박정환 |  |
+| :---: | :---: | :---: | :---: |
+| PL | FE | FE |  |
+
+
 
 <br>
 
 
 ## 📱 소개
 
-> 프로젝트의 주요 목적과 사용자가 얻게 될 경험을 설명해주세요.
+> 검사
+>>전문 기관 연계의 검사지 제공을 통한 정밀 진단 - 우울,불안 / 스트레스 / 성격유형
+
+> AI 분석
+>> 검사 기반 심리 상태 분석 레포트 제공 - 지표 기반 컨디션 추적
+
+> AI 상담사
+>> 분석 기반 맞춤 상담사 생성 - 증상별 대화 흐름 제공 + 맞춤형 대화
+
+> 관리
+>> 매일 '오늘 미션' 제공(감정 리프레쉬) - 회고 기록 기능
 
 <br>
 
 ## 📆 프로젝트 기간
-- 전체 기간: `YYYY.MM.DD - YYYY.MM.DD`
-- 개발 기간: `YYYY.MM.DD - YYYY.MM.DD`
+- 전체 기간: `2025.12.21 - 2026.02.20`
+- 개발 기간: `2026.01.02 - 2026.02.20`
 
 <br>
 
 ## 🤔 요구사항
 For building and running the application you need:
 
-iOS 26.0 <br>
-Xcode 26 <br>
-Swift 6.2
+iOS 18.2 <br>
+Xcode 16.2 <br>
+Swift 6.0
 
 <br>
 
@@ -94,12 +105,44 @@ Swift 6.2
 </table>
 
 ## 🔖 브랜치 컨벤션
-<!-- 팀원들끼리 협의하여 기록해주세요! -->
+* `main` - 제품 출시 브랜치
+* `develop` - 출시를 위해 개발하는 브랜치
+* `feat/xx` - 기능 단위로 독립적인 개발 환경을 위해 작성
+* `refac/xx` - 개발된 기능을 리팩토링 하기 위해 작성
+* `hotfix/xx` - 출시 버전에서 발생한 버그를 수정하는 브랜치
+* `chore/xx` - 빌드 작업, 패키지 매니저 설정 등
+* `design/xx` - 디자인 변경
+* `bugfix/xx` - 디자인 변경
+
+
 
 <br>
 
 ## 🌀 코딩 컨벤션
-<!-- 팀원들끼리 협의하여 기록해주세요! -->
+* 파라미터 이름을 기준으로 줄바꿈 한다.
+```swift
+let actionSheet = UIActionSheet(
+  title: "정말 계정을 삭제하실 건가요?",
+  delegate: self,
+  cancelButtonTitle: "취소",
+  destructiveButtonTitle: "삭제해주세요"
+)
+```
+
+<br>
+
+* if let 구문이 길 경우에 줄바꿈 한다
+```swift
+if let user = self.veryLongFunctionNameWhichReturnsOptionalUser(),
+   let name = user.veryLongFunctionNameWhichReturnsOptionalName(),
+  user.gender == .female {
+  // ...
+}
+```
+
+* 나중에 추가로 작업해야 할 부분에 대해서는 `// TODO: - xxx 주석을 남기도록 한다.`
+* 코드의 섹션을 분리할 때는 `// MARK: - xxx 주석을 남기도록 한다.`
+* 함수에 대해 전부 주석을 남기도록 하여 무슨 액션을 하는지 알 수 있도록 한다.
 
 <br>
 
@@ -112,56 +155,39 @@ Swift 6.2
     6. `PR 태그 종류`, PR 제목의 태그는 아래 형식을 따른다.
 
 #### 🌟 태그 종류 (커밋 컨벤션과 동일)
-<!-- 팀원들끼리 협의하여 기록해주세요! -->
-
-### ✅ PR 예시 모음
-> 🎉 [Chore] 프로젝트 초기 세팅 <br>
-> ✨ [Feat] 프로필 화면 UI 구현 <br>
-> 🐛 [Fix] iOS 17에서 버튼 클릭 오류 수정 <br>
-> 💄 [Design] 로그인 화면 레이아웃 조정 <br>
-> 📝 [Docs] README에 프로젝트 소개 추가 <br>
-
-<br>
-
-## 📑 커밋 컨벤션
-
-### 💬 깃모지 가이드
-
-| 아이콘 | 코드 | 설명 | 원문 |
-| :---: | :---: | :---: | :---: |
-| 🐛 | bug | 버그 수정 | Fix a bug |
-| ✨ | sparkles | 새 기능 | Introduce new features |
-| 💄 | lipstick | UI/스타일 파일 추가/수정 | Add or update the UI and style files |
-| ♻️ | recycle | 코드 리팩토링 | Refactor code |
-| ➕ | heavy_plus_sign | 의존성 추가 | Add a dependency |
-| 🔀 | twisted_rightwards_arrows | 브랜치 합병 | Merge branches |
-| 💡 | bulb | 주석 추가/수정 | Add or update comments in source code |
-| 🔥 | fire | 코드/파일 삭제 | Remove code or files |
-| 🚑 | ambulance | 긴급 수정 | Critical hotfix |
-| 🎉 | tada | 프로젝트 시작 | Begin a project |
-| 🔒 | lock | 보안 이슈 수정 | Fix security issues |
-| 🔖 | bookmark | 릴리즈/버전 태그 | Release / Version tags |
-| 📝 | memo | 문서 추가/수정 | Add or update documentation |
-| 🔧| wrench | 구성 파일 추가/삭제 | Add or update configuration files.|
-| ⚡️ | zap | 성능 개선 | Improve performance |
-| 🎨 | art | 코드 구조 개선 | Improve structure / format of the code |
-| 📦 | package | 컴파일된 파일 추가/수정 | Add or update compiled files |
-| 👽 | alien | 외부 API 변경 반영 | Update code due to external API changes |
-| 🚚 | truck | 리소스 이동, 이름 변경 | Move or rename resources |
-| 🙈 | see_no_evil | .gitignore 추가/수정 | Add or update a .gitignore file |
+| 태그        | 설명                                                   |
+|-------------|--------------------------------------------------------|
+| [Feat]      | 새로운 기능 추가                                       |
+| [Fix]       | 버그 수정                                              |
+| [Refactor]  | 코드 리팩토링 (기능 변경 없이 구조 개선)              |
+| [Style]     | 코드 포맷팅, 들여쓰기 수정 등                         |
+| [Docs]      | 문서 관련 수정                                         |
 
 ### 🏷️ 커밋 태그 가이드
-<!-- 팀원들끼리 협의하여 기록해주세요! -->
+
+ | 태그        | 설명                                                   |
+|-------------|--------------------------------------------------------|
+| [Feat]      | 새로운 기능 추가                                       |
+| [Fix]       | 버그 수정                                              |
+| [Refactor]  | 코드 리팩토링 (기능 변경 없이 구조 개선)              |
+| [Style]     | 코드 포맷팅, 세미콜론 누락, 들여쓰기 수정 등          |
+| [Docs]      | README, 문서 수정                                     |
+| [Test]      | 테스트 코드 추가 및 수정                              |
+| [Chore]     | 패키지 매니저 설정, 빌드 설정 등 기타 작업           |
+| [Design]    | UI, CSS, 레이아웃 등 디자인 관련 수정                |
+| [Hotfix]    | 운영 중 긴급 수정이 필요한 버그 대응                 |
+| [CI/CD]     | 배포 관련 설정, 워크플로우 구성 등                    |
 
 ### ✅ 커밋 예시 모음
-> 🎉 [Chore] 프로젝트 초기 세팅 <br>
-> ✨ [Feat] 프로필 화면 UI 구현 <br>
-> 🐛 [Fix] iOS 17에서 버튼 클릭 오류 수정 <br>
-> 💄 [Design] 로그인 화면 레이아웃 조정 <br>
-> 📝 [Docs] README에 프로젝트 소개 추가 <br>
+>  [Chore] 프로젝트 초기 세팅 <br>
+>  [Feat] 프로필 화면 UI 구현 <br>
+>  [Fix] iOS 17에서 버튼 클릭 오류 수정 <br>
+>  [Design] 로그인 화면 레이아웃 조정 <br>
+>  [Docs] README에 프로젝트 소개 추가 <br>
 
 <br>
 
 ## 🗂️ 폴더 컨벤션
 ```
 ```
+
