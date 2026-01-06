@@ -187,7 +187,65 @@ if let user = self.veryLongFunctionNameWhichReturnsOptionalUser(),
 
 <br>
 
+
 ## 🗂️ 폴더 컨벤션
 ```
+Symteo
+├── Common
+│   ├── Enum
+│   │   ├── Auth
+│   │   ├── Common
+│   │   ├── Mission
+│   │   ├── Error
+│   │   ├── Home
+│   │   ├── Tab
+│   │   └── Test
+│   └── UIComponents
+│       ├── Chat
+│       ├── Custom
+│       ├── DiaryList
+│       └── Profile
+├── Core
+│   ├── DIContainer
+│   ├── Navigation
+│   └── Utils
+├── Models
+│   ├── DTO
+│   │   ├── Auth
+│   │   ├── Chat
+│   │   ├── Common
+│   │   ├── Test
+│   │   ├── Home
+│   │   ├── Profile
+│   │   └── Report
+│   └── Domain
+│       ├── Auth
+│       ├── Chat
+│       ├── Common
+│       ├── Test
+│       ├── Home
+│       ├── Profile 
+│       └── Report      
+├── Modules
+│   ├── AppFlow
+│   │   └── Login
+│   └── Tab
+│       ├── Home
+│       ├── Test
+│       ├── Report
+│       ├── Chat
+│       └── Mypage
+├── Resource
+│   ├── Assets
+│   ├── Extension
+│   ├── Font
+│   ├── Keychain
+│   └── Modifier
+└── Service
+    ├── Common
+    ├── MoyaRouter
+    ├── MoyaService
+    ├── Social
+    └── Token
 ```
 
