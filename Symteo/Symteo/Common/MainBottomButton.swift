@@ -36,6 +36,7 @@ struct MainBottomButton: View {
         }
         .buttonStyle(MainButtonStyle(isDisabled: isDisabled))
         .disabled(isDisabled)
+        .padding(.horizontal, 17)
     }
 }
 
@@ -47,5 +48,4 @@ struct MainBottomButton: View {
             print("다음")
         }
     )
-    .padding(.horizontal, 17)
 }
