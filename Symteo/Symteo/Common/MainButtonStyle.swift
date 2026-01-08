@@ -18,7 +18,7 @@ struct MainButtonStyle: ButtonStyle {
                 : (configuration.isPressed ? Color.gray30 : Color.white)
             )
             .background(
-                RoundedRectangle(cornerRadius: 5)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(
                         isDisabled
                             ? Color.gray100

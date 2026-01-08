@@ -31,7 +31,8 @@ struct MainBottomButton: View {
         Button(action: action) {
             Text(text)
                 .font(.PretendardSemiBold(size: 16))
-                .frame(width: 340, height: 56)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
         }
         .buttonStyle(MainButtonStyle(isDisabled: isDisabled))
         .disabled(isDisabled)
@@ -46,4 +47,5 @@ struct MainBottomButton: View {
             print("다음")
         }
     )
+    .padding(.horizontal, 17)
 }
