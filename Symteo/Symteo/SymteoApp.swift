@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct SymteoApp: App {
+    
+    @StateObject private var container: DIContainer = .init()
+
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
         }
     }
 }
