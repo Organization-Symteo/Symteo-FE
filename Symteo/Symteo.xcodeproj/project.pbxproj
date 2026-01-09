@@ -6,13 +6,33 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		688E715B2F0EB509007A7C57 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 688E715A2F0EB509007A7C57 /* Kingfisher */; };
+		688E715E2F0EB558007A7C57 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 688E715D2F0EB558007A7C57 /* CombineMoya */; };
+		688E71602F0EB558007A7C57 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 688E715F2F0EB558007A7C57 /* Moya */; };
+		688E71632F0EB62D007A7C57 /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 688E71622F0EB62D007A7C57 /* KakaoSDK */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		688E6EF02F0D1833007A7C57 /* Symteo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Symteo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		688E72B92F0EC0B3007A7C57 /* Exceptions for "Symteo" folder in "Symteo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 688E6EEF2F0D1833007A7C57 /* Symteo */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		688E6EF22F0D1833007A7C57 /* Symteo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				688E72B92F0EC0B3007A7C57 /* Exceptions for "Symteo" folder in "Symteo" target */,
+			);
 			path = Symteo;
 			sourceTree = "<group>";
 		};
@@ -23,6 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				688E715E2F0EB558007A7C57 /* CombineMoya in Frameworks */,
+				688E71632F0EB62D007A7C57 /* KakaoSDK in Frameworks */,
+				688E715B2F0EB509007A7C57 /* Kingfisher in Frameworks */,
+				688E71602F0EB558007A7C57 /* Moya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +89,10 @@
 			);
 			name = Symteo;
 			packageProductDependencies = (
+				688E715A2F0EB509007A7C57 /* Kingfisher */,
+				688E715D2F0EB558007A7C57 /* CombineMoya */,
+				688E715F2F0EB558007A7C57 /* Moya */,
+				688E71622F0EB62D007A7C57 /* KakaoSDK */,
 			);
 			productName = Symteo;
 			productReference = 688E6EF02F0D1833007A7C57 /* Symteo.app */;
@@ -94,6 +122,11 @@
 			);
 			mainGroup = 688E6EE72F0D1833007A7C57;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				688E71592F0EB509007A7C57 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				688E715C2F0EB558007A7C57 /* XCRemoteSwiftPackageReference "Moya" */,
+				688E71612F0EB62D007A7C57 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 688E6EF12F0D1833007A7C57 /* Products */;
 			projectDirPath = "";
@@ -253,6 +286,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Symteo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +318,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Symteo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -328,6 +363,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		688E71592F0EB509007A7C57 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
+		688E715C2F0EB558007A7C57 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+		688E71612F0EB62D007A7C57 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		688E715A2F0EB509007A7C57 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 688E71592F0EB509007A7C57 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		688E715D2F0EB558007A7C57 /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 688E715C2F0EB558007A7C57 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		688E715F2F0EB558007A7C57 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 688E715C2F0EB558007A7C57 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		688E71622F0EB62D007A7C57 /* KakaoSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 688E71612F0EB62D007A7C57 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 688E6EE82F0D1833007A7C57 /* Project object */;
 }
