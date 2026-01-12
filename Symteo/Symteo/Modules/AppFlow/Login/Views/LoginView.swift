@@ -9,7 +9,12 @@
 import SwiftUI
 
 struct LoginView: View {
+    
+    // MARK: - Property
+
     @StateObject private var viewModel = LoginViewModel()
+
+    // MARK: - Body
 
     var body: some View {
         VStack(spacing: 8) {
@@ -17,6 +22,7 @@ struct LoginView: View {
 
             Spacer()
                 .frame(height:16)
+            
             ForEach(viewModel.providers) { provider in
                         SocialLoginButton(icon: provider.icon, title: provider.title) {
                             viewModel.tapLogin(provider: provider)
@@ -25,9 +31,10 @@ struct LoginView: View {
                 }
         .padding(.horizontal, 26)
         }
-    // MARK: - Top Contents
- 
     
+    
+    // MARK: - Top Contents
+    //로고+텍스트
     private var logoview: some View {
         VStack(){
             Image(.symlogoBig)
@@ -48,8 +55,8 @@ struct LoginView: View {
     
         
     
-        
-    
+// MARK: - Social Login Button Component
+// 소셜로그인 버튼 뷰
 struct SocialLoginButton: View{
     let icon: String
     let title: String
@@ -87,6 +94,7 @@ struct SocialLoginButton: View{
         .buttonStyle(.plain)
     }
 }
+
 
 
 struct LoginView_Preview: PreviewProvider {
