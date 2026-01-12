@@ -20,6 +20,7 @@ extension Font {
         case light
         case extraLight
         case thin
+        case ownglyph
         
         var value: String {
             switch self {
@@ -39,8 +40,14 @@ extension Font {
                 return "Pretendard-ExtraLight"
             case .thin:
                 return "Pretendard-Thin"
+            case .ownglyph:
+                return "OwnglyphPDH"
             }
         }
+    }
+    
+    static func OwnGlyphPDH(size: CGFloat) -> Font {
+        return .pretend(type: .ownglyph, size: size)
     }
     
     static func pretend(type: Pretend, size: CGFloat) -> Font {
