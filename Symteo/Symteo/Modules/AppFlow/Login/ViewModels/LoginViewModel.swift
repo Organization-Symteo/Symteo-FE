@@ -36,6 +36,7 @@ enum SocialProvider: CaseIterable, Identifiable {
 @MainActor
 final class LoginViewModel: ObservableObject {
 
+    
     let providers: [SocialProvider] = SocialProvider.allCases
 
     func tapLogin(provider: SocialProvider) {

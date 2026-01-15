@@ -11,36 +11,74 @@ import SwiftUI
 struct LoginView: View {
     
     // MARK: - Property
-
     @StateObject private var viewModel = LoginViewModel()
+    
+    //약관 동의 여부
+    @AppStorage("AgreeTerms") private var agreeTerms: Bool = false
+    
+    // 팝업 표시 상태
+        @State private var showTermsPopup: Bool = false
 
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 8) {
-            logoview
-
-            Spacer()
-                .frame(height:16)
+        ZStack{
             
-            ForEach(viewModel.providers) { provider in
-                        SocialLoginButton(icon: provider.icon, title: provider.title) {
-                            viewModel.tapLogin(provider: provider)
-                        }
+            //약관 동의 팝업 오버레이
+            if showTermsPopup{
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                
+                PopUpView(title: "심터의 이용약관 및 개인정보 취급방침에\n동의하고 시작합니다.",message:nil,confirmTitle: "동의하기", cancelTitle: "동의하지 않기", onConfirm: {
+                    agreeTerms = true
+                    showTermsPopup = false
+                }, onCancel: {
+                    showTermsPopup = true
+                })
+                .transition(.scale.combined(with: .opacity))
+                
+            }
+            
+            VStack(spacing: 8) {
+                logoview
+                
+                Spacer()
+                    .frame(height:16)
+                
+                ForEach(viewModel.providers) { provider in
+                    SocialLoginButton(icon: provider.icon, title: provider.title) {
+                        viewModel.tapLogin(provider: provider)
                     }
                 }
-        .padding(.horizontal, 26)
+            }//VStackend
+            .allowsHitTesting(!showTermsPopup)
+            .padding(.horizontal, 26)
+        }//ZStackend
+        .task{
+            agreeTerms = false //테스트용
+            
+            if !agreeTerms{
+                await Task.yield()
+                showTermsPopup = true
+            }
         }
+    }
+    
+    
+}
     
     
     // MARK: - Top Contents
     //로고+텍스트
     private var logoview: some View {
-        VStack(){
+        VStack{
             Image(.symlogoBig)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 550, height: 420)
+                .frame(height: 420)
+                .frame(maxWidth: .infinity)
+                .clipped()
+
             
             Text("나만의 멘탈 케어 솔루션")
                 .font(.PretendardMedium(size: 16))
@@ -49,51 +87,21 @@ struct LoginView: View {
             
         }
     }
-    
 
-    }
+// MARK: - Botton Contents
+//안심 이용약관 & 데이터 처리 동의
+private var termsofService: some View{
     
-        
-    
-// MARK: - Social Login Button Component
-// 소셜로그인 버튼 뷰
-struct SocialLoginButton: View{
-    let icon: String
-    let title: String
-    let action: () -> Void
-    
-    var body: some View{
-     
-        
-        Button(action: action){
-            HStack(spacing:0){
-                Image(icon)
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                    
-                Spacer()
-                
-                Text(title)
-                    .font(.PretendardSemiBold(size: 16))
-                    .foregroundStyle(.gray900)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
-                Spacer()
-                
-                Color.clear
-                    .frame(width: 24, height: 24) // 좌우 균형용 더미
-
-            }
-            .padding(.horizontal, 12)
-            .frame(height: 52)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius:12)
-                    .stroke(Color.gray200, lineWidth: 1))
-        }
-        .buttonStyle(.plain)
-    }
 }
+
+    
+
+        
+    
+
+    
+        
+    
 
 
 
