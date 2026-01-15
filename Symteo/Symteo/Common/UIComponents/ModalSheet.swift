@@ -13,7 +13,7 @@ private struct ModalSheetContent: View {
     let confirmTitle: String
     let cancelTitle: String?
     let onConfirm: () -> Void
-    let onCancel: () -> Void
+    let onDismiss: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -40,7 +40,7 @@ private struct ModalSheetContent: View {
 
             if let cancelTitle = cancelTitle {
                 HStack(spacing: 10) {
-                    PopupCancelButton(text: cancelTitle, action: onCancel)
+                    PopupCancelButton(text: cancelTitle, action: onDismiss)
                         .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
 
                     PopupConfirmButton(text: confirmTitle, action: onConfirm)
@@ -69,7 +69,6 @@ private struct ModalPopupPresenter: ViewModifier {
     let cancelTitle: String?
     let dismissOnBackgroundTap: Bool
     let onConfirm: () -> Void
-    let onCancel: () -> Void
 
     func body(content: Content) -> some View {
         ZStack {
@@ -83,7 +82,6 @@ private struct ModalPopupPresenter: ViewModifier {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             isPresented = false
                         }
-                        onCancel()
                     }
                     .transition(.opacity)
 
@@ -101,11 +99,10 @@ private struct ModalPopupPresenter: ViewModifier {
                             }
                             onConfirm()
                         },
-                        onCancel: {
+                        onDismiss: {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 isPresented = false
                             }
-                            onCancel()
                         }
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -125,8 +122,7 @@ extension View {
         confirmTitle: String,
         cancelTitle: String? = nil,
         dismissOnBackgroundTap: Bool = false,
-        onConfirm: @escaping () -> Void,
-        onCancel: @escaping () -> Void
+        onConfirm: @escaping () -> Void
     ) -> some View {
         modifier(
             ModalPopupPresenter(
@@ -136,8 +132,7 @@ extension View {
                 confirmTitle: confirmTitle,
                 cancelTitle: cancelTitle,
                 dismissOnBackgroundTap: dismissOnBackgroundTap,
-                onConfirm: onConfirm,
-                onCancel: onCancel
+                onConfirm: onConfirm
             )
         )
     }
@@ -156,8 +151,7 @@ extension View {
                 confirmTitle: "검사완료",
                 cancelTitle: "돌아가기",
                 dismissOnBackgroundTap: false,
-                onConfirm: { print("confirm") },
-                onCancel: { print("cancel") }
+                onConfirm: { print("confirm") }
             )
     }
 }
