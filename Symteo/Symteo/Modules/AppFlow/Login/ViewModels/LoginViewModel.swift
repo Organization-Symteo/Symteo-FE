@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 enum SocialProvider: CaseIterable, Identifiable {
     
@@ -36,13 +37,14 @@ enum SocialProvider: CaseIterable, Identifiable {
 @MainActor
 final class LoginViewModel: ObservableObject {
 
+
     
     let providers: [SocialProvider] = SocialProvider.allCases
 
-    func tapLogin(provider: SocialProvider) {
+    func tapLogin(provider: SocialProvider, onSuccess: @escaping () -> Void) {
         switch provider {
         case .kakao:
-            loginWithKakao()
+            loginWithKakao(onSuccess: onSuccess)
         case .naver:
             loginWithNaver()
         case .google:
@@ -50,9 +52,9 @@ final class LoginViewModel: ObservableObject {
         }
     }
 
-    private func loginWithKakao() {
-        print("카카오 로그인")
-        // TODO: Kakao SDK
+    private func loginWithKakao(onSuccess: @escaping () -> Void) {
+            print("카카오 로그인(시연용)")
+            onSuccess()
     }
 
     private func loginWithNaver() {

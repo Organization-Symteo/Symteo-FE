@@ -11,12 +11,15 @@ import SwiftUI
 struct SymteoApp: App {
     
     @StateObject private var container: DIContainer = .init()
+    @StateObject private var sessionManager = SessionManager()
+
 
 
     var body: some Scene {
         WindowGroup {
-            LoginView()
+            RootView()
                 .environmentObject(container)
+                .environmentObject(sessionManager)
             
         }
     }

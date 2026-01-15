@@ -49,7 +49,7 @@ struct MissionView: View {
             )
 
         case .completed:
-            HomeView()
+            BaseTabView()
         }
     }
 }

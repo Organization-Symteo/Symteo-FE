@@ -31,11 +31,20 @@ struct RootView: View {
                         NavigationRoutingView()
                             .environmentObject(container)
                             .environmentObject(sessionManager)
-                    } else{
-                        
+                    } else {
+                        LoginView()
+                            .environmentObject(container)
+                            .environmentObject(sessionManager)
                     }
                 }
             }
+        }
+        .task{
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초
+
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            showSplash = false
+                        }
         }
     }
 }
