@@ -15,6 +15,9 @@ struct SymteoApp: App {
 
     var body: some Scene {
         WindowGroup {
+            LoginView()
+                .environmentObject(container)
+            
         }
     }
 }

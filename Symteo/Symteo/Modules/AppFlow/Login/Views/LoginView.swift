@@ -17,7 +17,10 @@ struct LoginView: View {
     @AppStorage("AgreeTerms") private var agreeTerms: Bool = false
     
     // 팝업 표시 상태
-        @State private var showTermsPopup: Bool = false
+    @State private var showTermsPopup: Bool = false
+    
+    @State private var termsSheet: TermsSheetType? = nil
+
 
     // MARK: - Body
 
@@ -50,23 +53,28 @@ struct LoginView: View {
                         viewModel.tapLogin(provider: provider)
                     }
                 }
+                Spacer()
+                    .frame(height:77)
+                termsRow
             }//VStackend
             .allowsHitTesting(!showTermsPopup)
             .padding(.horizontal, 26)
         }//ZStackend
         .task{
-            agreeTerms = false //테스트용
+            //agreeTerms = false //테스트용
             
             if !agreeTerms{
                 await Task.yield()
                 showTermsPopup = true
             }
         }
+        .sheet(item: $termsSheet) { sheet in
+            TermsBottomSheet(type: sheet)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+
+        }
     }
-    
-    
-}
-    
     
     // MARK: - Top Contents
     //로고+텍스트
@@ -87,12 +95,40 @@ struct LoginView: View {
             
         }
     }
+    
+    // MARK: - Botton Contents
+    //안심 이용약관 & 데이터 처리 동의
+    private var termsRow: some View {
+        HStack(spacing:2){
+            Button {
+                termsSheet = .safeTerms
+            } label: {
+                Text("안심 이용약관")
+            }
+            .buttonStyle(.plain)
+            
+            Text("&")
+                .foregroundStyle(.gray400)
 
-// MARK: - Botton Contents
-//안심 이용약관 & 데이터 처리 동의
-private var termsofService: some View{
+            
+            Button {
+                termsSheet = .dataConsent
+            } label: {
+                Text("데이터 처리 동의")
+            }
+            .buttonStyle(.plain)
+        }
+        .font(.PretendardMedium(size: 14))
+        .foregroundStyle(Color.gray400)
+    }
     
 }
+
+    
+    
+
+
+
 
     
 
