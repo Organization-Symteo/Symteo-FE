@@ -17,7 +17,7 @@ struct BaseTabView: View {
             TabView(selection: $container.selectedTab) {
                 ForEach(TabItem.allCases, id: \.rawValue) { tab in
                     Tab(
-                        "",
+                        tab.title,
                         image: container.selectedTab == tab ? "\(tab.rawValue)_fill" : "\(tab.rawValue)",
                         value: tab,
                         content: {
@@ -35,10 +35,10 @@ struct BaseTabView: View {
     @ViewBuilder
     private func tabView(tab: TabItem) -> some View {
         Group {
-            //뷰 작성 후 바꿔놓을 예정
             switch tab {
             case .home:
-                EmptyView()
+                HomeView()
+                    .environmentObject(container)
             case .chat:
                 EmptyView()
             case .profile:

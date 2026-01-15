@@ -11,6 +11,7 @@ import SwiftUI
 struct LoginView: View {
     
     // MARK: - Property
+    @EnvironmentObject var sessionManager: SessionManager
     @StateObject private var viewModel = LoginViewModel()
     
     //약관 동의 여부
@@ -50,7 +51,9 @@ struct LoginView: View {
                 
                 ForEach(viewModel.providers) { provider in
                     SocialLoginButton(icon: provider.icon, title: provider.title) {
-                        viewModel.tapLogin(provider: provider)
+                        viewModel.tapLogin(provider: provider){
+                            sessionManager.login()
+                        }
                     }
                 }
                 Spacer()
