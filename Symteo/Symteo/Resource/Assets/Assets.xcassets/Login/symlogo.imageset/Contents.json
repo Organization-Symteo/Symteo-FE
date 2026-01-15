@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "symlogo.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
