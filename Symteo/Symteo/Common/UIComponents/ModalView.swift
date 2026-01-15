@@ -59,13 +59,13 @@ struct ModalView: View {
                                     text: cancelTitle,
                                     action: onCancel
                                 )
-                                .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
+                                .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
 
                                 PopupConfirmButton(
                                     text: confirmTitle,
                                     action: onConfirm
                                 )
-                                .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
+                                .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
                             }
                         } else {
                             PopupConfirmButton(
@@ -108,7 +108,7 @@ struct RoundedCorner: Shape {
         title: "작성을 완료하셨나요?",
         message: nil,
         confirmTitle: "돌아가기",
-        cancelTitle: nil,
+        cancelTitle: "nil",
         onConfirm: {},
         onCancel: {}
     )

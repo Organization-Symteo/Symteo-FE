@@ -50,13 +50,13 @@ struct PopUpView: View {
                             text: cancelTitle,
                             action: onCancel
                         )
-                        .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
+                        .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
 
                         PopupConfirmButton(
                             text: confirmTitle,
                             action: onConfirm
                         )
-                        .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
+                        .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
                     }
                 } else {
                     PopupConfirmButton(
@@ -88,48 +88,6 @@ struct PopUpView: View {
                 }
             }
         }
-    }
-}
-
-struct PopupConfirmButton: View {
-    let text: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(text)
-                .font(.PretendardSemiBold(size: 16))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.maingreen)
-                )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-struct PopupCancelButton: View {
-    let text: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(text)
-                .font(.PretendardSemiBold(size: 16))
-                .foregroundColor(.gray)
-                .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.white)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.gray100, lineWidth: 1)
-                )
-        }
-        .buttonStyle(.plain)
     }
 }
 
