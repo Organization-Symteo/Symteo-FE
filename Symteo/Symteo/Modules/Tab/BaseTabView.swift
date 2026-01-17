@@ -40,7 +40,8 @@ struct BaseTabView: View {
                 HomeView()
                     .environmentObject(container)
             case .chat:
-                EmptyView()
+                TestHomeView()
+                    .environmentObject(container)
             case .profile:
                 EmptyView()
             case .test:
