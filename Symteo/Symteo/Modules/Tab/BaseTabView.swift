@@ -47,7 +47,7 @@ struct BaseTabView: View {
                 EmptyView()
             case .report:
                 EmptyView()
-                
+               
             }
         }
         .environmentObject(container)

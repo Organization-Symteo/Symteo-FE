@@ -18,7 +18,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		68FC8A042F15068E0053FD9B /* Exceptions for "Symteo" folder in "Symteo" target */ = {
+		883B21022F10CD4500D815AB /* Exceptions for "Symteo" folder in "Symteo" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -31,7 +31,7 @@
 		688E6EF22F0D1833007A7C57 /* Symteo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				68FC8A042F15068E0053FD9B /* Exceptions for "Symteo" folder in "Symteo" target */,
+				883B21022F10CD4500D815AB /* Exceptions for "Symteo" folder in "Symteo" target */,
 			);
 			path = Symteo;
 			sourceTree = "<group>";
@@ -291,7 +291,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -324,7 +323,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
