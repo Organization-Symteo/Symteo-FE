@@ -10,6 +10,8 @@ import Foundation
 enum NavigationDestination: Equatable, Hashable{
     case basetab
     
-    
+    case depressionTest
+    case stressTest
+    case typeTest
     
 }

@@ -24,6 +24,15 @@ struct NavigationRoutingView: View {
                         case .basetab:
                             BaseTabView()
                             
+                        case .depressionTest:
+                            DepressionTestHome()
+                            
+                        case .typeTest:
+                            TypeTestHome()
+
+                        case .stressTest:
+                            StressTestHome()
+
                         }
                     }
                 }
