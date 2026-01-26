@@ -164,8 +164,8 @@ private struct ProgressBarView: View {
 
     let ratio: Double
 
-    private var level: ProgressSeverity {
-        ProgressSeverity.from(ratio: ratio)
+    private var level: AnxietyProgressSeverity {
+        AnxietyProgressSeverity.from(ratio: ratio)
     }
 
     var body: some View {

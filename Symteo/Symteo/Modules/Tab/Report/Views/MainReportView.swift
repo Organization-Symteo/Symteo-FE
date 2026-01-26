@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainReportView: View {
-    @StateObject private var viewModel = ReportViewModel()
+    @StateObject private var viewModel = MainReportViewModel()
     
     var body: some View {
         ZStack {

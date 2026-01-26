@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct ReportNavigationBar: View {
-    @StateObject private var viewModel = ReportViewModel()
+    @StateObject private var viewModel = MainReportViewModel()
     @Environment(\.dismiss) var dismiss
 
     var body: some View {

@@ -7,13 +7,13 @@
 //  우울과 불안 주요 증상 클러스터에서 점수 결과에 따라 달라지는 ProgressView를 구현하기 위한 Enum입니다.
 import SwiftUI
 
-enum ProgressSeverity {
+enum AnxietyProgressSeverity {
     case low
     case mediumLow
     case mediumHigh
     case high
 
-    static func from(ratio: Double) -> ProgressSeverity {
+    static func from(ratio: Double) -> AnxietyProgressSeverity {
         switch ratio { 
         case 0.0...0.25:
             return .low

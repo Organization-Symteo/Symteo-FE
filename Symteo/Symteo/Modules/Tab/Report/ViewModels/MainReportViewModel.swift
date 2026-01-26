@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-class ReportViewModel: ObservableObject {
+class MainReportViewModel: ObservableObject {
     @Published var userName: String = "따오기"
     @Published var currentPromoPage: Int = 0 // 현재 스와이프 페이지
     @Published var isShowingNoReportPopUp = false // 팝업 노출 상태

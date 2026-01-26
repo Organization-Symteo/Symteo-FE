@@ -7,12 +7,13 @@
 import Foundation
 
 final class AnxietyReportViewModel: ObservableObject {
-    @Published var currentStatus: OverallResult = .caution // 현재 결과값
+    @Published var currentStatus: OverallResultStatus = .caution // 현재 결과값
     @Published var score: Int = 65 // 실제 점수
+
     
-    
-     let phqScore: Int
-     let gadScore: Int
+    let phqScore: Int
+    let gadScore: Int
+    let overallResult: OverallResult
 
      
      
@@ -32,6 +33,10 @@ final class AnxietyReportViewModel: ObservableObject {
     init(phqScore: Int, gadScore: Int) {
         self.phqScore = phqScore
         self.gadScore = gadScore
+        self.overallResult = OverallResultCalculator.calculate(
+            phqScore: phqScore,
+            gadScore: gadScore
+        )
     }
     
     // MARK: -var
@@ -42,8 +47,8 @@ final class AnxietyReportViewModel: ObservableObject {
         }
     
     // 종합 결과
-    var overallLevel: OverallResult {
-        OverallResult.from(phqScore: phqScore, gadScore: gadScore)
+    var overallLevel: OverallResultStatus {
+        OverallResultStatus.from(phqScore: phqScore, gadScore: gadScore)
     }
     
     //  View에서 바로 쓰는 데이터
