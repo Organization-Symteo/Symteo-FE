@@ -76,38 +76,51 @@ struct MainReportView: View {
     
     // MARK: - 2. 리포트 리스트 섹션
     private var reportListSection: some View {
-        VStack(spacing: -25) {
-            ForEach(viewModel.reportList) { item in
-                // 클릭 시 데이터가 없으면 팝업을 띄우는 로직
-                Button(action: {
-                    // 실제로는 데이터 존재 여부를 체크해야 함
-                    viewModel.isShowingNoReportPopUp = false
-                }) {
-                    Image(item.fullImageName)
-                        .resizable()
-                        .scaledToFit()
+        VStack(spacing: 12) {
+
+            ReportListRow(
+                icon: "anxiety_icon",
+                title: "우울·불안 리포트",
+                subtitle: "내 마음 속에 숨은 비구름을 확인해봐요",
+                hasReport: viewModel.hasAnxietyReport,
+                destination: AnyView(
+                    AnxietyReportView(  phqScore: 14,   //  더미값
+                                        gadScore: 11)
+                ),
+                onEmptyTap: {
+                    viewModel.isShowingNoReportPopUp = true
                 }
-                .buttonStyle(PlainButtonStyle())
-            }
+            )
+
+            ReportListRow(
+                icon: "stress_icon",
+                title: "스트레스 리포트",
+                subtitle: "어깨에 짊어진 무거운 짐을 내려놓을 시간",
+                hasReport: viewModel.hasStressReport,
+                destination: AnyView(
+                    StressReportView()
+                ),
+                onEmptyTap: {
+                    viewModel.isShowingNoReportPopUp = true
+                }
+            )
+
+            ReportListRow(
+                icon: "attachment_icon",
+                title: "애착 리포트",
+                subtitle: "나의 애착유형과 성향을 알아가는 시간",
+                hasReport: viewModel.hasAttachmentReport,
+                destination: AnyView(
+                    AttachmentReportView()
+                ),
+                onEmptyTap: {
+                    viewModel.isShowingNoReportPopUp = true
+                }
+            )
         }
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.03), radius: 14, x: 0,y: 6)
+        .padding(.vertical, 8)
     }
-    
-    // MARK: - 목적지 분기 처리 (Helper Function)
-    /*
-    @ViewBuilder
-    private func destinationView(for type: ReportType) -> some View {
-        switch type {
-        case .anxiety:
-            AnxietyReportView()
-        case .stress:
-            StressReportView()
-        case .attachment:
-            AttachmentReportView()
-        }
-    }
-     */
+
     
     // MARK: - 3. 중간 배너 (상담 안내)
     private var bannerSection: some View {

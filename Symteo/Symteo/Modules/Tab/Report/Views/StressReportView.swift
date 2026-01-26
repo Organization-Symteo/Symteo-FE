@@ -78,6 +78,7 @@ struct StressReportView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Indicator

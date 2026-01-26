@@ -34,7 +34,7 @@ struct AnxietyReportView: View {
 
             VStack(spacing: 0) {
 
-                // 🔹 헤더 + 종합결과 겹침 영역
+            
                 ZStack(alignment: .top) {
 
                     Color.maingreen
@@ -77,6 +77,7 @@ struct AnxietyReportView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 
     private var customIndicator: some View {

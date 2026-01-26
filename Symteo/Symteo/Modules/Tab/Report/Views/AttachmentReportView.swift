@@ -58,11 +58,11 @@ struct AttachmentReportView: View {
                         customIndicator
                         ReportBottomBar()
                     }
-                    .padding(.top, 60) // 배터리 카드 아래 여백
+                    
                 }
             }
         }
-        
+        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - Indicator

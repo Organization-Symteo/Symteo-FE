@@ -10,7 +10,6 @@ import SwiftUI
 
  struct AttachmentAnalysisCard: View {
      var body: some View {
-         ScrollView {
              VStack(spacing: 16) {
                  // 1. 나의 스트레스 포인트 섹션
                  StressPointSection()
@@ -27,8 +26,6 @@ import SwiftUI
              }
              .padding()
          }
-        
-     }
  }
  
 struct StressPointSection: View {
