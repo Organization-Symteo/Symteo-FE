@@ -29,7 +29,7 @@ struct AttachmentTypeSection: View {
             Spacer() 
         }
         .padding()
-        .frame(maxWidth: .infinity, alignment: .leading) // 카드 가로 꽉
+        .frame(maxWidth: .infinity, alignment: .leading) // 최대 넓이 차지
         .background(type.backgroundColor)
         .cornerRadius(16)
     }

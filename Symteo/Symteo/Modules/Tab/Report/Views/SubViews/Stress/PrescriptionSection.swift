@@ -52,7 +52,7 @@ struct PrescriptionSection: View {
                             .font(.PretendardMedium(size: 14))
                     }
 
-                    Spacer() //
+                    Spacer() 
                 }
                 .foregroundStyle(Color(hex: "#0E9F6E"))
                 .padding(.horizontal, 24)
@@ -71,15 +71,8 @@ struct PrescriptionSection: View {
             }
         }
         .padding(24)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(
-            color: Color.black.opacity(0.04),
-            radius: 20,
-            x: 0,
-            y: 10
-        )
         .padding(.horizontal, 20)
+        //.cardStyle()
     }
 }
 

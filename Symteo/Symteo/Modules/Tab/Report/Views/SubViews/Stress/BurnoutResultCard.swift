@@ -23,6 +23,7 @@ struct BurnoutResultCard: View {
     }
 }
 
+//MARK: -SubViews(private)
 private struct BurnoutAnalysisSection: View {
 
     var body: some View {

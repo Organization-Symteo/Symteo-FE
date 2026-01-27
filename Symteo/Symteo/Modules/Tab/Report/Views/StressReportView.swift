@@ -64,8 +64,10 @@ struct StressReportView: View {
                         .frame(height: UIScreen.main.bounds.height * 0.75)
 
                         customIndicator
+                        
                         PrescriptionSection()
-
+                           // .cardStyle()
+        
                         MainBottomButton(
                             text: "다른 검사하러 가기",
                             isDisabled: false,

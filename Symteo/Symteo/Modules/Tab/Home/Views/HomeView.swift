@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+// 오늘의 한 줄: api 받아오기
 struct HomeView: View {
     // MARK: - Properties
     @State private var selectedWeather: EmotionWeather? = nil
@@ -182,6 +183,7 @@ extension HomeView {
             .cornerRadius(16)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 180)
+            
             
             //  커스텀 인디케이터 (지정한 이미지로 변경)
             HStack(spacing: 8) {

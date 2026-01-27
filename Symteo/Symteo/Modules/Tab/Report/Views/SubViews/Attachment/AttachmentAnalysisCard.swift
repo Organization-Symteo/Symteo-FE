@@ -28,7 +28,9 @@ import SwiftUI
          }
  }
  
-struct StressPointSection: View {
+
+//MARK: -SubViews(private)
+private struct StressPointSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("애착 분석: 나의 ‘성향’ 이해하기")

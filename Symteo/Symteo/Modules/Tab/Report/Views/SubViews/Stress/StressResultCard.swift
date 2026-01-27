@@ -28,14 +28,7 @@ struct StressResultCard: View {
             .cardStyle()
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(
-            color: Color.black.opacity(0.03),
-            radius: 14,
-            x: 0,
-            y: 6
-        )
+       // .background(Color.white)
     }
 }
 

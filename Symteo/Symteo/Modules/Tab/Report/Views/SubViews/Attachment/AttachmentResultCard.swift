@@ -26,6 +26,7 @@ struct AttachmentResultCard: View {
     }
 }
         
+//MARK: -SubViews(private)
 private struct AttachmentMapSection: View {
 
     let anxietyResult: AttachmentBarResult

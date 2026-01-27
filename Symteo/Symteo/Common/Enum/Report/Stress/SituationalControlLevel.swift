@@ -23,11 +23,6 @@ extension SituationalControlLevel {
         default: return .high
         }
     }
-/*
- var title: String { ... }
-     var description: String { ... }
-     var barColor: Color { ... }
- */
     var title: String {
         switch self {
         case .veryLow: return "매우 낮음"
@@ -49,9 +44,9 @@ extension SituationalControlLevel {
     var description: String {
         switch self {
         case .veryLow:
-            return "삶을 스스로 조절하기 어렵게 느껴집니다." //삶을 스스로 조절하기 어렵게 느껴집니다.
+            return "삶을 스스로 조절하기 어렵게 느껴집니다."
         case .low:
-            return "상황에 흔들리는 일이 잦은 상태입니다." //
+            return "상황에 흔들리는 일이 잦은 상태입니다."
         case .normal:
             return "대체로 관리되고 있으나 부담이 있습니다."
         case .high:

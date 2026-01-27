@@ -28,8 +28,6 @@ struct StressThermometerView: View {
                     // 실제 채워지는 색상 바
                     Rectangle()
                         .fill(fillColor)
-                        // 온도계 머리(원형) 부분은 보통 전체의 15~20%를 차지하므로
-                        // 최소 길이를 확보해주면 더 자연스럽습니다.
                         .frame(width: max(geometry.size.width * ratio, height * 0.8))
                 }
             }

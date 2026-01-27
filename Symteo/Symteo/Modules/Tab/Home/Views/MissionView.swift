@@ -30,7 +30,6 @@ struct MissionView: View {
                 missionState = .confirmed
             }
 
-
         case .confirmed:
             MissionIntroView(
                 onBack: {
