@@ -25,6 +25,7 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
         completion(.success(urlRequest))
     }
     
+    /*
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         guard request.retryCount < 1,
               let response = request.task?.response as? HTTPURLResponse,
@@ -44,5 +45,6 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
             }
         }
     }
+     */
 }
 
