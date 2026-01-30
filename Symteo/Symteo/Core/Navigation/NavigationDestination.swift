@@ -9,6 +9,7 @@ import Foundation
 
 enum NavigationDestination: Equatable, Hashable{
     case basetab
+    case setting
     
     
     

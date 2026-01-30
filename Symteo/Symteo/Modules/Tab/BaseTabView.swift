@@ -42,7 +42,7 @@ struct BaseTabView: View {
             case .chat:
                 EmptyView()
             case .profile:
-                EmptyView()
+                MySymteoView()
             case .test:
                 EmptyView()
             case .report:

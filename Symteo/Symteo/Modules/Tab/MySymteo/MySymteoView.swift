@@ -7,21 +7,9 @@
 
 import SwiftUI
 
-private struct RoundedCorner: Shape {
-    var radius: CGFloat
-    var corners: UIRectCorner
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
-
 struct MySymteoView: View {
+
+    @EnvironmentObject private var container: DIContainer
 
     private enum Layout {
         static let horizontalPadding: CGFloat = 16
@@ -49,7 +37,6 @@ struct MySymteoView: View {
             Spacer(minLength: 24)
         }
         .padding(.horizontal, Layout.horizontalPadding)
-        .padding(.top, 10)
         .background(Color(.gray5).ignoresSafeArea())
     }
 
@@ -64,7 +51,7 @@ struct MySymteoView: View {
             Spacer()
 
             Button {
-                print("settings")
+                container.navigationRouter.push(.setting)
             } label: {
                 Image("btn-setting")
             }
@@ -175,6 +162,20 @@ struct MySymteoView: View {
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous))
         .shadow(color: Color.black.opacity(0.03), radius: 12, x: 0, y: 6)
+    }
+}
+
+private struct RoundedCorner: Shape {
+    var radius: CGFloat
+    var corners: UIRectCorner
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }
 

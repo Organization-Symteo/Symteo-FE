@@ -24,6 +24,8 @@ struct NavigationRoutingView: View {
                         case .basetab:
                             BaseTabView()
                             
+                        case .setting:
+                            SettingView()
                         }
                     }
                 }
