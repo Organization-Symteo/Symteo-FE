@@ -21,6 +21,9 @@ struct PopUpView: View {
 
     var body: some View {
         ZStack {
+            Color.black
+                .opacity(opacity * 0.4)
+                .ignoresSafeArea()
             VStack(spacing: 0) {
                 // 제목
                 Text(title)
@@ -81,6 +84,7 @@ struct PopUpView: View {
             .padding(.horizontal, 19)
             .scaleEffect(appearScale)
             .opacity(opacity)
+            .transition(.scale.combined(with: .opacity))
             .onAppear {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
                     appearScale = 1.0
