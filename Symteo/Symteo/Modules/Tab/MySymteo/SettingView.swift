@@ -15,6 +15,7 @@ struct SettingView: View {
     @State private var cheerOn = false
     @State private var analysisOn = false
     @State private var monthlyOn = false
+    @State private var lockOn = false
     @State private var showLogoutPopup = false
     @State private var showInquiryPopup = false
     
@@ -46,12 +47,13 @@ struct SettingView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         
                         // 알림 설정
-                        sectionTitle("알림 설정")
-                        
-                        SettingRowToggle(
-                            title: "알림 설정",
-                            isOn: $alarmOn
-                        )
+                        HStack {
+                            sectionTitle("알림 설정")
+                            
+                            Spacer()
+                            
+                            CustomToggle(isOn: $alarmOn)
+                        }
                         
                         SettingRowToggle(
                             title: "응원 메시지",
@@ -73,7 +75,11 @@ struct SettingView: View {
                         // 사용자 설정
                         sectionTitle("사용자 설정")
                         
-                        settingArrowRow("잠금 설정")
+                        SettingRowToggle(
+                            title: "잠금 설정",
+                            isOn: $lockOn
+                        )
+                        
                         settingArrowRow("상담사 설정")
                         
                         Divider().padding(.vertical, 16)
@@ -235,21 +241,19 @@ struct SettingView: View {
     
     
     struct SettingRowToggle: View {
-        
+
         let title: String
         @Binding var isOn: Bool
-        
+
         var body: some View {
             HStack {
                 Text(title)
                     .font(.PretendardMedium(size: 14))
                     .foregroundColor(.gray900)
-                
+
                 Spacer()
-                
-                Toggle("", isOn: $isOn)
-                    .labelsHidden()
-                    .tint(.maingreen)
+
+                CustomToggle(isOn: $isOn)
             }
             .padding(.vertical, 12)
         }
