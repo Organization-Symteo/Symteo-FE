@@ -16,6 +16,25 @@ struct NicknameEditView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
 
+            ZStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image("icn_arrow_left")
+                    }
+
+                    Spacer()
+                }
+
+                Text("닉네임 수정")
+                    .font(.PretendardRegular(size: 14))
+                    .foregroundColor(.gray900)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.white)
+
             // Title
             Text("심터에서 사용할\n닉네임을 알려주세요!")
                 .font(.PretendardMedium(size: 22))
@@ -75,25 +94,8 @@ struct NicknameEditView: View {
             )
             .padding(.bottom, 11)
         }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            
-            ToolbarItem(placement: .principal) {
-                Text("닉네임 수정")
-                    .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray900)
-            }
-            
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image("icn_arrow_left")
-                }
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     // MARK: - Validation

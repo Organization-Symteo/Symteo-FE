@@ -15,6 +15,25 @@ struct WithdrawalView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
 
+            ZStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image("icn_arrow_left")
+                    }
+
+                    Spacer()
+                }
+
+                Text("회원 탈퇴")
+                    .font(.PretendardRegular(size: 14))
+                    .foregroundColor(.gray900)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.white)
+
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading) {
                     Text("회원 탈퇴 전 주의 사항")
@@ -90,25 +109,8 @@ struct WithdrawalView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 12)
         }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            
-            ToolbarItem(placement: .principal) {
-                Text("회원 탈퇴")
-                    .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray900)
-            }
-            
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image("icn_arrow_left")
-                }
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     // MARK: - Helper

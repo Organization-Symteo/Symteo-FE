@@ -12,8 +12,30 @@ struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading) {
+        ZStack {
+            VStack(spacing: 0) {
+
+                ZStack {
+                    HStack {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Image("icn_arrow_left")
+                        }
+
+                        Spacer()
+                    }
+
+                    Text("개인정보 처리방침")
+                        .font(.PretendardRegular(size: 14))
+                        .foregroundColor(.gray900)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(Color.white)
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading) {
 
                 PolicyTitle(text: "심터 서비스 약관 및 정책")
 
@@ -57,34 +79,18 @@ struct PrivacyPolicyView: View {
 
                 PolicyContent("• 글글글")
 
-                Spacer(minLength: 40)
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 24)
-        }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            
-            ToolbarItem(placement: .principal) {
-                Text("개인정보 처리방침")
-                    .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray900)
-            }
-            
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image("icn_arrow_left")
+                        Spacer(minLength: 40)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 24)
                 }
             }
         }
-        
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 
 #Preview {
-    ServicePolicyView()
+    PrivacyPolicyView()
 }
