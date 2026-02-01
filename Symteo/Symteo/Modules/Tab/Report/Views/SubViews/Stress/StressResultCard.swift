@@ -15,17 +15,17 @@ struct StressResultCard: View {
         VStack(spacing: 20) {
 
             StressGaugeSection(score: viewModel.stressScore,level: viewModel.stressLevel)
-                .cardStyle()
+                .reportCardStyle()
 
             StressDescriptionSection(userName: "따오기",
                                      level: viewModel.stressLevel, description: viewModel.stressDescriptionText)
-            .cardStyle()
+            .reportCardStyle()
 
             StressBalanceSection(
                 situationalResult: viewModel.situationalControlResult,
                 dailyOverloadResult: viewModel.dailyOverloadResult
             )
-            .cardStyle()
+            .reportCardStyle()
         }
         .padding()
        // .background(Color.white)

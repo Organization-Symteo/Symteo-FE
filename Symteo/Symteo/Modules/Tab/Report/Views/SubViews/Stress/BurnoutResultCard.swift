@@ -13,9 +13,9 @@ struct BurnoutResultCard: View {
         VStack(spacing: 14) {
 
           BurnoutAnalysisSection()
-                .cardStyle()
+                .reportCardStyle()
             BurnoutAIInsightSection()
-                .cardStyle()
+                .reportCardStyle()
         }
         .padding()
 

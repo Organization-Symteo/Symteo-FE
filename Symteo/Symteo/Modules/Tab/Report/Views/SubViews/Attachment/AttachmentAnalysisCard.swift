@@ -13,16 +13,16 @@ import SwiftUI
              VStack(spacing: 16) {
                  // 1. 나의 스트레스 포인트 섹션
                  StressPointSection()
-                     .cardStyle() // 미리 만드신 카드 스타일 적용
+                     .reportCardStyle() // 미리 만드신 카드 스타일 적용
                  
                  // 2. 나의 강점 섹션 (가로 병렬 카드)
                  MyStrengthsSection()
-                     .cardStyle()
+                     .reportCardStyle()
                  // 이 섹션은 내부에서 개별 카드에 .cardStyle()을 적용합니다.
                  
                  // 3. 행동 추천 섹션
                  ActionRecommendationSection()
-                     .cardStyle()
+                     .reportCardStyle()
              }
              .padding()
          }

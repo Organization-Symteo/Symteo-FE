@@ -7,7 +7,7 @@
 import SwiftUI
 
 extension View {
-    func cardStyle() -> some View {
+    func reportCardStyle() -> some View {
         self
             .padding(.vertical, 16)
             .padding(.horizontal, 24)

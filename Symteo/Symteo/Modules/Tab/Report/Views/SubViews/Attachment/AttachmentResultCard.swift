@@ -17,10 +17,10 @@ struct AttachmentResultCard: View {
                 anxietyResult: viewModel.anxietyResult,
                 avoidanceResult: viewModel.avoidanceResult
             )
-            .cardStyle()
+            .reportCardStyle()
 
             AttachmentDescriptionSection(attachmentType: .anxious, viewModel: AttachmentReportViewModel())
-                .cardStyle()
+                .reportCardStyle()
         }
         
     }
