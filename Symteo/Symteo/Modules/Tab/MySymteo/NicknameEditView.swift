@@ -75,10 +75,17 @@ struct NicknameEditView: View {
             )
             .padding(.bottom, 11)
         }
-        .navigationTitle("닉네임 수정")
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
+            
+            ToolbarItem(placement: .principal) {
+                Text("닉네임 수정")
+                    .font(.PretendardRegular(size: 14))
+                    .foregroundColor(.gray900)
+            }
+            
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     dismiss()

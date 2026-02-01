@@ -11,12 +11,15 @@ struct SettingView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @State private var alarmOn = true
-    @State private var cheerOn = true
+    @State private var alarmOn = false
+    @State private var cheerOn = false
     @State private var analysisOn = false
-    @State private var monthlyOn = true
+    @State private var monthlyOn = false
+    @State private var showLogoutPopup = false
+    @State private var showInquiryPopup = false
 
-    var body: some View {
+var body: some View {
+    ZStack {
         ScrollView(showsIndicators: false) {
 
             VStack(alignment: .leading, spacing: 0) {
@@ -62,7 +65,13 @@ struct SettingView: View {
                 } label: {
                     settingArrowRow("닉네임 수정")
                 }
-                settingArrowRow("로그아웃")
+                Button {
+                    withAnimation {
+                        showLogoutPopup = true
+                    }
+                } label: {
+                    settingArrowRow("로그아웃")
+                }
                 NavigationLink {
                     WithdrawalView()
                 } label: {
@@ -74,9 +83,25 @@ struct SettingView: View {
                 // 기타
                 sectionTitle("기타")
 
-                settingArrowRow("서비스 약관 및 정책")
-                settingArrowRow("개인정보 처리방침")
-                settingArrowRow("문의하기")
+                NavigationLink {
+                    ServicePolicyView()
+                } label: {
+                    settingArrowRow("서비스 약관 및 정책")
+                }
+                
+                NavigationLink {
+                    PrivacyPolicyView()
+                } label: {
+                    settingArrowRow("개인정보 처리방침")
+                }
+                
+                Button {
+                    withAnimation {
+                        showInquiryPopup = true
+                    }
+                } label: {
+                    settingArrowRow("문의하기")
+                }
 
                 HStack {
                     Text("앱 정보")
@@ -86,22 +111,76 @@ struct SettingView: View {
                     Text("0.0.1")
                         .font(.PretendardRegular(size: 14))
                         .foregroundColor(.gray700)                }
-                .padding(.vertical, 16)
+                .padding(.vertical, 72)
             }
             .padding(.horizontal, 16)
         }
-        .navigationTitle("환경설정")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image("icn_arrow_left")
+
+        // Logout Popup
+        if showLogoutPopup {
+            PopUpView(
+                title: "로그아웃을 하면 메세지 알림을 받을 수 없습니다.\n정말 로그아웃 하시겠습니까?",
+                message: nil,
+                confirmTitle: "로그아웃",
+                cancelTitle: "취소",
+                onConfirm: {
+                    withAnimation {
+                        showLogoutPopup = false
+                    }
+                    logout()
+                },
+                onCancel: {
+                    withAnimation {
+                        showLogoutPopup = false
+                    }
                 }
+            )
+        }
+        // Inquiry Popup
+        if showInquiryPopup {
+            PopUpView(
+                title: "심터 문의",
+                message: "cs@symteo.com로 이메일을 보내주세요.",
+                confirmTitle: "확인",
+                cancelTitle: nil,
+                onConfirm: {
+                    withAnimation {
+                        showInquiryPopup = false
+                    }
+                },
+                onCancel: {
+                    withAnimation {
+                        showInquiryPopup = false
+                    }
+                }
+            )
+        }
+    }
+    .navigationTitle("")
+    .navigationBarTitleDisplayMode(.inline)
+    .navigationBarBackButtonHidden(true)
+    .toolbar {
+        
+        ToolbarItem(placement: .principal) {
+            Text("환경 설정")
+                .font(.PretendardRegular(size: 14))
+                .foregroundColor(.gray900)
+        }
+        
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button {
+                dismiss()
+            } label: {
+                Image("icn_arrow_left")
             }
         }
+    }
+    }
+}
+
+    private func logout() {
+        // TODO: 로그아웃 API 연동
+        print("로그아웃 처리")
     }
 
     // MARK: - Helper
@@ -126,7 +205,7 @@ struct SettingView: View {
         }
         .padding(.vertical, 16)
     }
-}
+
 
 struct SettingRowToggle: View {
 

@@ -41,13 +41,12 @@ struct BaseTabView: View {
                     .environmentObject(container)
             case .chat:
                 EmptyView()
-            case .profile:
-                MySymteoView()
             case .test:
                 EmptyView()
             case .report:
                 EmptyView()
-                
+            case .profile:
+                MySymteoView()
             }
         }
         .environmentObject(container)

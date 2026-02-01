@@ -15,22 +15,20 @@ struct NavigationRoutingView: View {
             
             //Tab 뷰
             BaseTabView()
-                .environmentObject(container)
                 .navigationDestination(for: NavigationDestination.self) { destination in
-                
-                    Group{
-                        switch destination{
-                            
-                        case .basetab:
-                            BaseTabView()
-                            
-                        case .setting:
-                            SettingView()
-                        }
+                    switch destination {
+
+                    case .setting:
+                        SettingView()
+
+                    case .privacy:
+                        PrivacyPolicyView()
+
+                    case .service:
+                        ServicePolicyView()
                     }
                 }
         }
-        .environmentObject(container)
     }
 }
 

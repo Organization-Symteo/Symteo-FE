@@ -90,10 +90,17 @@ struct WithdrawalView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 12)
         }
-        .navigationTitle("회원 탈퇴")
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
+            
+            ToolbarItem(placement: .principal) {
+                Text("회원 탈퇴")
+                    .font(.PretendardRegular(size: 14))
+                    .foregroundColor(.gray900)
+            }
+            
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     dismiss()

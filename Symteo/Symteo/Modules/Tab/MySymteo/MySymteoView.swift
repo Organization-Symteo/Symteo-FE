@@ -24,20 +24,36 @@ struct MySymteoView: View {
     private let userName: String = "홍따오기"
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
-            
-            header
-            
-            profileRow
-            
-            missionHistoryCard
-            
-            monthlyTrendCard
-            
-            Spacer(minLength: 24)
+
+        NavigationStack(path: $container.navigationRouter.path) {
+
+            VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
+
+                header
+                profileRow
+                missionHistoryCard
+                monthlyTrendCard
+
+                Spacer(minLength: 24)
+            }
+            .padding(.horizontal, Layout.horizontalPadding)
+            .background(Color(.gray5).ignoresSafeArea())
+
+            .navigationDestination(for: NavigationDestination.self) { destination in
+
+                switch destination {
+
+                case .setting:
+                    SettingView()
+
+                case .privacy:
+                    PrivacyPolicyView()
+
+                case .service:
+                    ServicePolicyView()
+                }
+            }
         }
-        .padding(.horizontal, Layout.horizontalPadding)
-        .background(Color(.gray5).ignoresSafeArea())
     }
 
     // MARK: - Header
@@ -53,7 +69,7 @@ struct MySymteoView: View {
             Button {
                 container.navigationRouter.push(.setting)
             } label: {
-                Image("btn-setting")
+                Image("icn_setting")
             }
         }
         .padding(.top, 24)
