@@ -6,10 +6,10 @@
 //
 import SwiftUI
 
+// 오늘의 한 줄: api 받아오기
 struct HomeView: View {
     // MARK: - Properties
     @State private var selectedWeather: EmotionWeather? = nil
-    private let mainGreenColor = Color("maingreen") // 에셋 이름 'maingreen' 적용
     @State private var userName: String = "따오기" // 실제 유저 이름으로 수정예정
     private let recommendationCards = ["anxiety_test", "stress_test", "attachment_test"] // 추천검사
     private let recommendationItems = [
@@ -25,7 +25,7 @@ struct HomeView: View {
                 navigationBar
                 
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 10) {
                         welcomeHeader
                         emotionWeatherSection
                         todayMissionCard
@@ -41,6 +41,8 @@ struct HomeView: View {
         }
     }
 }
+
+
 
 // MARK: - Subviews
 extension HomeView {
@@ -134,7 +136,7 @@ extension HomeView {
             NavigationLink(destination: MissionView()) {
                 Text("하러가기")
                     .font(.PretendardMedium(size: 14))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(.maingreen)
@@ -148,7 +150,7 @@ extension HomeView {
     
     // 5. 추천 섹션
     private var recommendationSection: some View {
-        VStack(alignment: .leading, spacing: -20) {
+        VStack(alignment: .leading, spacing: 10) {
             // 타이틀 (userName)
             HStack(spacing: 0) {
                 Text("\(userName)") // MARK: 실제 userName으로
@@ -159,7 +161,7 @@ extension HomeView {
                     .foregroundStyle(.gray900)
                 Spacer()
             }
-            //.padding(.horizontal, 4)
+            .padding(.horizontal, 4)
             .padding(.leading, 15)
             .padding(.top)
             
@@ -177,8 +179,11 @@ extension HomeView {
                     .tag(index)            // 현재 페이지 추적
                 }
             }
+            .background(Color.white)
+            .cornerRadius(16)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 180)
+            
             
             //  커스텀 인디케이터 (지정한 이미지로 변경)
             HStack(spacing: 8) {
@@ -197,12 +202,12 @@ extension HomeView {
                         
                     }
                 }
+                .padding(.top)
                 Spacer()
             }
             .padding(.top, 8)
         }
-        .background(Color.white)
-        .cornerRadius(16)
+
     }
     
     
@@ -236,7 +241,7 @@ extension HomeView {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(mainGreenColor)
+                    .background(.maingreen)
                     .cornerRadius(12)
             }
         }
