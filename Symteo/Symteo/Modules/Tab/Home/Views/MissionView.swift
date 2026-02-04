@@ -5,46 +5,44 @@
 //  Created by 박병선 on 1/7/26.
 //
 import SwiftUI
-
-// 미션의 진행상태별로 분기하는 뷰입니다
-
+// 미션을 진행 상태별로 분기한 화면입니다.
 struct MissionView: View {
 
-    @State private var missionState: MissionState = .arrived
-    @State private var showSubmitConfirm = false   // confirming 대체
-    
-    
+    @StateObject private var viewModel = MissionViewModel(container: DIContainer())
+
     var body: some View {
         VStack {
             contentView
         }
-        .navigationBarBackButtonHidden(true) // 기본 BackButton 숨김
+        .navigationBarBackButtonHidden(true)
     }
 
     @ViewBuilder
     private var contentView: some View {
-        switch missionState {
-        
-        case .arrived: // 미션 도착 화면
+        switch viewModel.uiState {
+
+        case .arrived:
             MissionArrivedView {
-                missionState = .confirmed
+                viewModel.uiState = .confirmed
             }
 
         case .confirmed:
             MissionIntroView(
                 onBack: {
-                    missionState = .arrived
+                    viewModel.uiState = .arrived
                 },
                 onContinue: {
-                    missionState = .writing
-                }
+                    viewModel.uiState = .writing
+                },
+                viewModel: viewModel
             )
 
-        case .writing: // 미션 작성 화면
+        case .writing:
             MissionWritingView(
-                onSubmit:  {
-                    missionState = .completed
-                }
+                onSubmit: {
+                    viewModel.completeMission()
+                },
+                viewModel: viewModel
             )
 
         case .completed:

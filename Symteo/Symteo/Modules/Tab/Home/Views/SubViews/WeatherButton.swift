@@ -4,10 +4,11 @@
 //
 //  Created by 박병선 on 1/13/26.
 //
+/*
 import SwiftUI
 
 struct WeatherButton:  View {
-    let weather: EmotionWeather
+    let weather:  EmotionWeather.RawValue 
     let isSelected: Bool
     let isAnySelected: Bool
     let action: () -> Void
@@ -23,5 +24,30 @@ struct WeatherButton:  View {
             .frame(width: 64, height: 64)
         }
         .buttonStyle(.plain) // 버튼 클릭 시 깜빡임 방지
+    }
+}
+*/
+
+
+import SwiftUI
+
+struct WeatherButton: View {
+    let weather: EmotionWeather
+    let isSelected: Bool
+    let isAnySelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(
+                weather.getImageName(
+                    isSelected: isSelected,
+                    isAnySelected: isAnySelected
+                )
+            )
+            .resizable()
+            .frame(width: 64, height: 64)
+        }
+        .buttonStyle(.plain)
     }
 }
