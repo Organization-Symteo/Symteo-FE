@@ -40,7 +40,7 @@ struct BaseTabView: View {
             case .home:
                 EmptyView()
             case .chat:
-                EmptyView()
+                ChatView(container: container)
             case .profile:
                 EmptyView()
             case .test:
