@@ -5,6 +5,8 @@
 //  Created by 박병선 on 1/18/26.
 //
 import SwiftUI
+import Combine
+
 
 class MainReportViewModel: ObservableObject {
     @Published var userName: String = "따오기"
