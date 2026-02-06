@@ -9,10 +9,11 @@ import Moya
 import Alamofire
 
 enum MissionRouter {
-    case fetchTodayMission
-    case startMission(missionId: Int, data: MissionStartRequest)
-    case saveMissionDraft(userMissionId: Int, data: MissionDraftRequest)
-    case completeMission(userMissionId: Int)
+    case fetchTodayMission // 오늘의 미션 조회
+    case startMission(missionId: Int, data: MissionStartRequest) // 미션 시작
+    case saveMissionDraft(userMissionId: Int, data: MissionDraftRequest) // 미션 텍스트 제출
+    case completeMission(userMissionId: Int) // 미션 완료
+    case restartTodayMission // 미션 새로고침
 }
 extension MissionRouter: APITargetType {
     var baseURL: URL {
@@ -29,6 +30,8 @@ extension MissionRouter: APITargetType {
             return "/api/v1/missions/\(userMissionId)/draft"
         case .completeMission(let userMissionId):
             return "/api/v1/missions/\(userMissionId)/completed"
+        case .restartTodayMission:
+            return "/api/v1/missions/today-mission/restart"
         }
     }
     
@@ -36,7 +39,7 @@ extension MissionRouter: APITargetType {
         switch self {
         case .fetchTodayMission:
             return .get
-        case .startMission, .saveMissionDraft, .completeMission:
+        case .startMission, .saveMissionDraft, .completeMission, .restartTodayMission:
             return .post
         }
     }
@@ -50,6 +53,8 @@ extension MissionRouter: APITargetType {
         case .saveMissionDraft(_, let data):
             return .requestJSONEncodable(data)
         case .completeMission:
+            return .requestPlain
+        case .restartTodayMission:
             return .requestPlain
         }
     }
@@ -111,6 +116,19 @@ extension MissionRouter: APITargetType {
               "result": null
             }
             """.data(using: .utf8)!
+        case .restartTodayMission:
+                   return """
+                   {
+                     "isSuccess": true,
+                     "code": "2000",
+                     "message": "Ok",
+                     "result": {
+                       "contents": "나를 불안하게 만드는 상황에서 ‘내가 원래 잘하던 행동’ 1개 적기",
+                       "remainingSeconds": 86399,
+                       "restarted": true
+                     }
+                   }
+                   """.data(using: .utf8)!
         }
     }
 }

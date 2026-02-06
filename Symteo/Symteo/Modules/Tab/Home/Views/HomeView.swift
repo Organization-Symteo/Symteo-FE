@@ -6,23 +6,36 @@
 //
 import SwiftUI
 
-// 오늘의 한 줄: api 받아오기
 struct HomeView: View {
     // MARK: - Properties
     @State private var userName: String = "따오기" // 실제 유저 이름으로 수정예정
-    private let recommendationCards = ["anxiety_test", "stress_test", "attachment_test"] // 추천검사
-    private let recommendationItems = [
-        RecommendationItem(imageName: "anxiety_test", type: .anxiety),
-        RecommendationItem(imageName: "stress_test", type: .stress),
-        RecommendationItem(imageName: "attachment_test", type: .attachment)
-    ]
+    @State private var selectedDiagnosis: RecommendationType? // 하단의 추천 검사 분기를 위한 프로퍼티
     @State private var currentPage = 0 // 페이지 스와이프(현재페이지 추적)
     @StateObject private var viewModel = HomeViewModel(container: DIContainer())
+    
+    /// 추천 검사 아이템(우울/불안, 스트레스, 성향 검사)
+    private let recommendationItems: [RecommendationItem] = [
+        .init(imageName: "anxiety_test", type: .anxiety),
+        .init(imageName: "stress_test", type: .stress),
+        .init(imageName: "attachment_test", type: .attachment)
+    ]
+    
 
+    // MARK: - Init
+
+    /// DIContainer을 주입받아 초기화
+    init(
+        container: DIContainer
+    ) {
+        _viewModel = StateObject(wrappedValue: HomeViewModel(container: container))
+    }
+
+    // MARK: -Body
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // 상단 커스텀 네비게이션
+                /// 상단 커스텀 네비게이션
                 navigationBar
 
                 ScrollView(showsIndicators: false) {
@@ -38,7 +51,7 @@ struct HomeView: View {
                     .padding(.bottom, 30)
                 }
             }
-            .background(Color(hex: "F8F9FA")) // 전체 배경색 (필요시 수정)
+            .background(Color(hex: "F8F9FA")) /// 전체 배경색 (필요시 수정)
         }
     }
 }
@@ -46,7 +59,7 @@ struct HomeView: View {
 // MARK: - Subviews
 extension HomeView {
 
-    // 1. 네비게이션 바
+    ///  네비게이션 바
     private var navigationBar: some View {
         HStack {
             Image("home_logo")
@@ -64,7 +77,7 @@ extension HomeView {
         .padding(.vertical, 12)
     }
 
-    // 2. 나무늘보 헤더
+    ///  오늘의 한줄
     private var welcomeHeader: some View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 4) {
@@ -78,15 +91,17 @@ extension HomeView {
             }
 
             Spacer()
-
+            
+            /* 늘보 이미지 삭제됨(디자인 수정사항 반영)
             Image("home_neulbo")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 70)
+             */
         }
     }
 
-    // 3. 감정 날씨 섹션
+    /// 감정 날씨 섹션
     private var emotionWeatherSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("오늘 나의 감정 날씨를 선택해봐요")
@@ -114,7 +129,7 @@ extension HomeView {
         .cornerRadius(20)
     }
 
-    // 4. 오늘의 미션 카드
+    /// 오늘의 미션 카드
     private var todayMissionCard: some View {
         HStack {
             Image("home_note")
@@ -148,7 +163,7 @@ extension HomeView {
         .cornerRadius(16)
     }
 
-    // 5. 추천 섹션
+    /// 추천 섹션
     private var recommendationSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 0) {
@@ -167,9 +182,11 @@ extension HomeView {
             .padding(.top)
 
             TabView(selection: $currentPage) {
-                ForEach(0..<recommendationCards.count, id: \.self) { index in
-                    Button {} label: {
-                        Image(recommendationCards[index])
+                ForEach(Array(recommendationItems.enumerated()), id: \.offset) { index, item in
+                    Button {
+                        selectedDiagnosis = item.type
+                    } label: {
+                        Image(item.imageName)
                             .resizable()
                             .scaledToFit()
                     }
@@ -182,9 +199,10 @@ extension HomeView {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 180)
 
+            /// 인디케이터
             HStack(spacing: 8) {
                 Spacer()
-                ForEach(0..<recommendationCards.count, id: \.self) { index in
+                ForEach(0..<recommendationItems.count, id: \.self) { index in
                     Image(currentPage == index ? "indicator_selected" : "indicator_normal")
                         .resizable()
                         .frame(width: currentPage == index ? 18 : 8, height: 8)
@@ -195,7 +213,7 @@ extension HomeView {
         }
     }
 
-    // 6. AI 상담 배너
+    /// AI 상담 배너
     private var aiCounselingBanner: some View {
         VStack {
             Text("내게 딱 맞는 AI 상담, 해보실래요?")
@@ -217,7 +235,12 @@ extension HomeView {
                 .scaledToFit()
                 .frame(height: 100)
 
-            Button {} label: {
+            
+        /// 채팅 화면으로 이동
+        NavigationLink {
+                ChatView(container: DIContainer())
+            }
+             label: {
                 Text("정밀 상담 시작")
                     .font(.PretendardSemiBold(size: 16))
                     .foregroundColor(.white)
@@ -232,7 +255,9 @@ extension HomeView {
         .cornerRadius(20)
     }
 }
-                        
+
+
+//MARK: - Preview
 #Preview {
-    HomeView()
+    HomeView(container: .init())
 }

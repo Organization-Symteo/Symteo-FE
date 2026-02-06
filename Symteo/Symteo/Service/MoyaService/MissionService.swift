@@ -25,6 +25,9 @@ protocol MissionServiceProtocol {
     /// 미션 제출
     func completeMission(userMissionId: Int) -> AnyPublisher<StatusResponseOnly, APIError>
     
+    /// 미션 새로고침
+    func restartTodayMission() -> AnyPublisher<MissionRestartResponse, APIError>
+    
 }
 
 
@@ -53,8 +56,13 @@ final class MissionService: MissionServiceProtocol {
         provider.requestResult(MissionRouter.saveMissionDraft(userMissionId: userMissionId,data: data),type: MissionDraftResult.self)
     }
     
-    // MARK: -미션 제출
+    // MARK: - 미션 제출
     func completeMission(userMissionId: Int) -> AnyPublisher<StatusResponseOnly, APIError> {
             provider.requestStatus(MissionRouter.completeMission(userMissionId: userMissionId))
         }
+    
+    // MARK: - 미션 새로고침
+    func restartTodayMission() -> AnyPublisher<MissionRestartResponse, APIError> {
+        provider.requestResult(MissionRouter.restartTodayMission, type: MissionRestartResponse.self)
+    }
 }

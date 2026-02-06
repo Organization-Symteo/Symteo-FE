@@ -40,3 +40,10 @@ struct MissionDraftResult: Codable {
     let updatedAt: String?
     let drafted: Bool
 }
+
+/// 미션 새로고침 Response
+struct MissionRestartResponse: Codable {
+    let contents: String
+    let remainingSeconds: Int
+    let restarted: Bool
+}

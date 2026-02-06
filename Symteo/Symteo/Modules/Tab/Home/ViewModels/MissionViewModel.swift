@@ -71,18 +71,22 @@ final class MissionViewModel: ObservableObject {
     func loadTodayMission() {
         guard !isLoading else { return }
         isLoading = true
+        
+        print("loadTodayMission 요청 시작")
 
         container.useCaseService.missionServise.fetchTodayMission()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.isLoading = false
                 if case .failure(let error) = completion {
+                    print("미션 조회 실패: ", error)
                     self?.toast = CustomToast(
                         title: "미션 조회 실패",
                         message: error.errorDescription ?? "알 수 없는 에러"
                     )
                 }
             } receiveValue: { [weak self] mission in
+                print("미션 응답: ", mission)
                 self?.missionContent = mission.contents
                 self?.remainingSeconds = mission.remainingSeconds
                 self?.restarted = mission.restarted
@@ -98,6 +102,8 @@ final class MissionViewModel: ObservableObject {
         
         isLoading = true
         
+        print("startMission 요청 시작")
+        
         let request = MissionStartRequest(
             content: memo,
             imageUrl: uploadedImageUrl
@@ -109,12 +115,14 @@ final class MissionViewModel: ObservableObject {
             .sink { [weak self] completion in
                 self?.isLoading = false
                 if case .failure(let error) = completion {
+                    print("미션 시작 실패: ", error)
                     self?.toast = CustomToast(
                         title: "미션 시작 실패",
                         message: error.errorDescription ?? "알 수 없는 에러"
                     )
                 }
             } receiveValue: { [weak self] result in
+                print("미션 시작")
                 self?.userMissionId = result.userMissionId
                 self?.remainingSeconds = result.remainingSeconds
             }
@@ -164,4 +172,27 @@ final class MissionViewModel: ObservableObject {
             )
             .store(in: &cancellables)
     }
+    
+    /// 미션 새로고침 함수
+     func restartTodayMission() {
+         guard !isLoading else { return }
+         isLoading = true
+         
+         container.useCaseService.missionServise
+        .restartTodayMission()
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] completion in
+            if case .failure(let error) = completion {
+                self?.toast = CustomToast(
+                    title: "미션 새로고침 실패",
+                    message: error.errorDescription ?? "알 수 없는 오류"
+                )
+            }
+        } receiveValue: { [weak self] result in
+            self?.currentMission = result.contents
+            self?.remainingSeconds = result.remainingSeconds
+            self?.restarted = result.restarted
+        }
+        .store(in: &cancellables)
+}
 }

@@ -37,15 +37,10 @@ struct BaseTabView: View {
         Group {
             switch tab {
             case .home:
-                HomeView()
-                    .environmentObject(container)
+                HomeView(container: container)
             case .chat:
-
-
                 ChatView(container: container)
-            case .profile:
-
-                EmptyView()
+        
             case .test:
                 EmptyView()
             case .report:
