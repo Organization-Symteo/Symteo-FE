@@ -2,8 +2,7 @@
 //  Config.swift
 //  Symteo
 //
-//  Created by 박병선 on 2/3/26.
-//
+
 import Foundation
 
 enum Config {

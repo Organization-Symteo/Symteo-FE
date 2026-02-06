@@ -2,7 +2,7 @@
 //  UseCaseService.swift
 //  Symteo
 //
-//  Created by 박병선 on 2/3/26.
+
 //
 import Foundation
 
@@ -17,4 +17,3 @@ class UseCaseService {
         self.homeService = .init()
     }
 }
-
