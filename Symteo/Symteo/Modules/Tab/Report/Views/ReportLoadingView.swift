@@ -5,6 +5,7 @@
 //  Created by 박병선 on 1/18/26.
 //
 import SwiftUI
+import Combine
 
 struct ReportLoadingView: View {
     @State private var progress: Double = 0.0
