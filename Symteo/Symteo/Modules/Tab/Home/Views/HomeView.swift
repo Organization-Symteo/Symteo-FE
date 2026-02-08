@@ -92,7 +92,8 @@ extension HomeView {
 
             Spacer()
             
-            /* 늘보 이미지 삭제됨(디자인 수정사항 반영)
+            /*
+            // 늘보 이미지 삭제됨(디자인 수정사항 반영)
             Image("home_neulbo")
                 .resizable()
                 .scaledToFit()
