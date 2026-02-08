@@ -17,7 +17,7 @@ struct MissionArrivedView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray900)
 
-            Button(action: onStart) {
+            Button(action: onStart) { /// 화면전환만 담당
                 Image("mission_arrival") // 에셋 확인 필요
                     .resizable()
                     .scaledToFit()

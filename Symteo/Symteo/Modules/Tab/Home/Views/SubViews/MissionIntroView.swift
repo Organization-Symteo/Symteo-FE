@@ -93,7 +93,7 @@ struct MissionIntroView: View {
                 text: "미션 시작",
                 isDisabled: false,
                 action: {
-                    viewModel.startMission()
+                    viewModel.startMission()/// API startMission함수 호출
                     onContinue()
                 }
             )
