@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NavigationRoutingView: View {
     @EnvironmentObject var container: DIContainer
-
+    
     var body: some View {
         NavigationStack(path:$container.navigationRouter.path){
             
@@ -17,15 +17,16 @@ struct NavigationRoutingView: View {
             BaseTabView()
                 .navigationDestination(for: NavigationDestination.self) { destination in
                     switch destination {
-
+                        
                     case .setting:
                         SettingView()
-
+                        
                     case .privacy:
                         PrivacyPolicyView()
-
+                        
                     case .service:
                         ServicePolicyView()
+
                     }
                 }
         }

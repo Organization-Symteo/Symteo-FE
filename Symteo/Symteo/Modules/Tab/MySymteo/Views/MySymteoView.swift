@@ -51,6 +51,8 @@ struct MySymteoView: View {
 
                 case .service:
                     ServicePolicyView()
+                    
+
                 }
             }
         }
@@ -110,8 +112,8 @@ struct MySymteoView: View {
                 .resizable()
                 .scaledToFit()
 
-            Button {
-                print("mission-history")
+            NavigationLink {
+                MySymteoRecordView()
             } label: {
                 HStack(spacing: 12) {
                     Image("img-mission")
