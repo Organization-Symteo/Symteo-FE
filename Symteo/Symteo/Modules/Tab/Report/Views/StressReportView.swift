@@ -107,6 +107,7 @@ struct StressReportView: View {
     }
 }
 
+
 #Preview {
     StressReportView()
 }

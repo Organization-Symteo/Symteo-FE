@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 enum Config {
     private static let infoDictionary: [String: Any] = {
         guard let dict = Bundle.main.infoDictionary else {

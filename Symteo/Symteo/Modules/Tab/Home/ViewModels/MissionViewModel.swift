@@ -8,6 +8,7 @@ import Foundation
 import SwiftUI
 import Combine
 
+@MainActor
 final class MissionViewModel: ObservableObject {
 
     // 흐름 상태

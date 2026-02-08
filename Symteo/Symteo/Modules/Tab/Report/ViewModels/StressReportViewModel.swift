@@ -6,6 +6,8 @@
 //
 import Foundation
 import SwiftUI
+import Combine
+
 
 final class StressReportViewModel: ObservableObject {
     
@@ -97,6 +99,7 @@ extension StressReportViewModel {
 }
 
 /// 프리뷰용 더미데이터
+@MainActor
 extension StressReportViewModel {
 
     static let preview = StressReportViewModel(

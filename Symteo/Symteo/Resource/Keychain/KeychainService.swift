@@ -7,6 +7,7 @@
 import Foundation
 import Security
 
+@MainActor
 class KeychainService {
     static let shared = KeychainService()
     

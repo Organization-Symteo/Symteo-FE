@@ -22,6 +22,7 @@ final class SessionManager: ObservableObject {
         storedIsLoggedIn = true
     }
 
+    @MainActor
     func logout() {
         DispatchQueue.main.async {
             self.isLoggedIn = false

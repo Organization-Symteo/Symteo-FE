@@ -8,6 +8,7 @@ import Foundation
 import Moya
 import Alamofire
 
+@MainActor
 class APIManager: @unchecked Sendable {
     static let shared = APIManager()
     
@@ -18,7 +19,10 @@ class APIManager: @unchecked Sendable {
     
     private init() {
         tokenProvider = TokenProvider()
-        accessTokenRefresher = AccessTokenRefresher(tokenProviding: tokenProvider)
+        let accessToken = tokenProvider.accessToken
+        accessTokenRefresher = AccessTokenRefresher(
+                 accessToken: accessToken
+             )
         session = Session(interceptor: accessTokenRefresher)
         loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
     }
