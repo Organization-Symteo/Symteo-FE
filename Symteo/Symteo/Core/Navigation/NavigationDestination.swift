@@ -8,8 +8,21 @@
 import Foundation
 
 enum NavigationDestination: Equatable, Hashable{
+
     case basetab
     
     
+    case depressionTest
+    case stressTest
+    case typeTest
     
+    case survey(kind: SurveyKind)
+    
+    
+
+    case setting
+    case privacy
+    case service
+
+
 }

@@ -12,14 +12,14 @@ import SwiftUI
 struct MissionView: View {
 
     @State private var missionState: MissionState = .arrived
-    @State private var showSubmitConfirm = false   // confirming 대체
+    @State private var showSubmitConfirm = false
     
     
     var body: some View {
         VStack {
             contentView
         }
-        .navigationBarBackButtonHidden(true) // 기본 BackButton 숨김
+        .navigationBarBackButtonHidden(true) /// 기본 뒤로가기 버튼 숨긴
     }
 
     @ViewBuilder

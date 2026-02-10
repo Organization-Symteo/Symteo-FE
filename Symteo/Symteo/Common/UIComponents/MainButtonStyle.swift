@@ -12,7 +12,7 @@ struct MainButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(
+            .foregroundStyle(
                 isDisabled
                 ? Color.gray500
                 : (configuration.isPressed ? Color.gray30 : Color.white)

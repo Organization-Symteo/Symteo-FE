@@ -13,13 +13,13 @@ private struct ModalSheetContent: View {
     let confirmTitle: String
     let cancelTitle: String?
     let onConfirm: () -> Void
-    let onDismiss: () -> Void
+    let onCancel: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
             Text(title)
                 .font(.PretendardSemiBold(size: 16))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
 
@@ -28,7 +28,7 @@ private struct ModalSheetContent: View {
             if let message = message {
                 Text(message)
                     .font(.PretendardRegular(size: 12))
-                    .foregroundColor(.gray700)
+                    .foregroundStyle(.gray700)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity)
@@ -40,7 +40,7 @@ private struct ModalSheetContent: View {
 
             if let cancelTitle = cancelTitle {
                 HStack(spacing: 10) {
-                    PopupCancelButton(text: cancelTitle, action: onDismiss)
+                    PopupCancelButton(text: cancelTitle, action: onCancel)
                         .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
 
                     PopupConfirmButton(text: confirmTitle, action: onConfirm)
@@ -69,11 +69,12 @@ private struct ModalPopupPresenter: ViewModifier {
     let cancelTitle: String?
     let dismissOnBackgroundTap: Bool
     let onConfirm: () -> Void
+    let onCancel: () -> Void
 
     func body(content: Content) -> some View {
         ZStack {
             content
-            
+
             if isPresented {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
@@ -99,10 +100,11 @@ private struct ModalPopupPresenter: ViewModifier {
                             }
                             onConfirm()
                         },
-                        onDismiss: {
+                        onCancel: {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 isPresented = false
                             }
+                            onCancel()
                         }
                     )
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -122,7 +124,8 @@ extension View {
         confirmTitle: String,
         cancelTitle: String? = nil,
         dismissOnBackgroundTap: Bool = false,
-        onConfirm: @escaping () -> Void
+        onConfirm: @escaping () -> Void,
+        onCancel: @escaping () -> Void = {}
     ) -> some View {
         modifier(
             ModalPopupPresenter(
@@ -132,40 +135,9 @@ extension View {
                 confirmTitle: confirmTitle,
                 cancelTitle: cancelTitle,
                 dismissOnBackgroundTap: dismissOnBackgroundTap,
-                onConfirm: onConfirm
+                onConfirm: onConfirm,
+                onCancel: onCancel
             )
         )
-    }
-}
-
-// MARK: - Preview
-
-#Preview {
-    StatefulPreviewWrapper(true) { isPresented in
-        Color(.systemBackground)
-            .ignoresSafeArea()
-            .modalPopup(
-                isPresented: isPresented,
-                title: "검사지를 제출하시겠어요?",
-                message: nil,
-                confirmTitle: "검사완료",
-                cancelTitle: "돌아가기",
-                dismissOnBackgroundTap: false,
-                onConfirm: { print("confirm") }
-            )
-    }
-}
-
-private struct StatefulPreviewWrapper<Value, Content: View>: View {
-    @State var value: Value
-    let content: (Binding<Value>) -> Content
-
-    init(_ value: Value, content: @escaping (Binding<Value>) -> Content) {
-        _value = State(initialValue: value)
-        self.content = content
-    }
-
-    var body: some View {
-        content($value)
     }
 }
