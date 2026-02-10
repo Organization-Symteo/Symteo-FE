@@ -9,6 +9,8 @@ import SwiftUI
 struct AttachmentReportView: View {
     @Environment(\.dismiss) var dismiss
     @State private var currentPage = 0
+    @StateObject var viewModel: AttachmentReportViewModel
+    @EnvironmentObject var container: DIContainer
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -32,7 +34,7 @@ struct AttachmentReportView: View {
                         .ignoresSafeArea(edges: .top)
                     
                     // 네비게이션 바
-                    ReportNavigationBar()
+                    ReportNavigationBar(userName: viewModel.userName)
                     
                     // 애착유형섹션
                     AttachmentTypeSection(type: .anxious)
@@ -46,7 +48,7 @@ struct AttachmentReportView: View {
                     VStack(spacing: 20) {
                         
                         TabView(selection: $currentPage) {
-                            AttachmentResultCard(viewModel: AttachmentReportViewModel())
+                            AttachmentResultCard(viewModel: viewModel)
                                 .tag(0)
                             
                             AttachmentAnalysisCard()
@@ -56,7 +58,13 @@ struct AttachmentReportView: View {
                         .frame(height: UIScreen.main.bounds.height * 0.75)
                         
                         customIndicator
-                        ReportBottomBar()
+                        /// 하단 바
+                        ReportBottomBar( onConsultTap: {
+                            container.navigationRouter.push(.service) /// 상담사 버튼
+                        },
+                        onOtherTestTap: {
+                            container.navigationRouter.pop() ///dismiss()
+                        })
                     }
                     
                 }
@@ -89,7 +97,3 @@ struct AttachmentReportView: View {
     }
 }
 
-
-#Preview {
-    AttachmentReportView()
-}

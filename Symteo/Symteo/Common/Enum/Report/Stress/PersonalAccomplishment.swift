@@ -7,38 +7,40 @@
 
 import SwiftUI
 
-//성취감 저하의 단계 를 나타내는 Enum입니다.
-enum PersonalAccomplishment {
-    case veryLow
-    case low
-    case normal
-    case severe
-    case verySevere
+//성취감저하의 단계 를 나타내는 Enum입니다.
+enum PersonalAccomplishment: String {
+    case veryLow = "매우 낮음"
+    case low = "낮음"
+    case normal = "보통"
+    case severe = "높음"
+    case verySevere = "매우 심각"
 }
 
 extension PersonalAccomplishment {
-
-    static func from(ratio: Double) -> Self {
-           switch ratio {
-           case 0...0.20: return .veryLow
-           case 0.21...0.40: return .low
-           case 0.41...0.60: return .normal
-           case 0.61...0.80: return .severe
-           default: return .verySevere
+    
+    static func from(text: String) -> PersonalAccomplishment {
+           switch text {
+           case "매우 낮음": return .veryLow
+           case "낮음": return .low
+           case "보통": return .normal
+           case "높음": return .severe
+           case "매우 높음": return .verySevere
+           default: return .normal
            }
        }
-
-
-    var title: String {
+    
+    var ratio: Double {
         switch self {
-        case .veryLow: return "매우 낮음"
-        case .low: return "낮음"
-        case .normal: return "보통"
-        case .severe: return "높음"
-        case .verySevere: return "매우 높음"
+        case .veryLow: return 0.15
+        case .low: return 0.30
+        case .normal: return 0.50
+        case .severe: return 0.70
+        case .verySevere: return 0.85
         }
     }
-    
+
+    var title: String { rawValue }
+
     var titleColor: Color {
         switch self {
         case .veryLow: return Color(hex: "#3B8470")
@@ -48,7 +50,6 @@ extension PersonalAccomplishment {
         case .verySevere: return Color(hex: "#ED3F36")
         }
     }
-    
 
     var progressColor: Color {
         switch self {
@@ -59,7 +60,6 @@ extension PersonalAccomplishment {
         case .verySevere: return Color(hex: "#F4574F")
         }
     }
-    
 
     var description: String {
         switch self {

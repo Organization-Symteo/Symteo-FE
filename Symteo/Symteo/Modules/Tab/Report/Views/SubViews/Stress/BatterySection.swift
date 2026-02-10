@@ -50,15 +50,3 @@ struct BatterySection: View {
 
 
 }
-
-
-#Preview {
-    BatterySection(
-        result: BatteryResult(
-            percent: 15,
-            status: .veryLow
-        )
-    )
-    .padding()
-    .background(Color.white)
-}

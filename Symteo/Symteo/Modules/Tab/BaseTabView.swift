@@ -50,7 +50,7 @@ struct BaseTabView: View {
                 EmptyView()
                 
             case .report:
-                MainReportView()
+                MainReportView(userName: "따오기", container: container)
 
            
               

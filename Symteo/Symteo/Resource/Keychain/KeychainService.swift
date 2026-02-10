@@ -7,8 +7,8 @@
 import Foundation
 import Security
 
-@MainActor
-class KeychainService {
+
+class KeychainService: @unchecked Sendable {
     static let shared = KeychainService()
     
     private init() {}

@@ -6,6 +6,7 @@
 //
 import Foundation
 
+/*
 struct OverallResultCalculator {
 
     static func calculate(
@@ -32,3 +33,4 @@ struct OverallResultCalculator {
         )
     }
 }
+*/

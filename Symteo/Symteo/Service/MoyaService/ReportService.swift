@@ -4,7 +4,6 @@
 //
 //  Created by 박병선 on 2/8/26.
 //
-/*
 import Foundation
 import CombineMoya
 import Moya
@@ -28,6 +27,7 @@ protocol ReportServiceProtocol {
     func CreatAttachmentReport(diagnoseId: Int) -> AnyPublisher<AttachmentReportCreateResult, APIError>
     
     /// 애착 리포트 조회
+    func getAttachmentReport(reportId: Int) -> AnyPublisher<AttachmentReportDetail, APIError>
 }
 
 
@@ -66,6 +66,11 @@ final class ReportService: ReportServiceProtocol {
     func CreatAttachmentReport(diagnoseId: Int) -> AnyPublisher<AttachmentReportCreateResult, APIError> {
         return provider.requestResult(.creatAttachmentReport(diagnoseId: diagnoseId),type: AttachmentReportCreateResult.self)
     }
+    
+    // MARK: - 애착검사 리포트 조회
+    func getAttachmentReport(reportId: Int) -> AnyPublisher<AttachmentReportDetail, APIError> {
+        return provider.requestResult(.getAttachmentReport(reportId: reportId),type: AttachmentReportDetail.self)
+    }
 }
-*/
+
 

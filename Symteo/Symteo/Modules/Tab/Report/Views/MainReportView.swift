@@ -8,8 +8,22 @@
 import SwiftUI
 
 struct MainReportView: View {
-    @StateObject private var viewModel = MainReportViewModel()
+    let userName: String
+    @EnvironmentObject var container: DIContainer
+    @StateObject private var viewModel: MainReportViewModel
     
+    // MARK: -initializer
+    init(
+           userName: String,
+           container: DIContainer
+       ) {
+           self.userName = userName
+           _viewModel = StateObject(
+               wrappedValue: MainReportViewModel(container: container)
+           )
+       }
+    
+    // MARK: -Body
     var body: some View {
         ZStack {
             // 메인 콘텐츠 레이어
@@ -28,7 +42,7 @@ struct MainReportView: View {
             
             // 팝업레이어
             if viewModel.isShowingNoReportPopUp {
-                // 배경 어둡게 처리 (Dim)
+                // 배경 어둡게 처리
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {
@@ -53,7 +67,7 @@ struct MainReportView: View {
             }
         } // ZStack 끝
         .animation(.spring(), value: viewModel.isShowingNoReportPopUp)
-    } // body 끝
+    } 
     
     // MARK: - 1. 헤더
     private var headerSection: some View {
@@ -78,15 +92,26 @@ struct MainReportView: View {
     private var reportListSection: some View {
         VStack(spacing: 12) {
 
+            
             ReportListRow(
                 icon: "anxiety_icon",
                 title: "우울·불안 리포트",
                 subtitle: "내 마음 속에 숨은 비구름을 확인해봐요",
                 hasReport: viewModel.hasAnxietyReport,
-                destination: AnyView(
-                    AnxietyReportView(  phqScore: 14,   //  더미값
-                                        gadScore: 11)
-                ),
+
+                destination: {
+                    Group {
+                           if case let .available(reportId) = viewModel.stressReportStatus {
+                               StressReportView(
+                                   viewModel: StressReportViewModel(
+                                       reportId: reportId,
+                                       container: container
+                                   )
+                               )
+                           }
+                       }
+                },
+
                 onEmptyTap: {
                     viewModel.isShowingNoReportPopUp = true
                 }
@@ -97,9 +122,18 @@ struct MainReportView: View {
                 title: "스트레스 리포트",
                 subtitle: "어깨에 짊어진 무거운 짐을 내려놓을 시간",
                 hasReport: viewModel.hasStressReport,
-                destination: AnyView(
-                    StressReportView()
-                ),
+                destination: {
+                    Group {
+                        if case let .available(reportId) = viewModel.stressReportStatus {
+                            StressReportView(
+                                viewModel: StressReportViewModel(
+                                    reportId: reportId,
+                                    container: container
+                                )
+                            )
+                        }
+                    }
+                },
                 onEmptyTap: {
                     viewModel.isShowingNoReportPopUp = true
                 }
@@ -110,9 +144,20 @@ struct MainReportView: View {
                 title: "애착 리포트",
                 subtitle: "나의 애착유형과 성향을 알아가는 시간",
                 hasReport: viewModel.hasAttachmentReport,
-                destination: AnyView(
-                    AttachmentReportView()
-                ),
+
+                destination: {
+                    Group {
+                        if case let .available(reportId) = viewModel.attachmentReportStatus {
+                            AttachmentReportView(
+                                viewModel: AttachmentReportViewModel(
+                                    reportId: reportId,
+                                    container: container
+                                )
+                            )
+                        }
+                    }
+                },
+
                 onEmptyTap: {
                     viewModel.isShowingNoReportPopUp = true
                 }
@@ -209,7 +254,3 @@ struct MainReportView: View {
     }
 }
 
-// MARK: - Preview
-#Preview {
-    MainReportView()
-}

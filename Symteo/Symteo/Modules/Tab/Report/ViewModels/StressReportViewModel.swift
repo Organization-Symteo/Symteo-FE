@@ -4,117 +4,161 @@
 //
 //  Created by 박병선 on 1/19/26.
 //
-import Foundation
 import SwiftUI
 import Combine
+import Moya
 
-
-final class StressReportViewModel: ObservableObject {
-    
-    // MARK: - Raw Scores (서버에서 받는 값)
-    let stressScore: Int
-    let situationalControlScore: Int
-    let dailyOverloadScore: Int
-    
-    // MARK: - Init
-    init(
-        stressScore: Int,
-        situationalControlScore: Int,
-        dailyOverloadScore: Int
-    ) {
-        self.stressScore = stressScore
-        self.situationalControlScore = situationalControlScore
-        self.dailyOverloadScore = dailyOverloadScore
-    }
-    
-    
-    // MARK: - 하드코딩된 더미 데이터(번아웃 결과 섹션)
-
-    let emotionalExhaustion = BurnoutFactorResult(
-        title: "정서적 소진",
-        levelText: "매우 심각",
-        description: "마음의 에너지가 거의 소진된 상태예요.",
-        ratio: 0.85,
-        color: Color(hex: "#F4574F")
-    )
-
-    let accomplishmentLoss = BurnoutFactorResult(
-        title: "성취감 저하",
-        levelText: "심각",
-        description: "내가 잘하고 있는지 모르겠어요.",
-        ratio: 0.65,
-        color: Color(hex: "#FFAC79")
-    )
-
-    let depersonalization = BurnoutFactorResult(
-        title: "비인격화",
-        levelText: "매우 낮음",
-        description: "사람들과 거리를 두고 싶어요.",
-        ratio: 0.25,
-        color: Color(hex: "#63B19B")
-    )
-}
-    // 스트레스 온도계용
-extension StressReportViewModel {
-
-    var stressLevel: StressLevel {
-        StressLevel.from(score: stressScore)
-    }
-
-    var stressRatio: Double {
-        Double(stressScore) / 40.0
-    }
-}
-
-// MARK: - Situational Control
-extension StressReportViewModel {
-
-    var situationalControlResult: StressBalanceResult {
-        let level = SituationalControlLevel.from(score: situationalControlScore)
-        let ratio = Double(situationalControlScore) / 16.0
-
-        return StressBalanceResult(
-            ratio: ratio,
-            levelText: level.title,
-            description: level.description,
-            barColor: level.barColor
-        )
-    }
-}
-
-// MARK: - Daily Overload
-extension StressReportViewModel {
-
-    var dailyOverloadResult: StressBalanceResult {
-        let level = DailyOverloadLevel.from(score: dailyOverloadScore)
-        let ratio = Double(dailyOverloadScore) / 24.0
-
-        return StressBalanceResult(
-            ratio: ratio,
-            levelText: level.title,
-            description: level.description,
-            barColor: level.barColor
-        )
-    }
-}
-
-/// 프리뷰용 더미데이터
 @MainActor
-extension StressReportViewModel {
+final class StressReportViewModel: ObservableObject {
 
-    static let preview = StressReportViewModel(
-        stressScore: 32,
-        situationalControlScore: 3,
-        dailyOverloadScore: 22
-    )
-}
+    // 로딩 상태
+    @Published var isLoading: Bool = false
+    
+    // 에러 토스트
+    @Published var errorToast: CustomToast?
 
-extension StressReportViewModel {
+    // 서버에서 내려오는 배터리 원본 데이터
+    @Published var batteryPercent: Int = 0
+    @Published var batteryGuide: String = ""
+    @Published var batteryColorHex: String = ""
 
+    // 스트레스 관련 서버 데이터
+    @Published var pssScore: Int = 0
+    @Published var stressLevelText: String = ""
+    @Published var controlLevelText: String = ""
+    @Published var overloadLevelText: String = ""
+    
+    // 번아웃 관련 서버 데이터
+    @Published var exhaustionLevelText: String = ""
+    @Published var cynicismLevelText: String = ""
+    @Published var inefficacyLevelText: String = ""
+    @Published var totalBurnoutLevelText: String = ""
+
+    // AI 분석 결과
+    @Published var aiInsights: [String] = []
+    @Published var aiFullContent: String = ""
+
+    // 리포트 식별 정보
+    let reportId: Int
+
+
+    // 의존성
+    private let container: DIContainer
+    private var cancellables = Set<AnyCancellable>()
+
+    init(
+        reportId: Int,
+
+        container: DIContainer
+    ) {
+        self.reportId = reportId
+
+        self.container = container
+    }
+
+    // 배터리 UI에 사용되는 가공 모델
+    var batteryResult: BatteryResult {
+        BatteryResult(
+            percent: batteryPercent,
+            status: BatteryStatus.from(percent: batteryPercent)
+        )
+    }
+
+    // 스트레스 레벨 enum 변환
+    var stressLevel: StressLevel {
+        StressLevel.from(text: stressLevelText)
+    }
+    
+    // 스트레스 게이지 비율
+    var stressRatio: CGFloat {
+        CGFloat(pssScore) / 40.0
+    }
+
+    // 스트레스 색상
+    var stressColor: Color {
+        stressLevel.color
+    }
+
+    // 스트레스 설명 문구
     var stressDescriptionText: String {
-        Array(repeating:
-            "따오기님의 현재 스트레스 상태는 ‘중증도’입니다.",
-              count: 5
-        ).joined(separator: " ")
+        stressLevel.description
+    }
+
+    // 통제감 결과 UI 모델
+    var situationalControlResult: StressBalanceResult {
+        StressBalanceResult.fromControlLevel(controlLevelText)
+    }
+
+    // 과부하 결과 UI 모델
+    var dailyOverloadResult: StressBalanceResult {
+        StressBalanceResult.fromOverloadLevel(overloadLevelText)
+    }
+
+    // 번아웃 결과 묶음
+    var burnoutResult: BurnoutResult {
+        BurnoutResult(
+            exhaustionLevel: exhaustionLevelText,
+            cynicismLevel: cynicismLevelText,
+            inefficacyLevel: inefficacyLevelText,
+            totalLevel: totalBurnoutLevelText
+        )
+    }
+    
+    // 정서적 소진 enum
+    var emotionalExhaustion: EmotionalExhaustion {
+        EmotionalExhaustion.from(text: exhaustionLevelText)
+    }
+
+    // 성취감 저하 enum
+    var personalAccomplishment: PersonalAccomplishment {
+        PersonalAccomplishment.from(text: inefficacyLevelText)
+    }
+
+    // 비인격화 enum
+    var depersonalization: Depersonalization {
+        Depersonalization.from(text: cynicismLevelText)
+    }
+
+    // MARK: - 스트레스 리포트 조회 API
+    func getStressReport() {
+        isLoading = true
+
+        container.useCaseService.reportService.getStressReport(reportId: reportId)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+                    if case .failure(let failure) = completion {
+                        self?.errorToast = CustomToast(
+                            title: "조회 실패",
+                            message: failure.errorDescription ?? "리포트를 불러오지 못했어요."
+                        )
+                        print("스트레스 리포트 조회 오류:", failure)
+                    }
+                },
+                receiveValue: { [weak self] report in
+                    self?.bind(report)
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    // 서버 응답 → ViewModel 상태 바인딩
+    private func bind(_ report: StressReportDetail) {
+        batteryPercent = report.batteryPercent
+        batteryGuide = report.batteryGuide
+        batteryColorHex = report.batteryColor
+
+        pssScore = report.stress.pssScore
+        stressLevelText = report.stress.stressLevel
+        controlLevelText = report.stress.controlLevel
+        overloadLevelText = report.stress.overloadLevel
+
+        exhaustionLevelText = report.burnout.exhaustionLevel
+        cynicismLevelText = report.burnout.cynicismLevel
+        inefficacyLevelText = report.burnout.inefficacyLevel
+        totalBurnoutLevelText = report.burnout.totalLevel
+
+        aiInsights = report.aiInsights
+        aiFullContent = report.aiFullContent
     }
 }

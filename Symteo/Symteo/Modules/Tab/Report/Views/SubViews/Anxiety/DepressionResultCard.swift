@@ -185,12 +185,3 @@ private struct ProgressBarView: View {
         .frame(height: 10)
     }
 }
-
-// 프리뷰용 더미 데이터
-
-#Preview {
-    DepressionResultCard(
-        data: .preview
-    )
-   // .background(Color.gray.opacity(0.1)) // 카드 외곽 확인용 (선택)
-}

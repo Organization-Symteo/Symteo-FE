@@ -17,7 +17,7 @@ struct DepressionAnxietyReportResult: Decodable {
 struct DepressionAnxietyReportDetail: Decodable {
     let reportId: Int                    // 리포트 고유 ID
     let testType: String                 // 검사 유형 (ex. DEPRESSION_ANXIETY_COMPLEX)
-    let summary: ReportSummary           // 리포트 요약 정보 (평균 점수, 상태 등)
+    let summary: OverallSummary           // 리포트 요약 정보 (평균 점수, 상태 등)
     let phq9: ScaleResult                // 우울 척도(PHQ-9) 결과
     let gad7: ScaleResult                // 불안 척도(GAD-7) 결과
     let aiInsightCards: [AIInsightCard]  // AI가 분석한 주요 인사이트 카드 목록
@@ -27,7 +27,7 @@ struct DepressionAnxietyReportDetail: Decodable {
     let createdAt: String                // 리포트 생성 시각 (ISO 8601 문자열)
 }
 
-struct ReportSummary: Decodable {
+struct OverallSummary: Decodable {
     let averageScore: Double             // PHQ/GAD 종합 평균 점수
     let statusLabel: String              // 상태 라벨 (정상 / 주의 / 위험 등)
     let statusColor: String              // 상태 색상 HEX 코드 (UI 컬러용)
@@ -91,4 +91,33 @@ struct AttachmentReportCreateResult: Decodable {
     let reportId: Int        // 생성된 리포트 ID
     let testType: String     // 검사 유형 (ATTACHMENT_TEST)
     let createdAt: String   // 리포트 생성 시각
+}
+
+// MARK: - 성향(애착) 리포트 조회 Response DTO
+struct AttachmentReportDetail: Decodable {
+    let reportId: Int                // 리포트 ID
+    let userName: String             // 사용자 이름
+    let attachmentType: String       // 애착 유형 (ex. 안정형)
+    let anxiety: AttachmentScore     // 불안 점수 정보
+    let avoidance: AttachmentScore   // 회피 점수 정보
+    let stressPoints: [PointItem]    // 스트레스 포인트
+    let strengthPoints: [PointItem]  // 강점 포인트
+    let aiFullContent: String        // AI 종합 분석
+    let actionGuideSentence: String  // 행동 가이드 문장
+    let createdAt: String            // 생성 일시
+}
+
+// MARK: - 애착 점수 공통 DTO
+struct AttachmentScore: Decodable {
+    let score: Double        // 점수
+    let percentage: Int     // 퍼센트
+    let stateLabel: String  // 상태 라벨
+    let color: String       // 색상 HEX
+    let stateComment: String // 상태 설명 문구
+}
+
+// MARK: - 포인트 항목 DTO
+struct PointItem: Decodable {
+    let title: String       // 제목
+    let description: String // 설명
 }

@@ -9,31 +9,37 @@
 import SwiftUI
 
 struct AIPrecisionSection: View {
+
+    let items: [AIInsightCard]
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
+
+            Text("AI 정밀 분석")
+                .font(.PretendardSemiBold(size: 16))
+                .foregroundStyle(.gray900)
+
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ],
+                spacing: 12
+            ) {
+                ForEach(items, id: \.id) { item in
                     PrecisionItemView(
-                        title: "수면 장애 심각",
-                        subtitle: "(PHQ-9 #3)"
-                    )
-                    
-                    PrecisionItemView(
-                        title: "지속적인 걱정",
-                        subtitle: "(GAD-7 #2)"
-                    )
-                    
-                    PrecisionItemView(
-                        title: "신체적 긴장",
-                        subtitle: "(GAD-7 #6)"
+                        title: item.title,
+                        subtitle: "AI가 응답 패턴을 분석했어요"
                     )
                 }
-                .padding(.horizontal)
             }
         }
+        .padding(.horizontal, 20)
     }
+}
     
-    struct PrecisionItemView: View {
+/// 순수 UI 컴포넌트
+struct PrecisionItemView: View {
         let title: String
         let subtitle: String
         
@@ -64,8 +70,4 @@ struct AIPrecisionSection: View {
             .cornerRadius(12)
         }
     }
-}
 
-#Preview{
-    AIPrecisionSection()
-}

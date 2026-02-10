@@ -4,38 +4,28 @@
 //
 //  Created by 박병선 on 1/29/26.
 //
-
 import Foundation
 import Alamofire
 
 class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
-
-    private let accessToken: String?
+    private var tokenProviding: TokenProviding
     private var isRefreshing: Bool = false
     private var requestToRetry: [(RetryResult) -> Void] = []
-
-    init(accessToken: String?) {
-        self.accessToken = accessToken
+    
+    init(tokenProviding: TokenProviding) {
+        self.tokenProviding = tokenProviding
     }
-
-    func adapt(
-        _ urlRequest: URLRequest,
-        for session: Session,
-        completion: @escaping (Result<URLRequest, any Error>) -> Void
-    ) {
+    
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         var urlRequest = urlRequest
-
-        if let accessToken {
-            urlRequest.setValue(
-                "Bearer \(accessToken)",
-                forHTTPHeaderField: "Authorization"
-            )
+        if let accessToken = tokenProviding.accessToken {
+            urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         }
-
         completion(.success(urlRequest))
     }
     
-    /*    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
+    /*
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         guard request.retryCount < 1,
               let response = request.task?.response as? HTTPURLResponse,
               [401, 404].contains(response.statusCode) else {
@@ -55,8 +45,7 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
         }
     }
      */
-
 }
-    
-   
+
+
 

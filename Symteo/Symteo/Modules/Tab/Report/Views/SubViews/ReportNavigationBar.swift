@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct ReportNavigationBar: View {
-    @StateObject private var viewModel = MainReportViewModel()
+    let userName: String
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -26,7 +26,7 @@ struct ReportNavigationBar: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("오늘도 마음을 돌보는")
                     .font(.PretendardSemiBold(size: 16))
-                Text("당신을 응원합니다. \(viewModel.userName)님")
+                Text("당신을 응원합니다. \(userName)님")
                     .font(.PretendardSemiBold(size: 16))
             }
             .foregroundStyle(.white)
@@ -48,6 +48,3 @@ struct ReportNavigationBar: View {
     }
 }
 
-#Preview {
-    ReportNavigationBar()
-}

@@ -4,77 +4,117 @@
 //
 //  Created by 박병선 on 1/19/26.
 //
-import SwiftUI
 import Foundation
+import SwiftUI
+import Combine
 
+@MainActor
 final class AttachmentReportViewModel: ObservableObject {
+    // MARK: - UI State
+    @Published var isLoading: Bool = false
+    @Published var errorToast: CustomToast?
+    
+    // MARK: - Raw DTO
+    @Published private(set) var report: AttachmentReportDetail?
 
-    // MARK: - Raw Scores (서버에서 받는 값)
-    let anxietyScore: Int      // 예: 75
-    let avoidanceScore: Int    // 예: 30
+    // MARK: - Identity
+    let reportId: Int
+
+    // MARK: - Dependency
+    private let container: DIContainer
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(
-        anxietyScore: Int = 75,
-        avoidanceScore: Int = 20
+        reportId: Int,
+        container: DIContainer
     ) {
-        self.anxietyScore = anxietyScore
-        self.avoidanceScore = avoidanceScore
-        self.attachmentType = .anxious
+        self.reportId = reportId
+        self.container = container
     }
 
-    // MARK: - Results for View
 
-    var anxietyResult: AttachmentBarResult {
-        makeResult(
-            score: anxietyScore,
-            metric: .anxiety,
-            maxScore: 100
-        )
-    }
-
-    var avoidanceResult: AttachmentBarResult {
-        makeResult(
-            score: avoidanceScore,
-            metric: .avoidance,
-            maxScore: 100
-        )
-    }
-
-    // MARK: - Private Helper
-
-    private func makeResult(
-        score: Int,
-        metric: AttachmentMetricType,
-        maxScore: Int
-    ) -> AttachmentBarResult {
-
-        let ratio = Double(score) / Double(maxScore)
-        let level = AttachmentBarLevel.from(ratio: ratio)
-
-        return AttachmentBarResult(
-            score: score,          
-            ratio: ratio,
-            level: level,
-            metric: metric
-        )
-    }
     
-    //MARK: -애착유형에 대한 description
-    let attachmentType: AttachmentType
-    
-    // MARK: - 애착유형 설명 더미데이터
-    var description: String {
-           // TODO: API 연결 전 더미
-           switch attachmentType {
-           case .anxious:
-               return "따오기님의 애착유형은 ‘불안형’입니다. 따오기님의 애착유형은 ‘불안형’입니다. 따오기님의 애착유형은 ‘불안형’입니다. ..."
-           case .secure:
-               return "따오기님의 애착유형은 ‘안정형’입니다. 따오기님의 애착유형은 ‘안정형’입니다. 따오기님의 애착유형은 ‘안정형’입니다. ..."
-           case .fearfulAvoidant:
-               return "따오기님의 애착유형은 ‘공포 회피형’입니다. 따오기님의 애착유형은 ‘공포 회피형’입니다. 따오기님의 애착유형은 ‘공포 회피형’입니다. ..."
-           case .dismissiveAvoidant:
-               return "따오기님의 애착유형은 ‘거부 회피형’입니다. 따오기님의 애착유형은 ‘거부 회피형’입니다. 따오기님의 애착유형은 ‘거부 회피형’입니다. ..."
-           }
+
+       // MARK: - Header
+       var userName: String {
+           report?.userName ?? ""
        }
+
+       var attachmentType: AttachmentType {
+           AttachmentType.from(serverValue: report?.attachmentType)
+       }
+    var description: String {
+            report?.aiFullContent ?? ""
+        }
+
+       // MARK: - Bar Results (❗ 서버값 그대로)
+       var anxietyResult: AttachmentBarResult? {
+           guard let anxiety = report?.anxiety else { return nil }
+
+           return AttachmentBarResult(
+               score: Int(anxiety.score),
+               ratio: Double(anxiety.percentage) / 100.0,
+               level: AttachmentBarLevel.fromServer(
+                   label: anxiety.stateLabel
+               ),
+               metric: .anxiety
+           )
+       }
+
+       var avoidanceResult: AttachmentBarResult? {
+           guard let avoidance = report?.avoidance else { return nil }
+
+           return AttachmentBarResult(
+               score: Int(avoidance.score),
+               ratio: Double(avoidance.percentage) / 100.0,
+               level: AttachmentBarLevel.fromServer(
+                   label: avoidance.stateLabel
+               ),
+               metric: .avoidance
+           )
+       }
+
+       // MARK: - Text Sections
+       var stressPoints: [PointItem] {
+           report?.stressPoints ?? []
+       }
+
+       var strengthPoints: [PointItem] {
+           report?.strengthPoints ?? []
+       }
+
+       var aiDescription: String {
+           report?.aiFullContent ?? ""
+       }
+
+       var actionGuide: String {
+           report?.actionGuideSentence ?? ""
+       }
+   
+    // MARK: - API
+    func getAttachmentReport() {
+        isLoading = true
+
+        container.useCaseService.reportService
+            .getAttachmentReport(reportId: reportId)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] completion in
+                    self?.isLoading = false
+
+                    if case .failure(let failure) = completion {
+                        self?.errorToast = CustomToast(
+                            title: "조회 실패",
+                            message: failure.errorDescription ?? "리포트를 불러오지 못했어요."
+                        )
+                        print("애착 리포트 조회 오류:", failure)
+                    }
+                },
+                receiveValue: { [weak self] dto in
+                    self?.report = dto
+                }
+            )
+            .store(in: &cancellables)
+    }
 }

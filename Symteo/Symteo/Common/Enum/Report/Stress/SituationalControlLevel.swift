@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+//상황통제감용 enum
 enum SituationalControlLevel {
     case veryLow
     case low

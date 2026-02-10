@@ -7,7 +7,6 @@
 import Foundation
 import Moya
 
-@MainActor
 class TokenProvider: TokenProviding {
     private let userSession = "appNameUser"
     private let keyChain = KeychainService.shared
