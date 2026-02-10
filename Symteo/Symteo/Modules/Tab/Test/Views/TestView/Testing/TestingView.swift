@@ -7,162 +7,227 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct SurveyView: View {
-    // 작성하신 ViewModel 사용
-    @StateObject var viewModel = SurveyViewModel()
+    @EnvironmentObject private var container: DIContainer
     @Environment(\.dismiss) private var dismiss
-    
+
+    @StateObject private var viewModel: SurveyViewModel
+
+    @State private var isModalPresented = false
+    @State private var modalTitle = ""
+    @State private var modalMessage: String? = nil
+    @State private var modalConfirmTitle = ""
+    @State private var modalCancelTitle: String? = nil
+    @State private var modalConfirmAction: () -> Void = {}
+    @State private var modalCancelAction: () -> Void = {}
+
+    init(kind: SurveyKind) {
+        _viewModel = StateObject(wrappedValue: SurveyViewModel(kind: kind, service: TestService()))
+    }
+
     var body: some View {
         VStack(spacing: 0) {
-            // 1. 헤더 (뒤로가기 버튼)
-            headerView
-            
-            // 2. 프로그레스 바
+            topBar
             progressBar
                 .padding(.top, 10)
                 .padding(.bottom, 20)
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
+                    headerRow
+                        .padding(.bottom, 28)
                     
-                    // 3. 네비게이션 (숫자 카운터 & 화살표)
-                    navigationRow
-                        .padding(.bottom, 30)
-                    
-                    // 4. 질문 텍스트
                     Text(viewModel.currentQuestion.text)
-                        .font(.system(size: 20, weight: .medium)) // Pretendard Medium 20 대체
-                        .foregroundColor(.black)
+                        .font(.PretendardMedium(size: 20))
+                        .foregroundStyle(.gray900)
                         .lineSpacing(6)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.bottom, 50)
-                        .animation(nil, value: viewModel.currentIndex) // 텍스트는 즉시 변경
+                        .padding(.bottom, 44)
                     
-                    // 5. 선택지 목록
                     VStack(spacing: 12) {
-                        ForEach(viewModel.currentQuestion.options, id: \.self) { option in
+                        ForEach(Array(viewModel.currentQuestion.options.enumerated()), id: \.offset) { idx, text in
                             SurveyOptionButton(
-                                text: option,
-                                isSelected: viewModel.isSelected(option)
+                                text: text,
+                                isSelected: viewModel.isSelected(optionIndex: idx)
                             ) {
-                                viewModel.selectOption(option)
+                                viewModel.select(optionIndex: idx)
                             }
                         }
                     }
+                    
+                    if viewModel.isLast {
+                        MainBottomButton(
+                            text: viewModel.isSubmitting ? "제출 중..." : "제출",
+                            isDisabled: viewModel.isSubmitting
+                        ) {
+                            handleSubmitTap()
+                        }
+                        .padding(.top, 20)
+                        .padding(.bottom, 24)
+                    }
                 }
+
                 .padding(.horizontal, 24)
             }
         }
         .navigationBarHidden(true)
         .background(Color.white)
+        .modalPopup(
+            isPresented: $isModalPresented,
+            title: modalTitle,
+            message: modalMessage,
+            confirmTitle: modalConfirmTitle,
+            cancelTitle: modalCancelTitle,
+            dismissOnBackgroundTap: false,
+            onConfirm: modalConfirmAction,
+            onCancel: modalCancelAction
+        )
+
+        .onChange(of: viewModel.createdTestId) { _, newValue in
+            guard newValue != nil else { return }
+            container.navigationRouter.reset()
+            dismiss()
+        }
+        .onChange(of: viewModel.submitErrorMessage) { _, msg in
+            guard let msg else { return }
+            presentAlert(title: "제출에 실패했어요", message: msg, confirm: "확인", cancel: nil) {}
+        }
     }
-    
-    // MARK: - Components
-    
-    // 상단 헤더
-    private var headerView: some View {
+
+    private var topBar: some View {
         HStack {
-            Button(action: { dismiss() }) {
+            Button {
+                presentExitConfirm()
+            } label: {
                 Image(systemName: "arrow.left")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 24, height: 24)
-                    .foregroundColor(.black)
+                    .foregroundStyle(.gray900)
             }
             Spacer()
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
     }
-    
-    // 진행률 바
+
     private var progressBar: some View {
-        GeometryReader { geometry in
+        GeometryReader { geo in
             ZStack(alignment: .leading) {
-                // 배경 (회색)
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.gray.opacity(0.2))
+                RoundedRectangle(cornerRadius: 100)
+                    .fill(Color.gray30)
                     .frame(height: 4)
-                
-                // 진행 (초록색)
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color.green) // 브랜드 컬러 코드 있으면 교체 (.green600 등)
-                    .frame(width: geometry.size.width * viewModel.progress, height: 4)
+
+                RoundedRectangle(cornerRadius: 100)
+                    .fill(Color.green400)
+                    .frame(width: geo.size.width * viewModel.progress, height: 4)
                     .animation(.easeOut, value: viewModel.progress)
             }
         }
         .frame(height: 4)
         .padding(.horizontal, 24)
     }
-    
-    // 숫자 및 네비게이션 화살표
-    private var navigationRow: some View {
+
+    private var headerRow: some View {
         HStack {
-            // "01" (Bold) + "/16" (Light)
             HStack(spacing: 0) {
-                Text(viewModel.currentNumberString)
+                Text(String(format: "%02d", viewModel.currentIndex + 1))
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.black)
-                
-                Text(" / \(viewModel.totalCountString)")
+                    .foregroundStyle(.gray900)
+                Text(" / \(viewModel.questions.count)")
                     .font(.system(size: 14))
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray500)
             }
-            
+
             Spacer()
-            
-            // 화살표 버튼 그룹
+
             HStack(spacing: 8) {
-                // 이전 버튼
-                Button(action: { viewModel.prevQuestion() }) {
+                Button { viewModel.prev() } label: {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 14))
-                        .foregroundColor(viewModel.currentIndex > 0 ? .black : .gray.opacity(0.3))
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(viewModel.currentIndex > 0 ? .gray900 : .gray30)
                         .frame(width: 32, height: 32)
-                        .background(Color.gray.opacity(0.1)) // 연한 회색 배경
-                        .cornerRadius(4)
+                        .background(Color.gray.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
                 .disabled(viewModel.currentIndex == 0)
-                
-                // 다음 버튼
-                Button(action: { viewModel.nextQuestion() }) {
+
+                Button { viewModel.next() } label: {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 14))
-                        .foregroundColor(.black)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.gray900)
                         .frame(width: 32, height: 32)
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(4)
+                        .background(Color.gray.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
+                .disabled(viewModel.isLast)
             }
         }
     }
-}
 
-// MARK: - 설문용 옵션 버튼 컴포넌트
-struct SurveyOptionButton: View {
-    let text: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Text(text)
-                .font(.system(size: 14)) // Pretendard Regular 14
-                .foregroundColor(isSelected ? .black : .gray) // 선택시 검정, 미선택시 회색
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(isSelected ? Color.green.opacity(0.1) : Color.gray.opacity(0.05))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(isSelected ? Color.green : Color.clear, lineWidth: 1)
-                )
+    private func handleSubmitTap() {
+        if viewModel.hasUnanswered {
+            presentAlert(
+                title: "아직 안푼 문항이 있어요",
+                message: "정확한 결과를 위해 모든 문항에 답변해 주세요.",
+                confirm: "돌아가기",
+                cancel: "나가기",
+                onConfirm: { viewModel.jumpToFirstUnanswered() },
+                onCancel: { exitToTestHome() }
+            ) 
+        } else {
+            presentAlert(
+                title: "작성을 완료하셨나요?",
+                message: nil,
+                confirm: "작성완료",
+                cancel: "돌아가기"
+            ) {
+                viewModel.submit()
+            }
         }
     }
+
+    private func presentExitConfirm() {
+        presentAlert(
+            title: "작성을 그만두시겠어요?",
+            message: "지금 나가시면 진행 중인 내용이 저장되지 않습니다.",
+            confirm: "돌아가기",
+            cancel: "나가기",
+            onConfirm: {},
+            onCancel: { exitToTestHome() }
+        )
+    }
+
+    private func presentAlert(
+        title: String,
+        message: String?,
+        confirm: String,
+        cancel: String?,
+        onConfirm: @escaping () -> Void,
+        onCancel: @escaping () -> Void = {}
+    ) {
+        modalTitle = title
+        modalMessage = message
+        modalConfirmTitle = confirm
+        modalCancelTitle = cancel
+        modalConfirmAction = onConfirm
+        modalCancelAction = onCancel
+        isModalPresented = true
+    }
+
+    
+    private func exitToTestHome() {
+        container.navigationRouter.reset()
+        dismiss()
+    }
+
 }
 
+
+
 #Preview {
-    SurveyView()
+    SurveyView(kind:.stress)
 }
+

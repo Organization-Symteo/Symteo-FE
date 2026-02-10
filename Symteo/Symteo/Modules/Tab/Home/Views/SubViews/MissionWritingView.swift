@@ -126,7 +126,7 @@ struct MissionWritingView: View {
             }
             Text("오늘의 미션")
                 .font(.PretendardRegular(size: 14))
-                .foregroundColor(.gray600)
+                .foregroundStyle(.gray600)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -138,7 +138,7 @@ struct MissionWritingView: View {
             HStack(spacing: 4) {
                 Text(viewModel.timeRemainingString())
                     .font(.PretendardMedium(size: 12))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
                 /*Image(selectedWeather.normalImage)
                         .resizable()
                         .scaledToFit()
@@ -150,7 +150,7 @@ struct MissionWritingView: View {
             
             Text(viewModel.currentMission)
                 .font(.PretendardRegular(size: 16))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
                 .lineSpacing(4)
         }
         .padding(20)
@@ -213,7 +213,7 @@ struct MissionWritingView: View {
                 if memo.isEmpty {
                     Text("오늘 미션과 관련된 감정 일기를 적어보세요")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.gray600)
+                        .foregroundStyle(.gray600)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 18)
                         .allowsHitTesting(false)
@@ -221,7 +221,7 @@ struct MissionWritingView: View {
                 
                 TextEditor(text: $memo)
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
                     .frame(height: 150)
                     .padding(8)
                     .scrollContentBackground(.hidden)
@@ -241,7 +241,7 @@ struct MissionWritingView: View {
                 Spacer()
                 Text("\(memo.count) / 300")
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray600)
+                    .foregroundStyle(.gray600)
             }
         }
     }
@@ -255,7 +255,7 @@ struct MissionWritingView: View {
             VStack(spacing: 12) {
                 Image(systemName: "plus")
                     .font(.system(size: 24, weight: .light))
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
                 
                 HStack(spacing: 0) {
                     Text("\(selectedImages.count)")

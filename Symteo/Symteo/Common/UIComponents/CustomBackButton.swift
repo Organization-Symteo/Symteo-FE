@@ -18,7 +18,7 @@ struct CustomBackButton: View {
             action()
         }) {
             Image(systemName: "arrow.left")
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
                 .padding(8) // 터치 영역 확보
         }
     }

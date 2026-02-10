@@ -28,7 +28,7 @@ struct PopUpView: View {
                 // 제목
                 Text(title)
                     .font(.PretendardMedium(size: 16))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                 
@@ -38,7 +38,7 @@ struct PopUpView: View {
                 if let message = message {
                     Text(message)
                         .font(.PretendardMedium(size: 14))
-                        .foregroundColor(.gray700)
+                        .foregroundStyle(.gray700)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity)

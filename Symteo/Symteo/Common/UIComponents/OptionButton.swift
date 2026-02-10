@@ -30,7 +30,7 @@ struct OptionButton: View {
         Button(action: action) {
             Text(text)
                 .font(.PretendardRegular(size: fontSize))
-                .foregroundColor(isSelected ? .green600 : .black)
+                .foregroundStyle(isSelected ? .green600 : .black)
                 .padding(.vertical, verticalPadding)
                 .padding(.horizontal, horizontalPadding)
                 .background(

@@ -7,12 +7,27 @@
 
 import SwiftUI
 
+
+
 struct TestSelectButton: View {
+    let title: String
+    let onTap: () -> Void
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Button(action: onTap) {
+            Text(title)
+                .font(.PretendardSemiBold(size: 16))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(Color.green400)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
     }
 }
 
+
 #Preview {
-    TestSelectButton()
+    TestSelectButton(title: "테스트 시작", onTap: {})
 }

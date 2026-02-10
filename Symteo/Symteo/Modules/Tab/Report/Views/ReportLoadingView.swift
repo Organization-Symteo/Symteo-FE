@@ -25,7 +25,7 @@ struct ReportLoadingView: View {
                 Button(action: { dismiss() }) {
                     Image(systemName: "arrow.left")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                 }
                 Spacer()
             }
