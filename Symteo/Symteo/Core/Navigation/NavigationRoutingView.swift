@@ -9,13 +9,13 @@ import SwiftUI
 
 struct NavigationRoutingView: View {
     @EnvironmentObject var container: DIContainer
-
+    
     var body: some View {
         NavigationStack(path: $container.navigationRouter.path) {
             BaseTabView()
-                .environmentObject(container)
                 .navigationDestination(for: NavigationDestination.self) { destination in
                     switch destination {
+
                     case .basetab:
                         BaseTabView()
                             .environmentObject(container)
@@ -35,10 +35,21 @@ struct NavigationRoutingView: View {
                     case let .survey(kind):
                         SurveyView(kind: kind)
                             .environmentObject(container)
+
+                        
+                    case .setting:
+                        SettingView()
+                        
+                    case .privacy:
+                        PrivacyPolicyView()
+                        
+                    case .service:
+                        ServicePolicyView()
+
+
                     }
                 }
         }
-        .environmentObject(container)
     }
 }
 

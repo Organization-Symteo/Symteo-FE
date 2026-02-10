@@ -8,6 +8,7 @@
 import Foundation
 
 enum NavigationDestination: Equatable, Hashable{
+
     case basetab
     
     
@@ -18,4 +19,10 @@ enum NavigationDestination: Equatable, Hashable{
     case survey(kind: SurveyKind)
     
     
+
+    case setting
+    case privacy
+    case service
+
+
 }

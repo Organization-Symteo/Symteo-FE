@@ -31,6 +31,7 @@ struct PopUpView: View {
                     .foregroundStyle(.gray900)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
+                    .lineSpacing(6)
                 
                 Spacer().frame(height: 6)
                 
