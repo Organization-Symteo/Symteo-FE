@@ -5,6 +5,7 @@
 //  Created by 박병선 on 1/19/26.
 //
 import Foundation
+import Combine
 
 final class AnxietyReportViewModel: ObservableObject {
     @Published var currentStatus: OverallResultStatus = .caution // 현재 결과값

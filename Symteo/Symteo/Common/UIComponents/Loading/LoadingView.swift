@@ -76,12 +76,12 @@ struct LoadingView: View {
             VStack(spacing: 6) {
                 Text(isCompleted ? completedTitle : title)
                     .font(.PretendardRegular(size: 16))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
                     .lineLimit(1)
 
                 Text(subtitle)
                     .font(.PretendardRegular(size: 16))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
                     .opacity(isCompleted ? 0 : 1)
                     .accessibilityHidden(isCompleted)
             }

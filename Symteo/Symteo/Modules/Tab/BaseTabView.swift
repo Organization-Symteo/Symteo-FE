@@ -39,16 +39,13 @@ struct BaseTabView: View {
             case .home:
                 HomeView()
                     .environmentObject(container)
-                
-            case .chat:
-                ChatView(container: container)
-                
+            case .test:
+                TestHomeView()
+                    .environmentObject(container)
             case .profile:
                 MySymteoView()
-                
-            case .test:
-                EmptyView()
-                
+             case .chat:
+                ChatView(container: container)
             case .report:
                 MainReportView()
 

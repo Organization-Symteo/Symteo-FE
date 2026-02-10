@@ -29,7 +29,7 @@ struct MissionIntroView: View {
                 
                 Text("오늘의 미션")
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray600)
+                    .foregroundStyle(.gray600)
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)
@@ -64,7 +64,7 @@ struct MissionIntroView: View {
                         .font(.PretendardMedium(size: 18))
                         .multilineTextAlignment(.center)
                         .lineSpacing(8)
-                        .foregroundColor(.gray900)
+                        .foregroundStyle(.gray900)
                         .padding(.horizontal, 20)
                     
                     Spacer()
@@ -79,7 +79,7 @@ struct MissionIntroView: View {
                             Text("(\(viewModel.refreshCount)회)")
                                 .font(.PretendardMedium(size: 14))
                         }
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                     }
                     .padding(.bottom, 30)
                 }

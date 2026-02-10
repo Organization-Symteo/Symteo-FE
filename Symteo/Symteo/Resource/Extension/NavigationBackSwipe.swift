@@ -5,7 +5,7 @@
 //  Created by 김지우 on 1/8/26.
 //
 
-
+/*
 import Foundation
 import UIKit
 
@@ -26,3 +26,4 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
         return viewControllers.count > 1
     }
 }
+*/

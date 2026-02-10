@@ -58,14 +58,14 @@ struct ChatView: View {
                 Image("consultsetting")
                     .resizable()
                     .frame(width: 44, height: 44)
-                    .foregroundColor(.gray700)
+                    .foregroundStyle(.gray700)
             }
         }
         .padding(.vertical, 12)
         .overlay(
             Rectangle()
                 .frame(height: 1)
-                .foregroundColor(.gray100),
+                .foregroundStyle(.gray100),
             alignment: .bottom
         )
     }
@@ -105,7 +105,7 @@ struct ChatView: View {
                 "",
                 text: $viewModel.textInput,
                 prompt: Text("메시지를 입력하세요...")
-                    .foregroundColor(.gray400)
+                    .foregroundStyle(.gray400)
             )
                 .font(.PretendardMedium(size: 14))
                 .foregroundStyle(.black)
