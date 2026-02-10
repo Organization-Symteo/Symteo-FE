@@ -57,10 +57,10 @@ struct MissionIntroView: View {
                     Spacer()
 
                     Text(viewModel.missionContent)
-                        .font(.PretendardMedium(size: 18))
+                        .font(.OwnGlyphPDH(size: 16))
                         .multilineTextAlignment(.center)
                         .lineSpacing(8)
-                        .foregroundColor(.gray900)
+                        .foregroundColor(.gray700)
                         .padding(.horizontal, 20)
 
                     Spacer()
@@ -97,6 +97,7 @@ struct MissionIntroView: View {
                     onContinue()
                 }
             )
+            .padding()
         }
         .background(Color.white.ignoresSafeArea())
     }

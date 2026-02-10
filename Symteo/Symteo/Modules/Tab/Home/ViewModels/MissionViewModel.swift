@@ -90,6 +90,11 @@ final class MissionViewModel: ObservableObject {
                 }
             }
     }
+    
+    // MARK: - 미션 새로 고침 시 카운트 증가시키는 함수
+    func refreshMission() {
+        refreshCount += 1
+    }
 
     // MARK: - Time Formatter
     /// 남은 시간을 "00시간 00분 남음" 형식의 문자열로 변환

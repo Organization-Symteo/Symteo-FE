@@ -15,9 +15,15 @@ enum MissionRouter {
     case completeMission(userMissionId: Int) // 미션 완료
     case restartTodayMission // 미션 새로고침
 }
+
 extension MissionRouter: APITargetType {
     var baseURL: URL {
-        return URL(string: "\(Config.baseUrl)")!
+        print("Config.baseUrl =", Config.baseUrl)
+
+        guard let url = URL(string: Config.baseUrl) else {
+            fatalError("잘못된 BASE_URL: \(Config.baseUrl)")
+        }
+        return url
     }
     
     var path: String {

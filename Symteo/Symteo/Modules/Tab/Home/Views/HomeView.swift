@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+// 홈 화면 코드입니다. 
 struct HomeView: View {
     // MARK: - Properties
     @State private var userName: String = "따오기" // 실제 유저 이름으로 수정예정

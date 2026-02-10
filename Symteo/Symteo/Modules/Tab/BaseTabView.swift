@@ -34,7 +34,6 @@ struct BaseTabView: View {
     //각 탭에 해당하는 뷰
     @ViewBuilder
     private func tabView(tab: TabItem) -> some View {
-        Group {
             switch tab {
             case .home:
                 HomeView(container: container)
@@ -52,9 +51,8 @@ struct BaseTabView: View {
 
                
 
-            }
         }
-        .environmentObject(container)
+       // .environmentObject(container)
         
     }
 }
