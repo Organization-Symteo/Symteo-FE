@@ -12,6 +12,7 @@ class TokenProvider: TokenProviding {
     private let keyChain = KeychainService.shared
    // private let provider = MoyaProvider<AuthRouter>()
     
+    /*
     var accessToken: String? {
         get {
             guard let userInfo = keyChain.loadToken() else { return nil }
@@ -23,7 +24,25 @@ class TokenProvider: TokenProviding {
             keyChain.saveToken(userInfo)
         }
     }
+    */
     
+    /// 임시 토큰
+    var accessToken: String? {
+        get {
+    #if DEBUG
+            return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwNzM5MjU1LCJleHAiOjE3NzA4MjU2NTV9.koiL8HFI3wZjaf6NAUoBfBTLa2x0Q8KbcDXztkTwwG0"
+    #else
+            guard let userInfo = keyChain.loadToken() else { return nil }
+            return userInfo.accessToken
+    #endif
+        }
+
+        set {
+            guard var userInfo = keyChain.loadToken() else { return }
+            userInfo.accessToken = newValue ?? "토큰 정보 없음"
+            keyChain.saveToken(userInfo)
+        }
+    }
     var refreshToken: String? {
         get {
             guard let userInfo = keyChain.loadToken() else { return nil }

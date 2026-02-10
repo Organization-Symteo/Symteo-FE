@@ -17,6 +17,7 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
         self.tokenProviding = tokenProviding
     }
     
+    /*
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         var urlRequest = urlRequest
         if let accessToken = tokenProviding.accessToken {
@@ -24,7 +25,25 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
         }
         completion(.success(urlRequest))
     }
+    */
+    // 임시
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        var urlRequest = urlRequest
+        
+        // 로그 확인을 위해 프린트 추가
+        print("🛠 인터셉터 adapt 시작")
+
+        if let accessToken = tokenProviding.accessToken {
+            urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            print("🛠 인터셉터: 토큰 주입 완료")
+        } else {
+            print("⚠️ 인터셉터: 토큰이 없어서 주입 실패")
+        }
+        
+        completion(.success(urlRequest))
+    }
     
+   
     /*
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         guard request.retryCount < 1,

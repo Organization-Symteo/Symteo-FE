@@ -11,7 +11,7 @@ struct HomeView: View {
     @State private var userName: String = "따오기" // 실제 유저 이름으로 수정예정
     @State private var selectedDiagnosis: RecommendationType? // 하단의 추천 검사 분기를 위한 프로퍼티
     @State private var currentPage = 0 // 페이지 스와이프(현재페이지 추적)
-    @StateObject private var viewModel = HomeViewModel(container: DIContainer())
+    @StateObject private var viewModel : HomeViewModel
     
     /// 추천 검사 아이템(우울/불안, 스트레스, 성향 검사)
     private let recommendationItems: [RecommendationItem] = [
@@ -53,6 +53,9 @@ struct HomeView: View {
             }
             .background(Color(hex: "F8F9FA")) /// 전체 배경색 (필요시 수정)
         }
+        .task {
+            viewModel.loadHome()
+        }
     }
 }
 
@@ -85,20 +88,15 @@ extension HomeView {
                     .font(.PretendardMedium(size: 12))
                     .foregroundStyle(.green400)
 
-                Text(viewModel.todayLine.isEmpty ? "오늘의 한 줄이 없어요" : viewModel.todayLine)
-                    .font(.PretendardSemiBold(size: 16))
-                    .foregroundStyle(.gray700)
+                if !viewModel.todayLine.isEmpty {
+                    Text(viewModel.todayLine)
+                        .font(.PretendardSemiBold(size: 16))
+                        .foregroundStyle(.gray700)
+                }
             }
 
             Spacer()
-            
-            /*
-            // 늘보 이미지 삭제됨(디자인 수정사항 반영)
-            Image("home_neulbo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 70)
-             */
+
         }
     }
 

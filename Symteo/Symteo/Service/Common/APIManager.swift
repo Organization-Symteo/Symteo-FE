@@ -16,12 +16,26 @@ class APIManager: @unchecked Sendable {
     private let session: Session
     private let loggerPlugin: PluginType
     
+    /*
     private init() {
         tokenProvider = TokenProvider()
         accessTokenRefresher = AccessTokenRefresher(tokenProviding: tokenProvider)
         session = Session(interceptor: accessTokenRefresher)
         loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
     }
+    */
+    
+    /// 임시 이니셜라이저
+ 
+    private init() {
+        tokenProvider = TokenProvider()
+        accessTokenRefresher = AccessTokenRefresher(tokenProviding: tokenProvider)
+        
+        // 테스트를 위해 인터셉터를 잠시 빼고 일반 Session()으로 설정해 보세요.
+        session = Session()
+        loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
+    }
+    
     
     /// 실제 API 요청용 MoyaProvider
     public func createProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {
