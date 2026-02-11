@@ -23,7 +23,7 @@ enum Config {
         return value
     }
     
-    // 여기 추가
+    // 임시 dev-Token
         static let devToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwNzgzNzYzLCJleHAiOjE3NzA4NzAxNjN9.Ulx9ipmNgxGdP-HR4kwg1BsCZCeW8dwdQ357Zp9kh2g"
 }
