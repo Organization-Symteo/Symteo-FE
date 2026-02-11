@@ -15,6 +15,7 @@ protocol TestServiceProtocol {
     func createTest(_ request: CreateTestRequestDTO) -> AnyPublisher<CreateTestResponseDTO, APIError>
 }
 
+@MainActor
 final class TestService: TestServiceProtocol {
 
     private let provider: MoyaProvider<TestRouter>
