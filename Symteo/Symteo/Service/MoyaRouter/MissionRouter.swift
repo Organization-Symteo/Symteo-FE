@@ -31,13 +31,15 @@ extension MissionRouter: APITargetType {
         case .fetchTodayMission:
             return "/api/v1/missions/today"
         case .startMission(let missionId, _):
-            return "/api/v1/missions/{missionId}/start"
+            return "/api/v1/missions/{missionId}/submissions"
         case .saveMissionDraft(let userMissionId, _):
-            return "/api/v1/missions/\(userMissionId)/draft"
+            return "/api/v1/missions/\(userMissionId)/drafts"
         case .completeMission(let userMissionId):
-            return "/api/v1/missions/\(userMissionId)/completed"
+            return "/api/v1/missions/\(userMissionId)/status"
         case .restartTodayMission:
-            return "/api/v1/missions/today-mission/restart"
+            return "/api/v1/missions/today-mission/refresh"
+            
+            //api/v1/missions/today-mission/refresh
         }
     }
     
@@ -45,8 +47,10 @@ extension MissionRouter: APITargetType {
         switch self {
         case .fetchTodayMission:
             return .get
-        case .startMission, .saveMissionDraft, .completeMission, .restartTodayMission:
+        case .startMission, .saveMissionDraft, .completeMission:
             return .post
+        case .restartTodayMission:
+            return .patch
         }
     }
     
@@ -65,9 +69,11 @@ extension MissionRouter: APITargetType {
         }
     }
     
+    /*
     var headers: [String : String]? {
         ["Content-Type": "application/json"]
     }
+    */
     
     var sampleData: Data {
         switch self {

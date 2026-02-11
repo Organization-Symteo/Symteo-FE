@@ -8,26 +8,14 @@ import Foundation
 import Moya
 
 class TokenProvider: TokenProviding {
-    /*
+    
     private let userSession = "appNameUser"
     private let keyChain = KeychainService.shared
    //private let provider = MoyaProvider<AuthRouter>()
     
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    /*
-=======
-=======
->>>>>>> Stashed changes
 
-    let devToken = " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwNzM5MjU1LCJleHAiOjE3NzA4MjU2NTV9.koiL8HFI3wZjaf6NAUoBfBTLa2x0Q8KbcDXztkTwwG0"
-    
-    headers["Authorization"] = "Bearer \(devToken)"
-     
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
+    /*
     var accessToken: String? {
         get {
             guard let userInfo = keyChain.loadToken() else { return nil }
@@ -41,23 +29,28 @@ class TokenProvider: TokenProviding {
     }
     */
     
-    /// 임시 토큰
+    //임시
     var accessToken: String? {
         get {
-    #if DEBUG
-            return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwNzM5MjU1LCJleHAiOjE3NzA4MjU2NTV9.koiL8HFI3wZjaf6NAUoBfBTLa2x0Q8KbcDXztkTwwG0"
-    #else
-            guard let userInfo = keyChain.loadToken() else { return nil }
-            return userInfo.accessToken
-    #endif
+            if let userInfo = keyChain.loadToken(),
+               !userInfo.accessToken.isEmpty,
+               userInfo.accessToken != "토큰 정보 없음" {
+                return userInfo.accessToken
+            }
+            
+            // 🔥 로그인 안 되어 있으면 devToken 사용
+            print("⚠️ devToken 사용 중")
+            return Config.devToken
         }
-
         set {
             guard var userInfo = keyChain.loadToken() else { return }
             userInfo.accessToken = newValue ?? "토큰 정보 없음"
             keyChain.saveToken(userInfo)
         }
     }
+
+    
+    
     var refreshToken: String? {
         get {
             guard let userInfo = keyChain.loadToken() else { return nil }
@@ -70,7 +63,7 @@ class TokenProvider: TokenProviding {
             keyChain.saveToken(userInfo)
         }
     }
-     */
+     
     
 /*
     func refreshToken(completion: @escaping (String?, (any Error)?) -> Void) {
@@ -111,8 +104,5 @@ class TokenProvider: TokenProviding {
         }
     }
     */
-    // 임시 devToken
-    let devToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwNzM5MjU1LCJleHAiOjE3NzA4MjU2NTV9.koiL8HFI3wZjaf6NAUoBfBTLa2x0Q8KbcDXztkTwwG0"
 
-    headers["Authorization"] = "Bearer \(devToken)"
 }

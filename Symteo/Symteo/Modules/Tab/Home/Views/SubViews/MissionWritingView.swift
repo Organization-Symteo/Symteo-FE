@@ -7,10 +7,8 @@
 import SwiftUI
 
 struct MissionWritingView: View {
-    let onSubmit: () -> Void
     @ObservedObject var viewModel: MissionViewModel
     @Environment(\.dismiss) private var dismiss
-
     @State private var showPicker: Bool = false
     @State private var tempImage: UIImage? = nil
     @State private var showSubmitConfirm: Bool = false
@@ -49,15 +47,17 @@ struct MissionWritingView: View {
             if showSubmitConfirm {
                 VStack {
                     Spacer()
-                    PopUpView(
+                    /// 작성 완료 팝업
+                    PopUpView (
                         title: "작성을 완료하셨나요?",
                         message: "[마이 심터 > 오늘 미션]에서 다시 볼 수 있어요.",
                         confirmTitle: "작성완료",
                         cancelTitle: "돌아가기",
                         onConfirm: {
                             showSubmitConfirm = false
-                            viewModel.completeMission()
-                            onSubmit()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                viewModel.completeMission()
+                            }
                         },
                         onCancel: { showSubmitConfirm = false }
                     )
@@ -65,6 +65,7 @@ struct MissionWritingView: View {
                 .transition(.move(edge: .bottom))
             }
 
+            /// 취소 팝업
             if showExitConfirm {
                 PopUpView(
                     title: "미션을 그만두시겠습니까?",

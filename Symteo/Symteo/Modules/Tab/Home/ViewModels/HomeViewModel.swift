@@ -15,6 +15,7 @@ final class HomeViewModel: ObservableObject {
     @Published var toast: CustomToast? = nil
 
     // MARK: - Dependency Injection & Combine
+    
     /// DIContainer를 통한 의존성 주입
     let container: DIContainer
     
@@ -51,6 +52,8 @@ final class HomeViewModel: ObservableObject {
     /// 실패 시:
     /// - 에러 메시지를 담은 토스트 표시
     func updateTodayWeather(_ weather: EmotionWeather) {
+        selectedWeather = weather
+        
         container.useCaseService.homeService
             .updateTodayWeather(weather: weather.rawValue)
             .receive(on: DispatchQueue.main)

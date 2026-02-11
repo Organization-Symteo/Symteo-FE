@@ -27,21 +27,27 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
     }
     */
     // 임시
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
-        var urlRequest = urlRequest
-        
-        // 로그 확인을 위해 프린트 추가
-        print("🛠 인터셉터 adapt 시작")
+   
 
-        if let accessToken = tokenProviding.accessToken {
-            urlRequest.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-            print("🛠 인터셉터: 토큰 주입 완료")
-        } else {
-            print("⚠️ 인터셉터: 토큰이 없어서 주입 실패")
+        func adapt(
+            _ urlRequest: URLRequest,
+            for session: Session,
+            completion: @escaping (Result<URLRequest, Error>) -> Void
+        ) {
+
+            var request = urlRequest
+
+            // 🔥 로그인 토큰 먼저 시도
+            let token = tokenProviding.accessToken
+
+            // 🔥 없으면 devToken 사용
+            let finalToken = token ?? Config.devToken
+
+            request.setValue("Bearer \(finalToken)", forHTTPHeaderField: "Authorization")
+
+            completion(.success(request))
         }
-        
-        completion(.success(urlRequest))
-    }
+    
     
    
     /*

@@ -14,12 +14,15 @@ struct HomeView: View {
     @State private var currentPage = 0 // 페이지 스와이프(현재페이지 추적)
     @StateObject private var viewModel : HomeViewModel
     
+    @EnvironmentObject var container: DIContainer
+    
     /// 추천 검사 아이템(우울/불안, 스트레스, 성향 검사)
     private let recommendationItems: [RecommendationItem] = [
         .init(imageName: "anxiety_test", type: .anxiety),
         .init(imageName: "stress_test", type: .stress),
         .init(imageName: "attachment_test", type: .attachment)
     ]
+    
     
 
     // MARK: - Init
@@ -148,7 +151,9 @@ extension HomeView {
 
             Spacer()
 
-            NavigationLink(destination: MissionView()) {
+            Button {
+                container.navigationRouter.push(.mission) /// 미션화면으로 이동
+            }label: {
                 Text("하러가기")
                     .font(.PretendardMedium(size: 14))
                     .foregroundStyle(.white)

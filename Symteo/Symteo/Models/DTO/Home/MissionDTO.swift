@@ -9,16 +9,19 @@ import Foundation
 // MARK: -미션 요청/응답
 /// 오늘의 미션 Response
 struct TodayMissionResult: Codable {
-        let contents: String
-        let remainingSeconds: Int
-        let restarted: Bool
-    }
+    let missionId: Int
+    let userMissionId: Int
+    let contents: String
+    let remainingSeconds: Int
+    let completed: Bool
+    let restarted: Bool
+}
     //typealias TodayMissionResponse = BaseResponse<TodayMissionResult>
 
 /// 미션 시작 Request
 struct MissionStartRequest: Codable {
-    let content: String
-    let imageUrl: String
+    let contents: String
+    let imageUrl: String?
 }
 
 ///미션 시작 Response

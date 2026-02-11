@@ -8,8 +8,16 @@ import SwiftUI
 // 미션을 진행 상태별로 분기한 화면입니다.
 struct MissionView: View {
 
-    @StateObject private var viewModel = MissionViewModel(container: DIContainer())
+    @EnvironmentObject var container: DIContainer
+    @StateObject private var viewModel: MissionViewModel
+    
+    init(
+        container: DIContainer
+    ) {
+        _viewModel = StateObject(wrappedValue: MissionViewModel(container: container))
+    }
 
+    
     var body: some View {
         VStack {
             contentView
@@ -18,39 +26,24 @@ struct MissionView: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
-        switch viewModel.uiState {
+       private var contentView: some View {
+           switch viewModel.uiState {
 
-        case .arrived:
-            MissionArrivedView {
-                viewModel.uiState = .confirmed
-            }
+           case .arrived:
+               MissionArrivedView(viewModel: viewModel)
 
-        case .confirmed:
-            MissionIntroView(
-                onBack: {
-                    viewModel.uiState = .arrived
-                },
-                onContinue: {
-                    viewModel.uiState = .writing
-                },
-                viewModel: viewModel
-            )
+           case .confirmed:
+               MissionIntroView(viewModel: viewModel)
 
-        case .writing:
-            MissionWritingView(
-                onSubmit: {
-                    viewModel.completeMission()
-                },
-                viewModel: viewModel
-            )
+           case .writing:
+               MissionWritingView(viewModel: viewModel)
 
-        case .completed:
-            BaseTabView()
-        }
-    }
+           case .completed:
+               HomeView(container: DIContainer())
+           }
+       }
 }
 
 #Preview {
-    MissionView()
+    MissionView(container: .init())
 }

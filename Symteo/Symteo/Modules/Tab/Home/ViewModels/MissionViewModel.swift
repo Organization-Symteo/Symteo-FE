@@ -61,6 +61,9 @@ final class MissionViewModel: ObservableObject {
     
     /// 1초 단위 타이머 관리용 Combine 객체
     private var timer: AnyCancellable?
+    
+    /// 서버가 내려준 종료 시각 (초 단위 timestamp)
+    private var endTimestamp: TimeInterval = 0
 
     // MARK: - Dependency Injection & Combine
     /// DIContainer를 통한 의존성 주입
@@ -68,23 +71,37 @@ final class MissionViewModel: ObservableObject {
     
     /// Combine 구독 해제를 관리하기 위한 cancellables
     var cancellables = Set<AnyCancellable>()
+    private var draftCancellable: AnyCancellable?
 
     // MARK: - Init
     /// MissionViewModel 초기화
     /// - Parameter container: 의존성이 주입된 DIContainer
     init(container: DIContainer) {
         self.container = container
+        bindDraftAutoSave()
     }
 
+    /// 유저가 타이핑 멈춘 후 saveDraftIfNeeded 한 번만 호출하도록
+    private func bindDraftAutoSave() {
+        draftCancellable = $memo
+            .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] text in
+                guard let self else { return }
+                self.saveDraftIfNeeded(text: text)
+            }
+    }
     // MARK: - Timer
     /// 서버에서 내려준 remainingSeconds 값을 기준으로
     /// 1초마다 timeRemaining을 감소시키는 타이머 시작
     func startTimer() {
         timer?.cancel()
+
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self else { return }
+
                 if self.timeRemaining > 0 {
                     self.timeRemaining -= 1
                 }
@@ -99,9 +116,18 @@ final class MissionViewModel: ObservableObject {
     // MARK: - Time Formatter
     /// 남은 시간을 "00시간 00분 남음" 형식의 문자열로 변환
     func timeRemainingString() -> String {
-        let hours = timeRemaining / 3600
-        let minutes = (timeRemaining % 3600) / 60
+        let safeTime = max(timeRemaining, 0)
+
+        let hours = safeTime / 3600
+        let minutes = (safeTime % 3600) / 60
+
         return String(format: "%02d시간 %02d분 남음", hours, minutes)
+    }
+    
+
+    
+    func goBackToArrived() {
+        uiState = .arrived
     }
 
     // MARK: - API: Fetch Today Mission
@@ -130,10 +156,18 @@ final class MissionViewModel: ObservableObject {
                     )
                 }
             } receiveValue: { [weak self] mission in
-                print("미션 응답: ", mission)
-                self?.missionContent = mission.contents
-                self?.remainingSeconds = mission.remainingSeconds
-                self?.restarted = mission.restarted
+                guard let self else { return }
+
+                print("🔥 remainingSeconds raw:", mission.remainingSeconds)
+                self.missionId = mission.missionId
+                self.userMissionId = mission.userMissionId
+                self.missionContent = mission.contents
+                self.restarted = mission.restarted
+                self.timeRemaining = mission.remainingSeconds
+
+                startTimer()
+
+                self.uiState = .confirmed
             }
             .store(in: &cancellables)
     }
@@ -144,18 +178,31 @@ final class MissionViewModel: ObservableObject {
     /// 필요 조건:
     /// - missionId 존재
     /// - 업로드된 이미지 URL 존재
+    ///
     func startMission() {
+        
+        print("🧡 startMission 요청 시작")
+        print("missionId:", missionId as Any)
+        print("uploadedImageUrl:", uploadedImageUrl as Any)
+
         guard !isLoading else { return }
-        guard let missionId else { return }
-        guard let uploadedImageUrl else { return }
+
+        guard let missionId else {
+            print("❌ missionId is nil")
+            return
+        }
+
+        guard let uploadedImageUrl else {
+            print("❌ uploadedImageUrl is nil")
+            return
+        }
 
         isLoading = true
 
-        print("startMission 요청 시작")
-
+    
         let request = MissionStartRequest(
-            content: memo,
-            imageUrl: uploadedImageUrl
+            contents: memo,
+            imageUrl: uploadedImageUrl // optional 그대로 전달
         )
 
         container.useCaseService.missionServise
@@ -172,18 +219,25 @@ final class MissionViewModel: ObservableObject {
                 }
             } receiveValue: { [weak self] result in
                 print("미션 시작")
+                
                 self?.userMissionId = result.userMissionId
                 self?.remainingSeconds = result.remainingSeconds
+                self?.uiState = .writing
+        
             }
             .store(in: &cancellables)
     }
+     
 
     // MARK: - API: Save Draft
     /// 미션 수행 중 입력한 텍스트를 임시 저장하는 API 호출
     /// - Parameter text: 현재 입력 중인 미션 텍스트
     func saveDraftIfNeeded(text: String) {
         guard let userMissionId else { return }
-
+        
+        print("🧡 미션 임시저장 함수 요청")
+   
+        
         let request = MissionDraftRequest(contents: text)
 
         container.useCaseService.missionServise
@@ -208,8 +262,8 @@ final class MissionViewModel: ObservableObject {
         guard let userMissionId else { return }
         isLoading = true
 
-        container.useCaseService.missionServise
-            .completeMission(userMissionId: userMissionId)
+        print("🧡 미션 제출 함수 요청")
+        container.useCaseService.missionServise.completeMission(userMissionId: userMissionId)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] completion in
@@ -218,8 +272,9 @@ final class MissionViewModel: ObservableObject {
                         print("미션 제출 실패:", error)
                     }
                 },
-                receiveValue: { _ in
+                receiveValue: { [weak self] _ in
                     print("미션 제출 완료")
+                    self?.uiState = .completed   
                 }
             )
             .store(in: &cancellables)
@@ -231,10 +286,14 @@ final class MissionViewModel: ObservableObject {
         guard !isLoading else { return }
         isLoading = true
 
+        print("🧡 미션 새로고침 함수 요청")
+
         container.useCaseService.missionServise
             .restartTodayMission()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
+                self?.isLoading = false
+                
                 if case .failure(let error) = completion {
                     self?.toast = CustomToast(
                         title: "미션 새로고침 실패",
@@ -242,10 +301,23 @@ final class MissionViewModel: ObservableObject {
                     )
                 }
             } receiveValue: { [weak self] result in
-                self?.currentMission = result.contents
-                self?.remainingSeconds = result.remainingSeconds
-                self?.restarted = result.restarted
+                guard let self else { return }
+
+                //  새 미션 내용
+                self.missionContent = result.contents
+
+                //  새로고침 횟수 증가
+                self.refreshCount += 1
+
+                //  남은 시간은 그냥 초 그대로
+                self.timeRemaining = result.remainingSeconds
+
+                //  타이머 재시작
+                self.startTimer()
+
+                self.restarted = result.restarted
             }
             .store(in: &cancellables)
     }
 }
+

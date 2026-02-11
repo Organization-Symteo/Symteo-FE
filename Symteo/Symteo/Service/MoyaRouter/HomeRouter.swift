@@ -18,9 +18,9 @@ extension HomeRouter: APITargetType {
     var path: String {
         switch self {
         case .updateTodayWeather:
-            return "/api/v1/home/today-weather" // /api/v1/home/today-weather?weather={}
+            return "/api/v1/home/today-emotion" // /api/v1/home/today-weather?weather={}
         case .fetchHome:
-            return "/api/v1/home/"
+            return "/api/v1/home"
         }
     }
 
@@ -42,10 +42,12 @@ extension HomeRouter: APITargetType {
         }
     }
 
+    /*
     var headers: [String : String]? {
         ["Content-Type": "application/json"]
-    }
-
+    } */
+    
+    
     var sampleData: Data {
         switch self {
         case .updateTodayWeather:

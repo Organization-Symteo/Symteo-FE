@@ -7,8 +7,6 @@
 import SwiftUI
 
 struct MissionIntroView: View {
-    let onBack: () -> Void
-    let onContinue: () -> Void
     @ObservedObject var viewModel: MissionViewModel
 
     var body: some View {
@@ -17,7 +15,9 @@ struct MissionIntroView: View {
             // 1. 커스텀 네비게이션 바
             ZStack {
                 HStack {
-                    Button(action: onBack) {
+                    Button{
+                        viewModel.goBackToArrived()
+                    } label: {
                         Image(systemName: "arrow.left")
                             .font(.system(size: 16, weight: .regular))
                             .foregroundStyle(.black)
@@ -64,16 +64,22 @@ struct MissionIntroView: View {
                         .padding(.horizontal, 20)
 
                     Spacer()
-
-                    // 새로고침 (서버 재요청)
-                    Button {
-                        viewModel.loadTodayMission()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(.gray)
+                    VStack (spacing: 0) {
+                        // 새로고침 (서버 재요청)
+                        Button {
+                            viewModel.restartTodayMission()
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.bottom, 30)
+                        
+                        Text("(\(viewModel.refreshCount)회)")
+                            .font(.OwnGlyphPDH(size: 12))
+                            .foregroundColor(.gray700)
+                            .padding(.bottom)
                     }
-                    .padding(.bottom, 30)
                 }
                 .frame(width: 225, height: 272)
                 .background(Color.white)
@@ -93,8 +99,7 @@ struct MissionIntroView: View {
                 text: "미션 시작",
                 isDisabled: false,
                 action: {
-                    viewModel.startMission()/// API startMission함수 호출
-                    onContinue()
+                    viewModel.startMission()/// API startMission함수 호출(missionId가 필요함)
                 }
             )
             .padding()
@@ -103,10 +108,4 @@ struct MissionIntroView: View {
     }
 }
 
-#Preview {
-    MissionIntroView(
-        onBack: {},
-        onContinue: {},
-        viewModel: MissionViewModel(container: DIContainer())
-    )
-}
+

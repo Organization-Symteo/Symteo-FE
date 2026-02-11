@@ -8,7 +8,7 @@ import SwiftUI
 
 struct MissionArrivedView: View {
     
-    let onStart: () -> Void
+    @ObservedObject var viewModel: MissionViewModel
 
     var body: some View {
         VStack(spacing: 40) {
@@ -17,7 +17,9 @@ struct MissionArrivedView: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray900)
 
-            Button(action: onStart) { /// 화면전환만 담당
+            Button{
+                viewModel.loadTodayMission()
+            } label: {
                 Image("mission_arrival")
                     .resizable()
                     .scaledToFit()
