@@ -14,7 +14,7 @@ enum TestType: String, Codable {
 }
 
 struct CreateTestRequestDTO: Encodable {
-    let userId: Int
+    
     let testType: String
     let answers: [CreateTestAnswerDTO]
 }
