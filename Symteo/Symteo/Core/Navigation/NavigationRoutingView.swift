@@ -11,12 +11,31 @@ struct NavigationRoutingView: View {
     @EnvironmentObject var container: DIContainer
     
     var body: some View {
-        NavigationStack(path:$container.navigationRouter.path){
-            
-            //Tab 뷰
+        NavigationStack(path: $container.navigationRouter.path) {
             BaseTabView()
                 .navigationDestination(for: NavigationDestination.self) { destination in
                     switch destination {
+
+                    case .basetab:
+                        BaseTabView()
+                            .environmentObject(container)
+
+                    case .depressionTest:
+                        DepressionTestHome()
+                            .environmentObject(container)
+
+                    case .typeTest:
+                        TypeTestHome()
+                            .environmentObject(container)
+
+                    case .stressTest:
+                        StressTestHome()
+                            .environmentObject(container)
+
+                    case let .survey(kind):
+                        SurveyView(kind: kind)
+                            .environmentObject(container)
+
                         
                     case .setting:
                         SettingView()
@@ -26,6 +45,7 @@ struct NavigationRoutingView: View {
                         
                     case .service:
                         ServicePolicyView()
+
 
                     }
                 }

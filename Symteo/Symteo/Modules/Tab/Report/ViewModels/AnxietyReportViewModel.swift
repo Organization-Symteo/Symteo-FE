@@ -5,6 +5,7 @@
 //  Created by 박병선 on 1/19/26.
 //
 import SwiftUI
+import Foundation
 import Combine
 
 @MainActor

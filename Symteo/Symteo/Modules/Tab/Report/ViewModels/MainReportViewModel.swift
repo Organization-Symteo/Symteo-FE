@@ -5,8 +5,10 @@
 //  Created by 박병선 on 1/18/26.
 //
 import SwiftUI
-import Moya
+import Foundation
 import Combine
+import Moya
+
 
 @MainActor
 final class MainReportViewModel: ObservableObject {
