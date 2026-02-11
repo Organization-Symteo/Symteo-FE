@@ -4,7 +4,6 @@
 //
 //  Created by 김지우 on 1/25/26.
 //
-
 import Foundation
 import Combine
 
@@ -121,17 +120,15 @@ final class SurveyViewModel: ObservableObject {
     @Published var answers: [Int: Int] = [:]
     @Published var isSubmitting: Bool = false
     @Published var submitErrorMessage: String? = nil
-    @Published var createdTestId: Int? = nil
+    @Published var createdDiagnoseId: Int? = nil
 
     let kind: SurveyKind
-    private let userId: Int
     private let service: TestService
 
     private var cancellables = Set<AnyCancellable>()
 
-    init(kind: SurveyKind, userId: Int = 1, service: TestService) {
+    init(kind: SurveyKind, service: TestService) {
         self.kind = kind
-        self.userId = userId
         self.service = service
         self.questions = Self.makeQuestions(kind: kind)
     }
@@ -201,15 +198,14 @@ final class SurveyViewModel: ObservableObject {
 
     func submit() {
         submitErrorMessage = nil
-        createdTestId = nil
+        createdDiagnoseId = nil
         isSubmitting = true
 
         let request = CreateTestRequestDTO(
-            userId: userId,
             testType: kind.testTypeString,
             answers: answers
                 .sorted(by: { $0.key < $1.key })
-                .map { CreateTestAnswerDTO(questionNo: $0.key + 1, score: $0.value + kind.scoreOffset) }
+                .map { CreateTestAnswerDTO(questionNo: $0.key + 1, score: $0.value) }
         )
 
         service.createTest(request)
@@ -221,7 +217,7 @@ final class SurveyViewModel: ObservableObject {
                     self.submitErrorMessage = error.localizedDescription
                 }
             } receiveValue: { [weak self] res in
-                self?.createdTestId = res.testId
+                self?.createdDiagnoseId = res.diagnoseId
             }
             .store(in: &cancellables)
     }
@@ -234,9 +230,5 @@ private extension SurveyKind {
         case .attachment: return TestType.attachmentTest.rawValue
         case .depression: return TestType.depressionAnxietyComplex.rawValue
         }
-    }
-
-    var scoreOffset: Int {
-        0
     }
 }

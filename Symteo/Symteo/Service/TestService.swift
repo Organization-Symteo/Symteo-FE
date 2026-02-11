@@ -5,17 +5,15 @@
 //  Created by 김지우 on 2/10/26.
 //
 
-
 import Foundation
 import Combine
 import Moya
 import Alamofire
 
 protocol TestServiceProtocol {
-    func createTest(_ request: CreateTestRequestDTO) -> AnyPublisher<CreateTestResponseDTO, APIError>
+    func createTest(_ request: CreateTestRequestDTO) -> AnyPublisher<CreateDiagnosisResultDTO, APIError>
 }
 
-@MainActor
 final class TestService: TestServiceProtocol {
 
     private let provider: MoyaProvider<TestRouter>
@@ -33,8 +31,7 @@ final class TestService: TestServiceProtocol {
         }
     }
 
-    func createTest(_ request: CreateTestRequestDTO) -> AnyPublisher<CreateTestResponseDTO, APIError> {
-        provider.requestResult(.createTest(request: request), type: CreateTestResponseDTO.self)
+    func createTest(_ request: CreateTestRequestDTO) -> AnyPublisher<CreateDiagnosisResultDTO, APIError> {
+        provider.requestResult(.createTest(request: request), type: CreateDiagnosisResultDTO.self)
     }
 }
-
