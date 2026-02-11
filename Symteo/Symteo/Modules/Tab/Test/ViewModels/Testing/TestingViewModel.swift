@@ -209,7 +209,7 @@ final class SurveyViewModel: ObservableObject {
             testType: kind.testTypeString,
             answers: answers
                 .sorted(by: { $0.key < $1.key })
-                .map { CreateTestAnswerDTO(questionNo: $0.key + 1, score: $0.value) }
+                .map { CreateTestAnswerDTO(questionNo: $0.key + 1, score: $0.value + kind.scoreOffset) }
         )
 
         service.createTest(request)
@@ -231,8 +231,12 @@ private extension SurveyKind {
     var testTypeString: String {
         switch self {
         case .stress: return TestType.stressBurnoutComplex.rawValue
-        case .attachment: return TestType.ecrR.rawValue
+        case .attachment: return TestType.attachmentTest.rawValue
         case .depression: return TestType.depressionAnxietyComplex.rawValue
         }
+    }
+
+    var scoreOffset: Int {
+        0
     }
 }

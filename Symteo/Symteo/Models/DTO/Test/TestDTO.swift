@@ -7,15 +7,14 @@
 
 import Foundation
 
-
 enum TestType: String, Codable {
     case stressBurnoutComplex = "STRESS_BURNOUT_COMPLEX"
     case depressionAnxietyComplex = "DEPRESSION_ANXIETY_COMPLEX"
-    case ecrR = "ECR_R"
+    case attachmentTest = "ATTACHMENT_TEST"
 }
 
 struct CreateTestRequestDTO: Encodable {
-    let userId: Int
+    
     let testType: String
     let answers: [CreateTestAnswerDTO]
 }
