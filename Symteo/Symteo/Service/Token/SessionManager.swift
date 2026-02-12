@@ -9,7 +9,10 @@
 import SwiftUI
 import Combine
 
+
+@MainActor
 final class SessionManager: ObservableObject {
+
     @AppStorage("isLoggedIn") private var storedIsLoggedIn: Bool = false
     @Published var isLoggedIn: Bool = false
 
@@ -17,15 +20,12 @@ final class SessionManager: ObservableObject {
         self.isLoggedIn = storedIsLoggedIn
     }
 
-    func login() {
-        isLoggedIn = true
-        storedIsLoggedIn = true
+    func setLoggedIn(_ value: Bool) {
+        isLoggedIn = value
+        storedIsLoggedIn = value
     }
 
     func logout() {
-        DispatchQueue.main.async {
-            self.isLoggedIn = false
-            self.storedIsLoggedIn = false
-        }
+        setLoggedIn(false)
     }
 }

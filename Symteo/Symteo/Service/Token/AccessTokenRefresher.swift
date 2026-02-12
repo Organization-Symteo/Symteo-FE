@@ -1,8 +1,8 @@
 //
 //  AccessTokenRefresher.swift
-//  Symteo
+//  Plantory
 //
-//  Created by 박병선 on 1/29/26.
+//  Created by 주민영 on 7/30/25.
 //
 
 import Foundation
@@ -29,7 +29,7 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
     func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
         guard request.retryCount < 1,
               let response = request.task?.response as? HTTPURLResponse,
-              [401, 404].contains(response.statusCode) else {
+              [401].contains(response.statusCode) else {
             return completion(.doNotRetry)
         }
         
@@ -39,7 +39,10 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
             tokenProviding.refreshToken { [weak self] newToken, error in
                 guard let self = self else { return }
                 self.isRefreshing = false
-                let result = error == nil ? RetryResult.retry : RetryResult.doNotRetryWithError(error!)
+                
+                let result: RetryResult
+
+                
                 self.requestToRetry.forEach { $0(result) }
                 self.requestToRetry.removeAll()
             }
@@ -47,4 +50,3 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
     }
      */
 }
-

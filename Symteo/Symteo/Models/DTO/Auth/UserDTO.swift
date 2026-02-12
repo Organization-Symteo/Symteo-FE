@@ -24,5 +24,5 @@ struct SignupResult: Decodable {
     let refreshToken: String
     let userId: Int
     let nickname: String
-    let registered: Bool //가입 완료 시 true 반환함
+    let isRegistered: Bool //가입 완료 시 true 반환함
 }

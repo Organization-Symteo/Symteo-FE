@@ -52,7 +52,7 @@ struct LoginView: View {
                 ForEach(viewModel.providers) { provider in
                     SocialLoginButton(icon: provider.icon, title: provider.title) {
                         viewModel.tapLogin(provider: provider){
-                            sessionManager.login()
+                            sessionManager.isLoggedIn = true
                         }
                     }
                 }

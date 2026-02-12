@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import KakaoSDKCommon
 
 @main
 struct SymteoApp: App {
@@ -14,7 +15,14 @@ struct SymteoApp: App {
     @StateObject private var sessionManager = SessionManager()
 
 
+    init() {
+        guard let appKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO_NATIVE_APP_KEY") as? String else {
+            fatalError("KAKAO_NATIVE_APP_KEY not found")
+        }
 
+        KakaoSDK.initSDK(appKey: appKey)
+    }
+    
     var body: some Scene {
         WindowGroup {
             RootView()
