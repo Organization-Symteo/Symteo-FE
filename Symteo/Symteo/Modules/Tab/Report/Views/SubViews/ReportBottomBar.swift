@@ -6,14 +6,17 @@
 //
 import SwiftUI
 
+/// 우울/불안 리포트, 애착 리포트 하위 바텀바
 struct ReportBottomBar: View {
+    
+    // 외부에서 주입 받을 액션
+    let onConsultTap: () -> Void
+    let onOtherTestTap: () -> Void
     
     var body: some View {
         VStack(spacing: 12) {
 
-            Button(action: {
-                // TODO: 액션 추가
-            }) {
+            Button(action: onConsultTap) {
                 HStack {
                     Image("message_notify_circle")
                         .resizable()
@@ -44,16 +47,22 @@ struct ReportBottomBar: View {
             MainBottomButton(
                 text: "다른 검사하러 가기",
                 isDisabled: false,
-                action: {
-                    print("다른 검사하러 가기") // TODO: 액션 추가
-                }
+                action: onOtherTestTap
             )
         }
         .padding()
     }
 }
 
-
-#Preview {
-    ReportBottomBar()
-}
+/*
+ // 사용방법
+ ReportBottomBar(
+     onConsultTap: {
+         // 상담 화면 이동
+         path.append(.aiConsult)
+     },
+     onOtherTestTap: {
+         dismiss() // 메인 리포트로 돌아가기
+     }
+ )
+ */

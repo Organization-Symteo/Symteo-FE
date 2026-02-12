@@ -174,10 +174,3 @@ private struct ProgressBarView: View {
     }
 }
 
-// 프리뷰용 더미 데이터
-
-#Preview {
-    AnxietyResultCard(
-        data: .preview
-    )
-}

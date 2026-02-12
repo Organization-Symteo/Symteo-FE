@@ -13,13 +13,26 @@ struct AttachmentResultCard: View {
     var body: some View {
         VStack(spacing: 16) {
 
-            AttachmentMapSection(
-                anxietyResult: viewModel.anxietyResult,
-                avoidanceResult: viewModel.avoidanceResult
-            )
-            .reportCardStyle()
+            if let anxiety = viewModel.anxietyResult,
+                           let avoidance = viewModel.avoidanceResult {
 
-            AttachmentDescriptionSection(attachmentType: .anxious, viewModel: AttachmentReportViewModel())
+                            AttachmentMapSection(
+                                anxietyResult: anxiety,
+                                avoidanceResult: avoidance
+                            )
+                            .reportCardStyle()
+
+                        } else {
+                            // 로딩 or placeholder
+                            ProgressView()
+                        }
+
+
+            AttachmentDescriptionSection(
+                userName: viewModel.userName,
+                attachmentType: viewModel.attachmentType,
+                description: viewModel.description
+            )
                 .reportCardStyle()
         }
         
@@ -62,14 +75,15 @@ private struct AttachmentMapSection: View {
 
 private struct AttachmentDescriptionSection: View {
 
+    let userName: String
     let attachmentType: AttachmentType
-    let viewModel: AttachmentReportViewModel
+    let description: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
 
             HStack(spacing: 4) {
-                Text("따오기님의 애착유형은")
+                Text("\(userName)님의 애착유형은")
                     .font(.PretendardSemiBold(size: 16))
                     .foregroundStyle(.gray900)
 
@@ -82,7 +96,7 @@ private struct AttachmentDescriptionSection: View {
                     .foregroundStyle(.gray900)
             }
 
-            Text(viewModel.description)
+            Text(description)
                 .font(.PretendardRegular(size: 12))
                 .foregroundStyle(.gray900)
                 .lineSpacing(4)
@@ -147,7 +161,3 @@ private struct ProgressBarView: View {
     }
 }
         
-
-#Preview{
-    AttachmentResultCard(viewModel: AttachmentReportViewModel())
-}

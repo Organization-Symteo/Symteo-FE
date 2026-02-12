@@ -43,11 +43,11 @@ extension TestRouter: APITargetType {
             return .requestJSONEncodable(request)
         }
     }
-
+/* 임시로 주석 처리
     var headers: [String : String]? {
         return ["Content-Type": "application/json"]
     }
-    
+ */
     
     var sampleData: Data {
         let json = """

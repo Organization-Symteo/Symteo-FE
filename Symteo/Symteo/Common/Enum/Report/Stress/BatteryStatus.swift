@@ -21,7 +21,7 @@ enum BatteryStatus {
         }
     }
 
-    var description: String {
+    var guideText: String {
         switch self {
         case .veryLow:
             return "지금 당장 휴식이 필요합니다."

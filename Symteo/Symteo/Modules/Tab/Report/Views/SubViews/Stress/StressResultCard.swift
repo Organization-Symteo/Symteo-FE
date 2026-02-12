@@ -6,21 +6,30 @@
 //
 import SwiftUI
 
+// 스트레스 리포트 화면에서 스트레스 결과를 보여주는 하위뷰입니다.
 struct StressResultCard: View {
-   
-    @ObservedObject var viewModel: StressReportViewModel
 
+    let userName: String
+    @ObservedObject var viewModel: StressReportViewModel
 
     var body: some View {
         VStack(spacing: 20) {
 
-            StressGaugeSection(score: viewModel.stressScore,level: viewModel.stressLevel)
-                .reportCardStyle()
-
-            StressDescriptionSection(userName: "따오기",
-                                     level: viewModel.stressLevel, description: viewModel.stressDescriptionText)
+            // 스트레스 게이지
+            StressGaugeSection(
+                level: viewModel.stressLevel
+            )
             .reportCardStyle()
 
+            //  설명 섹션
+            StressDescriptionSection(
+                userName: userName,
+                level: viewModel.stressLevel,
+                description: viewModel.stressDescriptionText
+            )
+            .reportCardStyle()
+
+            // 통제력 / 과부하
             StressBalanceSection(
                 situationalResult: viewModel.situationalControlResult,
                 dailyOverloadResult: viewModel.dailyOverloadResult
@@ -28,15 +37,15 @@ struct StressResultCard: View {
             .reportCardStyle()
         }
         .padding()
-       // .background(Color.white)
     }
 }
 
+// MARK: -SubViews
 private struct StressGaugeSection: View {
 
-    let score: Int
     let level: StressLevel
-    
+  
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
 
@@ -44,17 +53,18 @@ private struct StressGaugeSection: View {
                 .font(.PretendardSemiBold(size: 16))
                 .foregroundStyle(.gray900)
 
-            // 온도계 그래프 (커스텀 뷰로 분리 가능)
-            StressThermometerView(  ratio: 0.85,
-                                    fillColor: Color(hex: "#F4574F") )
+            Image(level.imageName)
+                   .resizable()
+                   .aspectRatio(305 / 72, contentMode: .fit)
+                   .frame(maxWidth: .infinity)
 
             VStack(alignment: .leading, spacing: 6) {
-                HStack{
-                    Text("\(level.title)")
+                HStack {
+                    Text(level.title)
                         .font(.PretendardSemiBold(size: 16))
                         .foregroundStyle(level.color)
-                    
-                    Text("(\(level.rangeText))")
+
+                    Text("(\(level.rangeText))") // 점수
                         .font(.PretendardRegular(size: 12))
                         .foregroundStyle(.gray700)
                 }
@@ -67,11 +77,12 @@ private struct StressGaugeSection: View {
     }
 }
 
+
 private struct StressDescriptionSection: View {
 
     let userName: String
     let level: StressLevel
-    let description: String
+    let description: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -91,14 +102,17 @@ private struct StressDescriptionSection: View {
                 
             }
             
-            Text(description)
-                .font(.PretendardRegular(size: 13))
-                .foregroundStyle(.gray700)
-                .lineSpacing(4)
+            if let description {
+                Text(description)
+                    .font(.PretendardRegular(size: 12))
+                    .foregroundStyle(.gray900)
+            }
         }
     }
 }
 
+
+// MARK: - 통제감 vs 과부하 영역
 private struct StressBalanceSection: View {
     
     let situationalResult: StressBalanceResult
@@ -120,8 +134,7 @@ private struct StressBalanceSection: View {
                 )
             }
             .padding(16)
-            //.frame(maxWidth: .infinity)      // 가로는 부모 기준
-            //.frame(height: 220)
+
         }
     
 
@@ -155,6 +168,7 @@ private struct StressBalanceRow: View {
                 Text("(\(result.levelText))")
                     .font(.PretendardSemiBold(size: 13))
                     .foregroundStyle(result.barColor)
+                
             }
             .frame(width: 80, alignment: .leading) // 2. 프로그레스바 시작점 정렬을 위한 고정폭
             
@@ -172,11 +186,10 @@ private struct StressBalanceRow: View {
                 Text(result.description)
                     .font(.PretendardRegular(size: 13))
                     .foregroundStyle(Color.gray700)
-                    .lineLimit(1)                // 한 줄로 제한
+                    .lineLimit(3)                // 한 줄로 제한
                     .fixedSize(horizontal: false, vertical: true) // 텍스트가 수직으로 늘어나는 것을 방지
-            
-                        .allowsTightening(true)      // 자간을 살짝 좁혀서 최대한 다 보여주려 노력함
-                        .layoutPriority(1)           // 다른 요소보다 텍스트 레이아웃 우선순위를 높임
+                    .allowsTightening(true)      // 자간을 살짝 좁혀서 최대한 다 보여주려 노력함
+                    .layoutPriority(1)           // 다른 요소보다 텍스트 레이아웃 우선순위를 높임
             }
         }
         .padding(.vertical, 8)
@@ -203,8 +216,4 @@ private struct ProgressBarView: View {
         }
         .frame(height: 10)
     }
-}
-
-#Preview {
-    StressResultCard(viewModel: .preview)
 }

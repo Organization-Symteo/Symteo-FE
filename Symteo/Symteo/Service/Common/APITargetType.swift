@@ -11,6 +11,7 @@ protocol APITargetType: TargetType {}
 /*
 extension APITargetType {
 
+
     var headers: [String: String]? {
         switch task {
         case .requestJSONEncodable, .requestParameters:
@@ -21,7 +22,22 @@ extension APITargetType {
             return nil
         }
     }
+    
+    var validationType: ValidationType { .none }
+         
+}
 
+*/
+
+// 임시
+extension APITargetType {
+    var headers: [String: String]? {
+        return [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(Config.devToken)"
+        ]
+    }
+    
     var validationType: ValidationType { .none }
          
 }

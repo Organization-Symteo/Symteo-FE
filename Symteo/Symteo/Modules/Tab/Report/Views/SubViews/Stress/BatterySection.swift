@@ -9,14 +9,18 @@ import SwiftUI
 
 
 struct BatterySection: View {
+    let percent: Int   // percent만 받자
 
-    let result: BatteryResult
+    private var status: BatteryStatus {
+        BatteryStatus.from(percent: percent)
+    }
+
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
 
             // 왼쪽 배터리 아이콘
-            Image(result.status.batteryImage)
+            Image(status.batteryImage)
                 .resizable()
                 .frame(width: 58, height: 50)
 
@@ -29,13 +33,13 @@ struct BatterySection: View {
                         .font(.PretendardMedium(size: 16))
                         .foregroundStyle(.gray900)
 
-                    Text("\(result.percent)%")
+                    Text("\(percent)%")
                         .font(.PretendardSemiBold(size: 16))
-                        .foregroundStyle(result.status.titleColor)
+                        .foregroundStyle(status.titleColor)
                 }
 
                 // 설명 문구
-                Text(result.status.description)
+                Text(status.guideText)
                     .font(.PretendardRegular(size: 14))
                     .foregroundStyle(.gray700)
                     .lineLimit(2)
@@ -44,21 +48,9 @@ struct BatterySection: View {
             Spacer()
         }
         .padding(16)
-        .background(result.status.backgroundColor)
+        .background(status.backgroundColor)
         .cornerRadius(16)
     }
 
 
-}
-
-
-#Preview {
-    BatterySection(
-        result: BatteryResult(
-            percent: 15,
-            status: .veryLow
-        )
-    )
-    .padding()
-    .background(Color.white)
 }

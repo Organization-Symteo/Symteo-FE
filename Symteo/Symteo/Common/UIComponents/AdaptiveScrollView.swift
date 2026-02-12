@@ -4,12 +4,11 @@
 //
 //  Created by 김지우 on 1/8/26.
 //
-
-
-
 import SwiftUI
+import Combine
 
 /// 스크롤 위치에 따라 상단/하단 패딩을 조절하는 커스텀 ScrollView
+@MainActor
 struct AdaptiveScrollView<Content: View>: View {
     @ViewBuilder let content: Content
     let topPadding: CGFloat
@@ -69,14 +68,14 @@ struct AdaptiveScrollView<Content: View>: View {
 
 /// 스크롤 오프셋 감지를 위한 PreferenceKey
 private struct TopOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
+    static let defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
 }
 
 private struct BottomOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
+    static let defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }

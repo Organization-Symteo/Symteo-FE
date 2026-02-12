@@ -27,4 +27,15 @@ extension GAD7ClusterType {
             return "안달감, 짜증, 근육긴장"
         }
     }
+    
+    static func from(serverName: String) -> GAD7ClusterType {
+            switch serverName {
+            case "정서적 불안":
+                return .emotional
+            case "신체적 긴장":
+                return .physical
+            default:
+                return .emotional
+            }
+        }
 }

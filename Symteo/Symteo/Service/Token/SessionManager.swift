@@ -85,6 +85,7 @@ final class SessionManager: ObservableObject {
         decideNextFlow()
     }
 
+    @MainActor
     func logout() {
         _ = keychain.deleteToken()
         accessToken = nil
@@ -120,4 +121,5 @@ final class SessionManager: ObservableObject {
 
         flow = .home
     }
+
 }

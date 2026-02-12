@@ -15,7 +15,7 @@ struct OverallResultSection: View {
         HStack(spacing: 12) {
 
             //  상태 아이콘
-            Image(result.status.resultImage)
+            Image(result.level.resultImage)
                 .resizable()
                 .frame(width: 48, height: 48)
 
@@ -28,13 +28,13 @@ struct OverallResultSection: View {
                 Text("종합결과:")
                     .font(.PretendardSemiBold(size: 16))
                     .foregroundStyle(Color(hex: "000000"))
-                Text(result.status.title)
+                Text(result.level.title)
                     .font(.PretendardSemiBold(size: 16))
-                    .foregroundStyle(result.status.titleColor)
+                    .foregroundStyle(result.level.titleColor)
             }
 
                 /// 영문 서브 타이틀
-                Text("(\(result.status.subtitle))")
+                Text("(\(result.level.subtitle))")
                     .font(.PretendardRegular(size: 14))
                     .foregroundStyle(.gray700)
             }
@@ -42,18 +42,9 @@ struct OverallResultSection: View {
             Spacer()
         }
         .padding(16)
-        .background(result.status.backgroundColor)
+        .background(result.level.backgroundColor)
         .cornerRadius(16)
     }
 }
 
-#Preview {
-    OverallResultSection(
-        result: OverallResult(
-            phqScore: 9, gadScore: 9, averageScore: 9, status: .safe
-        )
-    )
-    .padding()
-    .background(Color.white)
-}
 

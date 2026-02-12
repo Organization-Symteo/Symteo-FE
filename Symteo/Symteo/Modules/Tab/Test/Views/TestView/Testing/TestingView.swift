@@ -23,8 +23,8 @@ struct SurveyView: View {
     @State private var modalConfirmAction: () -> Void = {}
     @State private var modalCancelAction: () -> Void = {}
 
-    init(kind: SurveyKind) {
-        _viewModel = StateObject(wrappedValue: SurveyViewModel(kind: kind, service: TestService()))
+    init(kind: SurveyKind, container: DIContainer) {
+        _viewModel = StateObject(wrappedValue: SurveyViewModel(kind: kind, service: TestService(), container: container))
     }
 
     var body: some View {
@@ -226,8 +226,9 @@ struct SurveyView: View {
 }
 
 
-
+/*
 #Preview {
     SurveyView(kind:.stress)
 }
 
+*/

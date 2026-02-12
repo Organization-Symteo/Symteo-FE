@@ -7,16 +7,21 @@
 import SwiftUI
 
 struct StressReportView: View {
-    @Environment(\.dismiss) var dismiss
     @State private var currentPage = 0
-  //  @ObservedObject var viewModel: StressReportViewModel
+    @StateObject var viewModel: StressReportViewModel
+    @EnvironmentObject var container: DIContainer
+    @Environment(\.dismiss) var dismiss
 
-    //  예시 배터리 결과
-    let batteryResult = BatteryResult(
-        percent: 15,
-        status: .veryLow
-    )
-
+    // MARK: -initializer
+    init(reportId: Int, container: DIContainer) {
+          _viewModel = StateObject(
+              wrappedValue: StressReportViewModel(
+                  reportId: reportId,
+                  container: container
+              )
+          )
+      }
+ 
     var body: some View {
         ZStack(alignment: .top) {
 
@@ -40,10 +45,10 @@ struct StressReportView: View {
                         .ignoresSafeArea(edges: .top)
 
                     // 네비게이션 바
-                    ReportNavigationBar()
+                    ReportNavigationBar(userName: "따오기")
 
                     //  배터리 섹션
-                    BatterySection(result: batteryResult)
+                    BatterySection(percent: viewModel.batteryPercent)
                         .padding(.horizontal, 20)
                         .offset(y: 70)   //  ReportNavigationBar와 겹침
                 }
@@ -54,10 +59,10 @@ struct StressReportView: View {
                     VStack(spacing: 20) {
 
                         TabView(selection: $currentPage) {
-                            StressResultCard(viewModel: .preview)
+                            StressResultCard(userName: "따오기", viewModel: viewModel)
                                 .tag(0)
 
-                            BurnoutResultCard()
+                            BurnoutResultCard(viewModel: viewModel)
                                 .tag(1)
                         }
                         .tabViewStyle(.page(indexDisplayMode: .never))
@@ -66,13 +71,13 @@ struct StressReportView: View {
                         customIndicator
                         
                         PrescriptionSection()
-                           // .cardStyle()
+
         
                         MainBottomButton(
                             text: "다른 검사하러 가기",
                             isDisabled: false,
                             action: {
-                                print("다른 검사하러 가기")
+                                dismiss()
                             }
                         )
                     }
@@ -81,9 +86,14 @@ struct StressReportView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            viewModel.getStressReport()
+        }
     }
 
-    // MARK: - Indicator
+    
+    
+    // MARK: - 커스텀 인디케이터 
     private var customIndicator: some View {
         HStack(spacing: 8) {
             Spacer()
@@ -107,6 +117,3 @@ struct StressReportView: View {
     }
 }
 
-#Preview {
-    StressReportView()
-}
