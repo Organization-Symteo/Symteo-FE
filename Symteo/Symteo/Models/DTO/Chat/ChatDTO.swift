@@ -7,20 +7,39 @@
 
 import Foundation
 
-/// 챗봇 채팅 요청 구조체
-struct ChatRequest: Codable {
-    let content: String
+
+
+// MARK: - Setting
+
+struct CounselSettingRequestDTO: Encodable {
+    let atmosphere: String?
+    let supportStyle: String?
+    let roleCounselor: String?
+    let answerFormat: String?
+    let tone: String?
 }
 
-/// 챗봇 채팅장 조회 응답 구조체
-struct ChatResponse: Codable {
-    let content: String
-    let createdAt: String
-    let isMember: Bool
+// setting 성공 응답이 문자열이라 별도 처리 (requestPlainString)
+
+// MARK: - Send Message (POST)
+
+struct CounselSendResultDTO: Decodable {
+    let userId: Int
+    let chatRoomId: Int
+    let userRequest: String
+    let AiResponse: String
 }
 
-struct ChatResult: Codable {
-    let hasNext: Bool
-    let nextCursor: String?
-    let chatsDetatilList: [ChatResponse]
+// MARK: - End Chat (PATCH)
+
+struct CounselEndRequestDTO: Encodable {
+    let chatRoomId: Int
+}
+
+struct CounselEndResultDTO: Decodable {
+    let userId: Int
+    let chatRoomId: Int
+    let chatSummary: String
+    let userSummary: String
+    let aiSummary: String
 }
