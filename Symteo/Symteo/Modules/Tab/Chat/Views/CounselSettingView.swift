@@ -10,6 +10,8 @@ import SwiftUI
 
 struct CounselSettingView: View {
     @StateObject private var viewModel = CounselSettingViewModel()
+    @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var sessionManager: SessionManager
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -85,7 +87,16 @@ struct CounselSettingView: View {
     private var saveButton: some View {
         Button(action: {
             viewModel.saveSettings()
-            dismiss()
+                        sessionManager.applyCounselorConfigured()
+                        
+
+                        if sessionManager.flow == .home {
+                            dismiss()
+                        } else {
+                            container.navigationRouter.push(.basetab)
+                            print("초기 설정 완료: 홈으로 전환")
+                        }
+            
         }) {
             Text("저장")
                 .font(.PretendardMedium(size: 16))

@@ -10,5 +10,5 @@ import Foundation
 enum LoginDestination: Hashable {
     case permit
     case policy(num: Int)
-    case profileInfo
+    case nickname
 }

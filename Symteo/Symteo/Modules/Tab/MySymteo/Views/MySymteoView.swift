@@ -75,6 +75,8 @@ struct MySymteoView: View {
                     ServicePolicyView()
 
 
+                case .counselsetting:
+                    CounselSettingView()
                 }
             }
         }
