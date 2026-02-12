@@ -5,6 +5,8 @@
 //  Created by 박병선 on 1/7/26.
 //
 import SwiftUI
+import Combine
+
 
 // 홈 화면 코드입니다. 
 struct HomeView: View {
@@ -203,6 +205,7 @@ struct HomeView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(height: 180)
                 
+
                 /// 인디케이터
                 HStack(spacing: 8) {
                     Spacer()
@@ -214,6 +217,7 @@ struct HomeView: View {
                     Spacer()
                 }
                 .padding(.top, 8)
+
             }
         }
         

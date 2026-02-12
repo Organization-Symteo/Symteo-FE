@@ -11,7 +11,6 @@ protocol APITargetType: TargetType {}
 /*
 extension APITargetType {
 
-    
     var headers: [String: String]? {
         switch task {
         case .requestJSONEncodable, .requestParameters:
@@ -22,11 +21,10 @@ extension APITargetType {
             return nil
         }
     }
-    
+
     var validationType: ValidationType { .none }
          
 }
-
 */
 
 // 임시
@@ -40,3 +38,4 @@ extension APITargetType {
     
     var validationType: ValidationType { .none }
 }
+

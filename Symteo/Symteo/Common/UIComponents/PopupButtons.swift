@@ -15,7 +15,7 @@ struct PopupConfirmButton: View {
         Button(action: action) {
             Text(text)
                 .font(.PretendardSemiBold(size: 16))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 44, maxHeight: 56)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
@@ -34,7 +34,7 @@ struct PopupCancelButton: View {
         Button(action: action) {
             Text(text)
                 .font(.PretendardSemiBold(size: 16))
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
                 .frame(maxWidth: .infinity, minHeight: 44, maxHeight: 56)
                 .background(
                     RoundedRectangle(cornerRadius: 12)

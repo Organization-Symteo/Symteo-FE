@@ -4,10 +4,12 @@
 //
 //  Created by 박병선 on 1/29/26.
 //
+
 import Foundation
 import Moya
+ 
+final class TokenProvider: TokenProviding {
 
-class TokenProvider: TokenProviding {
     
     private let userSession = "appNameUser"
     private let keyChain = KeychainService.shared
@@ -16,17 +18,12 @@ class TokenProvider: TokenProviding {
 
 
     /*
+
     var accessToken: String? {
-        get {
-            guard let userInfo = keyChain.loadToken() else { return nil }
-            return userInfo.accessToken
-        }
-        set {
-            guard var userInfo = keyChain.loadToken() else { return }
-            userInfo.accessToken = newValue ?? "토큰 정보 없음"
-            keyChain.saveToken(userInfo)
-        }
+        get { keyChain.loadToken()?.accessToken }
+        set { upsertTokens(accessToken: newValue, refreshToken: nil) }
     }
+
     */
     
     //임시
@@ -50,19 +47,34 @@ class TokenProvider: TokenProviding {
     }
 
     
-    
+
     var refreshToken: String? {
-        get {
-            guard let userInfo = keyChain.loadToken() else { return nil }
-            return userInfo.refreshToken
-        }
-        
-        set {
-            guard var userInfo = keyChain.loadToken() else { return }
-            userInfo.refreshToken = newValue ?? "토큰 정보 없음"
-            keyChain.saveToken(userInfo)
+        get { keyChain.loadToken()?.refreshToken }
+        set { upsertTokens(accessToken: nil, refreshToken: newValue) }
+    }
+
+    func setTokens(accessToken: String, refreshToken: String) {
+        upsertTokens(accessToken: accessToken, refreshToken: refreshToken)
+    }
+
+    func clearTokens() {
+        _ = keyChain.deleteToken()
+    }
+
+    private func upsertTokens(accessToken: String?, refreshToken: String?) {
+        if var tokenInfo = keyChain.loadToken() {
+            if let accessToken { tokenInfo.accessToken = accessToken }
+            if let refreshToken { tokenInfo.refreshToken = refreshToken }
+            keyChain.saveToken(tokenInfo)
+        } else {
+            let tokenInfo = TokenInfo(
+                accessToken: accessToken ?? "",
+                refreshToken: refreshToken ?? ""
+            )
+            keyChain.saveToken(tokenInfo)
         }
     }
+
      
     
 /*
@@ -104,5 +116,6 @@ class TokenProvider: TokenProviding {
         }
     }
     */
+
 
 }

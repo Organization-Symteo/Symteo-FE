@@ -15,7 +15,7 @@ struct MissionArrivedView: View {
             Text("오늘의 미션이 도착!\n지금 바로 열어보세요")
                 .font(.PretendardMedium(size: 22))
                 .multilineTextAlignment(.center)
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
 
             Button{
                 viewModel.openMission()

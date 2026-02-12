@@ -20,7 +20,6 @@ struct TermsBottomSheet: View {
 
                     Divider()
 
-                    // TODO: 실제 약관 내용으로 교체
                     Text(dummyText(for: type))
                         .font(.PretendardMedium(size: 14))
                         .foregroundStyle(.gray700)

@@ -27,7 +27,7 @@ struct MissionIntroView: View {
 
                 Text("오늘의 미션")
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray600)
+                    .foregroundStyle(.gray600)
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)
@@ -73,12 +73,14 @@ struct MissionIntroView: View {
                                 .font(.system(size: 24, weight: .medium))
                                 .foregroundColor(.gray)
                         }
+
                         .padding(.bottom, 30)
                         
                         Text("(\(viewModel.refreshCount)회)")
                             .font(.OwnGlyphPDH(size: 12))
                             .foregroundColor(.gray700)
                             .padding(.bottom)
+
                     }
                 }
                 .frame(width: 225, height: 272)

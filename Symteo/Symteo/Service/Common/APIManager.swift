@@ -1,9 +1,10 @@
 //
-//  APIMaager.swift
-//  Symteo
+//  APIManager.swift
+//  Plantory
 //
-//  Created by 박병선 on 1/29/26.
+//  Created by 주민영 on 7/2/25.
 //
+
 import Foundation
 import Moya
 import Alamofire

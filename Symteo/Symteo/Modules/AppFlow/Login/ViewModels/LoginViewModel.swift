@@ -2,68 +2,66 @@
 //  LoginViewModel.swift
 //  Symteo
 //
-//  Created by 김지우 on 1/12/26.
-//
 
 import Foundation
 import Combine
 import SwiftUI
-
-enum SocialProvider: CaseIterable, Identifiable {
-    
-    case kakao
-    case naver
-    case google
-
-    var id: String { title }
-
-    var title: String {
-        switch self {
-        case .kakao: return "카카오로 시작하기"
-        case .naver: return "네이버로 시작하기"
-        case .google: return "구글로 시작하기"
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .kakao: return "kakaologo"
-        case .naver: return "naverlogo"
-        case .google: return "googlelogo"
-        }
-    }
-}
-
 @MainActor
 final class LoginViewModel: ObservableObject {
-
-
+    private let sessionManager: SessionManager
+    private let loginRouter: LoginRouter
+    private let authService: AuthServicing
+    private let kakaoLoginManager: KakaoLoginManager
+    private var cancellables = Set<AnyCancellable>()
     
     let providers: [SocialProvider] = SocialProvider.allCases
 
+    init(
+        sessionManager: SessionManager,
+        loginRouter: LoginRouter,
+        authService: AuthServicing = AuthService(),
+        kakaoLoginManager: KakaoLoginManager = KakaoLoginManager()
+    ) {
+        self.sessionManager = sessionManager
+        self.loginRouter = loginRouter
+        self.authService = authService
+        self.kakaoLoginManager = kakaoLoginManager
+    }
+
     func tapLogin(provider: SocialProvider, onSuccess: @escaping () -> Void) {
-        switch provider {
-        case .kakao:
+        if provider == .kakao {
             loginWithKakao(onSuccess: onSuccess)
-        case .naver:
-            loginWithNaver()
-        case .google:
-            loginWithGoogle()
+        } else {
+            onSuccess()
         }
     }
 
     private func loginWithKakao(onSuccess: @escaping () -> Void) {
-            print("카카오 로그인(시연용)")
-            onSuccess()
-    }
-
-    private func loginWithNaver() {
-        print("네이버 로그인")
-        // TODO: Naver SDK
-    }
-
-    private func loginWithGoogle() {
-        print("구글 로그인")
-        // TODO: Google SDK
+        Task {
+            do {
+                let accessToken = try await kakaoLoginManager.loginAccessToken()
+                authService.login(provider: .kakao, token: accessToken)
+                    .receive(on: DispatchQueue.main)
+                    .sink { _ in } receiveValue: { [weak self] result in
+                        // SessionManager 상태 업데이트 -> RootView의 flow 전환 트리거
+                        self?.sessionManager.applySocialLoginResult(
+                            accessToken: result.accessToken,
+                            refreshToken: result.refreshToken,
+                            userId: result.userId,
+                            isRegistered: result.isRegistered,
+                            nickname: result.nickname
+                        )
+                        
+                        if result.isRegistered {
+                            self?.loginRouter.push(.nickname)
+                        } else {
+                            onSuccess()
+                        }
+                    }
+                    .store(in: &cancellables)
+            } catch {
+                print("로그인 실패: \(error)")
+            }
+        }
     }
 }

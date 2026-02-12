@@ -5,11 +5,13 @@
 //  Created by 박병선 on 1/7/26.
 //
 import SwiftUI
+
 // 미션을 진행 상태별로 분기한 화면입니다.
 struct MissionView: View {
 
     @EnvironmentObject var container: DIContainer
     @StateObject private var viewModel: MissionViewModel
+
     
     init(
         container: DIContainer
@@ -23,6 +25,7 @@ struct MissionView: View {
             contentView
         }
         .navigationBarBackButtonHidden(true)
+
     }
 
     @ViewBuilder

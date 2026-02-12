@@ -106,7 +106,7 @@ struct MissionWritingView: View {
             }
             Text("오늘의 미션")
                 .font(.PretendardRegular(size: 14))
-                .foregroundColor(.gray600)
+                .foregroundStyle(.gray600)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -114,6 +114,7 @@ struct MissionWritingView: View {
 
     private var missionHeader: some View {
         VStack(alignment: .leading, spacing: 16) {
+
             Text(viewModel.timeRemainingString())
                 .font(.PretendardMedium(size: 12))
 
@@ -160,11 +161,13 @@ struct MissionWritingView: View {
             Text("메모")
                 .font(.PretendardSemiBold(size: 14))
 
+
             TextEditor(text: $viewModel.memo)
                 .frame(height: 150)
                 .onChange(of: viewModel.memo) { _ in
                     viewModel.saveDraftIfNeeded(text: viewModel.memo)
                 }
+
         }
     }
 
@@ -172,7 +175,9 @@ struct MissionWritingView: View {
         Button(action: { showPicker = true }) {
             VStack {
                 Image(systemName: "plus")
+                
                 Text("\(viewModel.selectedImages.count) / 3장")
+
             }
             .frame(width: 100, height: 100)
         }

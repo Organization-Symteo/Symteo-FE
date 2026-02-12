@@ -7,15 +7,15 @@
 
 enum TabItem: String, CaseIterable{
     
-    case home, chat, report, test, profile
+    case home, test, report, chat, profile
 
 
     var title: String {
             switch self {
             case .home: return "홈"
-            case .chat: return "진단"
+            case .test: return "진단"
             case .report: return "리포트"
-            case .test: return "맞춤 상담"
+            case .chat: return "맞춤 상담"
             case .profile: return "My 심터"
 
             }
@@ -24,9 +24,9 @@ enum TabItem: String, CaseIterable{
     var systemIcon: String{
         switch self{
         case .home: return "home"
-        case .chat: return "test"
+        case .test: return "test"
         case .report: return "report"
-        case .test: return "chat"
+        case .chat: return "chat"
         case .profile: return "profile"
             
         }
@@ -34,11 +34,11 @@ enum TabItem: String, CaseIterable{
     
     var systemIconFill: String{
         switch self{
-        case .home: return "home_fill"
-        case .chat: return "test_fill"
-        case .report: return "report_fill"
-        case .test: return "chat_fill"
-        case .profile: return "profile_fill"
+        case .home: return "homefill"
+        case .test: return "testfill"
+        case .report: return "reportfill"
+        case .chat: return "chatfill"
+        case .profile: return "profilefill"
 
         }
     }

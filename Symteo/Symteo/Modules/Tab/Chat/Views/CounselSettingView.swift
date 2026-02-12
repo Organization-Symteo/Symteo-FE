@@ -10,6 +10,8 @@ import SwiftUI
 
 struct CounselSettingView: View {
     @StateObject private var viewModel = CounselSettingViewModel()
+    @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var sessionManager: SessionManager
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -21,7 +23,7 @@ struct CounselSettingView: View {
                     
                     Text("내게 맞는 상담 스타일을 설정해보세요")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.gray400)
+                        .foregroundStyle(.gray400)
                         .padding(.top, 10)
                     
                     ForEach(viewModel.sections) { section in
@@ -53,7 +55,7 @@ struct CounselSettingView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
             }
             .padding(.trailing, 4)
             
@@ -62,7 +64,7 @@ struct CounselSettingView: View {
             HStack{
                 Text("맞춤")
                     .font(.PretendardBold(size: 11))
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
                     .background(Color.green400)
@@ -70,7 +72,7 @@ struct CounselSettingView: View {
                 
                 Text("상담사 설정")
                     .font(.PretendardMedium(size: 16))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
             }
             .frame(maxWidth: .infinity)
 
@@ -79,17 +81,26 @@ struct CounselSettingView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .overlay(Rectangle().frame(height: 1).foregroundColor(.gray100), alignment: .bottom)
+        .overlay(Rectangle().frame(height: 1).foregroundStyle(.gray100), alignment: .bottom)
     }
     
     private var saveButton: some View {
         Button(action: {
             viewModel.saveSettings()
-            dismiss()
+                        sessionManager.applyCounselorConfigured()
+                        
+
+                        if sessionManager.flow == .home {
+                            dismiss()
+                        } else {
+                            container.navigationRouter.push(.basetab)
+                            print("초기 설정 완료: 홈으로 전환")
+                        }
+            
         }) {
             Text("저장")
                 .font(.PretendardMedium(size: 16))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 16)
                 .background(Color.green400)
@@ -111,7 +122,7 @@ struct CounselSectionComponent: View {
             // 섹션 제목
             Text(section.title)
                 .font(.PretendardSemiBold(size: 14))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
             
             // 옵션 버튼들 (가로 스크롤/나열)
             ScrollView(.horizontal, showsIndicators: false) {
