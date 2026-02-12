@@ -24,7 +24,15 @@ enum NavigationDestination: Equatable, Hashable{
     case privacy
     case service
     
+
+    
+    // 홈 & 미션
+    case home
+    case mission
+    
+
     case counselsetting
+
 
 
 

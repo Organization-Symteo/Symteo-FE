@@ -46,6 +46,13 @@ struct NavigationRoutingView: View {
                     case .service:
                         ServicePolicyView()
 
+                        
+                    case .home:
+                        HomeView(container: container)
+                    case .mission:
+                        MissionView(container: container)
+
+
 
                     case .counselsetting:
                         CounselSettingView()
