@@ -62,6 +62,7 @@ struct SymptomCluster: Decodable {
 struct AIInsightCard: Decodable {
     let id: String                       // 인사이트 식별자 (아이콘/이미지 매핑용)
     let title: String                    // 카드에 표시될 제목 텍스트
+    let subtitle: String                 // 설명
 }
 
 

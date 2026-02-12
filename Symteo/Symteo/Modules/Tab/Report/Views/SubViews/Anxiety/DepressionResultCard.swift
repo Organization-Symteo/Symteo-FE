@@ -78,7 +78,7 @@ private struct DepressionDescriptionSection: View {
     let description: String?
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 10)  {
 
             HStack {
                 Text("현재 우울 상태는")
@@ -98,6 +98,9 @@ private struct DepressionDescriptionSection: View {
                 Text(description)
                     .font(.PretendardRegular(size: 12))
                     .foregroundStyle(.gray900)
+                    //.multilineTextAlignment(.leading)  // ⭐️ 추가
+                   // .frame(maxWidth: .infinity, alignment: .leading) // ⭐️ 추가
+                    //.fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding()

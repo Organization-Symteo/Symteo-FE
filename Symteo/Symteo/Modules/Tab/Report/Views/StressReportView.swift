@@ -21,15 +21,7 @@ struct StressReportView: View {
               )
           )
       }
-    
-    /*
-    //  수정 전 예시 배터리 결과
-    let batteryResult = BatteryResult(
-        percent: 15,
-        status: .veryLow
-    )
-     */
-
+ 
     var body: some View {
         ZStack(alignment: .top) {
 
@@ -56,7 +48,7 @@ struct StressReportView: View {
                     ReportNavigationBar(userName: "따오기")
 
                     //  배터리 섹션
-                    BatterySection(result: viewModel.batteryResult)
+                    BatterySection(percent: viewModel.batteryPercent)
                         .padding(.horizontal, 20)
                         .offset(y: 70)   //  ReportNavigationBar와 겹침
                 }
@@ -94,8 +86,8 @@ struct StressReportView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .task {
-            viewModel.getStressReport() // 스트레스 리포트 클릭하자마자 함수 호출
+        .onAppear {
+            viewModel.getStressReport()
         }
     }
 

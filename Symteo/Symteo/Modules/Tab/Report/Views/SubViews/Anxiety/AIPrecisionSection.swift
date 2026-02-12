@@ -29,7 +29,7 @@ struct AIPrecisionSection: View {
                 ForEach(items, id: \.id) { item in
                     PrecisionItemView(
                         title: item.title,
-                        subtitle: "AI가 응답 패턴을 분석했어요"
+                        subtitle: item.subtitle
                     )
                 }
             }

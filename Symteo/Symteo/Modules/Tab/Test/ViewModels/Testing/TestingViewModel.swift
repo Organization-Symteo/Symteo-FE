@@ -242,6 +242,10 @@ final class SurveyViewModel: ObservableObject {
     /// - isSubmitting으로 로딩 상태 관리
     @MainActor
     func submit() {
+        
+        // 디버깅 1
+        print("현재 kind:", kind)
+        print("testTypeString:", kind.testTypeString)
 
         // 상태 초기화 (이전 에러/ID 제거)
         submitErrorMessage = nil
@@ -265,9 +269,13 @@ final class SurveyViewModel: ObservableObject {
                     return Fail(error: APIError.unknown).eraseToAnyPublisher()
                 }
 
+                // 🔥 디버깅 2
+                print("생성된 diagnoseId:", res.diagnoseId)
+                print("현재 kind (flatMap 안):", self.kind)
+                
                 //  diagnoseId 저장
                 self.createdDiagnoseId = res.diagnoseId
-
+            
                 //  검사 종류에 따라 다른 리포트 생성 API 호출
                 switch self.kind {
 
@@ -284,6 +292,7 @@ final class SurveyViewModel: ObservableObject {
                         .eraseToAnyPublisher()
 
                 case .attachment:
+                    print("👉 attachment 리포트 생성 시도")
                     return self.container.useCaseService.reportService
                         .createAttachmentReport(diagnoseId: res.diagnoseId)
                         .map { $0.reportId }
@@ -306,8 +315,19 @@ final class SurveyViewModel: ObservableObject {
                 }
 
             } receiveValue: { [weak self] reportId in
-                // 리포트 생성 성공 시 reportId 저장
-                self?.createdReportId = reportId
+                guard let self else { return }
+
+                self.createdReportId = reportId
+
+                let key = "reportId_\(self.kind.testTypeString)"
+                UserDefaults.standard.set(reportId, forKey: key)
+                
+                // 디버그용 print
+                    print(" 리포트 생성 성공")
+                    print("저장 key:", key)
+                    print("저장 reportId:", reportId)
+                    print("UserDefaults 저장 확인:",
+                          UserDefaults.standard.integer(forKey: key))
             }
 
             .store(in: &cancellables)

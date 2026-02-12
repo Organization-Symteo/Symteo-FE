@@ -12,7 +12,7 @@ struct DepressionResult {
     let clusters: [PHQ9ClusterResult]
     let description: String?
 }
-
+/*
 /// 프리뷰용 더미데이터
 extension DepressionResult {
 
@@ -42,3 +42,4 @@ extension DepressionResult {
         description: "현재 우울 상태는 중증도 입니다.현재 우울 상태는 중증도 입니다. 현재 우울 상태는 중증도 입니다. 현재 우울 상태는 중증도 입니다. 현재 우울 상태는 중증도 입니다. "
     )
 }
+*/

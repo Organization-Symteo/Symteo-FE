@@ -6,8 +6,7 @@
 //
 import SwiftUI
 
-
-
+// AttachmentView에서 애착 분석결과를 나타낸 하위뷰입니다.
  struct AttachmentAnalysisCard: View {
      var body: some View {
              VStack(spacing: 16) {
@@ -74,7 +73,6 @@ struct MyStrengthsSection: View {
         HStack(spacing: 12) {
             StrengthCard(text: "섬세한 감수성으로 상대의 감정과 필요를 깊이 있게 읽어내는 따뜻한 능력을 가졌어요")
                
-            
             StrengthCard(text: "섬세한 감수성으로 상대의 감정과 필요를 깊이 있게 읽어내는 따뜻한 능력을 가졌어요")
                 
         }

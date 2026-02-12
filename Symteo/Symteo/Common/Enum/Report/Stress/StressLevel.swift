@@ -15,20 +15,15 @@ enum StressLevel {
 
     // MARK: - 서버 문자열 → enum 변환
     static func from(text: String) -> StressLevel {
-        switch text {
-        case "양호":
-            return .good
-        case "주의":
-            return .caution
-        case "위험":
-            return .danger
-        case "매우 위험":
-            return .critical
-        default:
-            return .caution   // 방어 코드
+            switch text {
+            case "양호": return .good
+            case "주의": return .caution
+            case "위험": return .danger
+            case "매우 위험": return .critical
+            default: return .caution
+            }
         }
-    }
-
+    
     // MARK: - 점수 → 등급 변환 (보조 / fallback)
     static func from(score: Int) -> StressLevel {
         switch score {

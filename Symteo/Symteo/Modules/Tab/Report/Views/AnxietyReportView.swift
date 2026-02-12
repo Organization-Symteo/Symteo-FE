@@ -56,19 +56,19 @@ struct AnxietyReportView: View {
                 // 스크롤 영역
                 ScrollView {
                     VStack(spacing: 20) {
+                            TabView(selection: $currentPage) {
+                                /// 우울 결과 카드
+                                DepressionResultCard(data: viewModel.depressionResult)
+                                    .tag(0)
+                                
+                                /// 불안 결과 카드
+                                AnxietyResultCard(data: viewModel.anxietyResult)
+                                    .tag(1)
+                            }
+                            .tabViewStyle(.page(indexDisplayMode: .never))
+                            .frame(height: UIScreen.main.bounds.height * 0.75)
 
-                        TabView(selection: $currentPage) {
-                            /// 우울 결과 카드
-                            DepressionResultCard(data: viewModel.depressionResult)
-                                .tag(0)
-
-                            /// 불안 결과 카드
-                            AnxietyResultCard(data: viewModel.anxietyResult)
-                                .tag(1)
-                        }
-                        .tabViewStyle(.page(indexDisplayMode: .never))
-                        .frame(height: UIScreen.main.bounds.height * 0.75)
-
+                        
                         /// 커스텀 인디케이터
                         customIndicator
                         
@@ -98,7 +98,9 @@ struct AnxietyReportView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            viewModel.getAnxietyDepressionReport()
+            if viewModel.summary == nil {
+                   viewModel.getAnxietyDepressionReport()
+               }
         }
     }
 

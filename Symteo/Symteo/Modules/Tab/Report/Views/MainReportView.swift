@@ -82,7 +82,10 @@ struct MainReportView: View {
             }
         } // ZStack 끝
         .animation(.spring(), value: viewModel.isShowingNoReportPopUp)
-    } 
+        .onAppear {
+            viewModel.fetchReportStatusFromLocal()
+        }
+    }
     
     // MARK: - 1. 헤더
     private var headerSection: some View {

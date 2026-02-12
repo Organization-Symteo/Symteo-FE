@@ -115,20 +115,19 @@ final class AnxietyReportViewModel: ObservableObject {
 
                     // 4. 클러스터 (서버 → UI 모델)
                     self.phqClusters = dto.phq9.clusters.map {
-                        PHQ9ClusterResult(
-                            type: PHQ9ClusterType.from(serverName: $0.name),
-                            rawScore: 0,
-                            maxScore: 1,
-                            ratio: $0.scoreRatio
-                        )
-                    }
+                            PHQ9ClusterResult(
+                                type: PHQ9ClusterType.from(serverName: $0.name),
+                                ratio: $0.scoreRatio,
+                                colorHex: $0.color
+                            )
+                        }
+                    
 
                     self.gadClusters = dto.gad7.clusters.map {
                         GAD7ClusterResult(
                             type: GAD7ClusterType.from(serverName: $0.name),
-                            rawScore: 0,
-                            maxScore: 1,
-                            ratio: $0.scoreRatio
+                            ratio: $0.scoreRatio,
+                            colorHex: $0.color
                         )
                     }
 
@@ -136,7 +135,7 @@ final class AnxietyReportViewModel: ObservableObject {
                     self.isEmergency = dto.emergencyFlag
                     
                     // 6. ai 카드
-                      self.aiInsightCards = dto.aiInsightCards
+                    self.aiInsightCards = dto.aiInsightCards
                 }
             )
             .store(in: &cancellables)

@@ -33,13 +33,13 @@ private struct BurnoutAnalysisSection: View {
     @ObservedObject var viewModel: StressReportViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 10) {
 
             Text("번아웃의 3가지 신호 (상세분석)")
                 .font(.PretendardSemiBold(size: 16))
                 .foregroundStyle(.gray900)
 
-            HStack(spacing: 12) {
+            HStack(spacing: 10) {
 
                 // 정서적 소진
                 BurnoutSignalItem(
@@ -138,22 +138,13 @@ private struct BurnoutAIInsightSection: View {
     let insights: [String]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 5) {
             
             // 타이틀(고정)
             Text("심터 AI의 통찰: 왜 지금 힘들까?")
                 .font(.PretendardSemiBold(size: 16))
                 .foregroundStyle(.gray900)
-            
-            /* api 연결 전 더미데이터
-             // 인사이트 1
-             AIInsightRow(
-             title: "PSS의 과부하와 번아웃의 정서적 소진이 너무 높습니다.", description:  "일상적이고 반복적인 업무에서 에너지가 고갈된 ‘만성적 소진’의 신호입니다.")
-             
-             // 인사이트 2
-             AIInsightRow(
-             title: "지난 달보다 통제력 점수가 급격히 하락했습니다.", description:  "최근 갑작스러운 환경 변화가 있었는지 되돌아 보세요.")
-             */
+
             
             ForEach(insights.prefix(3), id: \.self) { insight in
                 AIInsightRow(text: insight)

@@ -40,7 +40,6 @@ extension ReportRouter: TargetType {
     
     var path: String {
         switch self {
-        
             /// 생성
         case .createDepressionAnxietyReport(let diagnoseId):
             return "/api/v1/reports/diagnose/\(diagnoseId)/depression-anxiety"
@@ -52,13 +51,13 @@ extension ReportRouter: TargetType {
             
             /// 조회
         case .getDepressionAnxietyReport(let reportId):
-            return "/api/v1/reports/\(reportId)/depression-anxiety/\(reportId)"// /api/v1/reports/{reportId}/depression-anxiety/{reportId}
+            return "/api/v1/reports/depression-anxiety/\(reportId)"
 
         case .getStressReport(let reportId):
-            return "/api/v1/reports/\(reportId)/stress-burnout/\(reportId)"
-            
+            return "/api/v1/reports/stress-burnout/\(reportId)"
+
         case .getAttachmentReport(let reportId):
-                   return "/api/v1/reports/\(reportId)/attachments"
+            return "/api/v1/reports/attachment/\(reportId)"
         }
     }
     

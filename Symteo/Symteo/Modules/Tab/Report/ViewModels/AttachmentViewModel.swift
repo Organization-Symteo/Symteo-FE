@@ -35,22 +35,23 @@ final class AttachmentReportViewModel: ObservableObject {
     }
 
 
-    
 
-       // MARK: - Header
-       var userName: String {
+// MARK: - Header
+
+    var userName: String {
            report?.userName ?? ""
-       }
+        }
 
        var attachmentType: AttachmentType {
            AttachmentType.from(serverValue: report?.attachmentType)
        }
+    
     var description: String {
             report?.aiFullContent ?? ""
         }
 
        // MARK: - Bar Results (❗ 서버값 그대로)
-       var anxietyResult: AttachmentBarResult? {
+       var anxietyResult: AttachmentBarResult? {// 애착 불안 결과
            guard let anxiety = report?.anxiety else { return nil }
 
            return AttachmentBarResult(

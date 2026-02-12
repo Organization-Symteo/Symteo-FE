@@ -17,10 +17,7 @@ struct StressResultCard: View {
 
             // 스트레스 게이지
             StressGaugeSection(
-                score: viewModel.pssScore,
-                level: viewModel.stressLevel,
-                ratio: viewModel.stressRatio,
-                fillColor: viewModel.stressColor
+                level: viewModel.stressLevel
             )
             .reportCardStyle()
 
@@ -46,10 +43,8 @@ struct StressResultCard: View {
 // MARK: -SubViews
 private struct StressGaugeSection: View {
 
-    let score: Int
     let level: StressLevel
-    let ratio: CGFloat
-    let fillColor: Color
+  
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -69,7 +64,7 @@ private struct StressGaugeSection: View {
                         .font(.PretendardSemiBold(size: 16))
                         .foregroundStyle(level.color)
 
-                    Text("(\(level.rangeText))")
+                    Text("(\(level.rangeText))") // 점수
                         .font(.PretendardRegular(size: 12))
                         .foregroundStyle(.gray700)
                 }
@@ -87,7 +82,7 @@ private struct StressDescriptionSection: View {
 
     let userName: String
     let level: StressLevel
-    let description: String
+    let description: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -107,10 +102,11 @@ private struct StressDescriptionSection: View {
                 
             }
             
-            Text(description)
-                .font(.PretendardRegular(size: 13))
-                .foregroundStyle(.gray700)
-                .lineSpacing(4)
+            if let description {
+                Text(description)
+                    .font(.PretendardRegular(size: 12))
+                    .foregroundStyle(.gray900)
+            }
         }
     }
 }
@@ -172,6 +168,7 @@ private struct StressBalanceRow: View {
                 Text("(\(result.levelText))")
                     .font(.PretendardSemiBold(size: 13))
                     .foregroundStyle(result.barColor)
+                
             }
             .frame(width: 80, alignment: .leading) // 2. 프로그레스바 시작점 정렬을 위한 고정폭
             
@@ -189,11 +186,10 @@ private struct StressBalanceRow: View {
                 Text(result.description)
                     .font(.PretendardRegular(size: 13))
                     .foregroundStyle(Color.gray700)
-                    .lineLimit(1)                // 한 줄로 제한
+                    .lineLimit(3)                // 한 줄로 제한
                     .fixedSize(horizontal: false, vertical: true) // 텍스트가 수직으로 늘어나는 것을 방지
-            
-                        .allowsTightening(true)      // 자간을 살짝 좁혀서 최대한 다 보여주려 노력함
-                        .layoutPriority(1)           // 다른 요소보다 텍스트 레이아웃 우선순위를 높임
+                    .allowsTightening(true)      // 자간을 살짝 좁혀서 최대한 다 보여주려 노력함
+                    .layoutPriority(1)           // 다른 요소보다 텍스트 레이아웃 우선순위를 높임
             }
         }
         .padding(.vertical, 8)

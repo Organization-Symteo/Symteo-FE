@@ -9,7 +9,7 @@ import Foundation
 enum TestType: String, Codable {
     case stressBurnoutComplex = "STRESS_BURNOUT_COMPLEX"
     case depressionAnxietyComplex = "DEPRESSION_ANXIETY_COMPLEX"
-    case attachmentTest = "ATTACHMENT_TEST"
+    case attachmentTest = "ATTACHMENT"
 }
 
 struct CreateTestRequestDTO: Encodable {

@@ -21,12 +21,6 @@ protocol ReportServiceProtocol {
     func createAttachmentReport(diagnoseId: Int) -> AnyPublisher<AttachmentReportResult, APIError>
      
     
-    /*
-    /// 리포트 생성 (reportId만 반환하도록 통일)
-      func createDepressionAnxietyReport(diagnoseId: Int) -> AnyPublisher<Int, APIError>
-      func createStressReport(diagnoseId: Int) -> AnyPublisher<Int, APIError>
-      func createAttachmentReport(diagnoseId: Int) -> AnyPublisher<Int, APIError>
-    */
     
     /// 우울·불안 리포트 상세 조회
     func getDepressionAnxietyReport(reportId: Int) -> AnyPublisher<DepressionAnxietyReportDetail, APIError>
@@ -52,34 +46,7 @@ final class ReportService: ReportServiceProtocol {
         self.provider = provider
     }
 
-    /*
-    // MARK: - 우울/불안 리포트 생성
-      func createDepressionAnxietyReport(diagnoseId: Int) -> AnyPublisher<Int, APIError> {
-          return provider
-              .requestResult(.createDepressionAnxietyReport(diagnoseId: diagnoseId),
-                             type: DepressionAnxietyReportResult.self)
-              .map { $0.reportId }
-              .eraseToAnyPublisher()
-      }
-
-      // MARK: - 스트레스 리포트 생성
-      func createStressReport(diagnoseId: Int) -> AnyPublisher<Int, APIError> {
-          return provider
-              .requestResult(.creatStressReport(diagnoseId: diagnoseId),
-                             type: StressReportResult.self)
-              .map { $0.reportId }
-              .eraseToAnyPublisher()
-      }
-
-      // MARK: - 애착 리포트 생성
-      func createAttachmentReport(diagnoseId: Int) -> AnyPublisher<Int, APIError> {
-          return provider
-              .requestResult(.creatAttachmentReport(diagnoseId: diagnoseId),
-                             type: AttachmentReportCreateResult.self)
-              .map { $0.reportId }
-              .eraseToAnyPublisher()
-      }
-     */
+   
     
     // MARK: - 우울/불안 리포트 생성
     func createDepressionAnxietyReport(diagnoseId: Int)-> AnyPublisher<DepressionAnxietyReportResult, APIError> {

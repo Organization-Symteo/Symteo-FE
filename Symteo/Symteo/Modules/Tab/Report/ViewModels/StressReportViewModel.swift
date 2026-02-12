@@ -57,30 +57,43 @@ final class StressReportViewModel: ObservableObject {
         self.container = container
     }
 
-    // 배터리 UI에 사용되는 가공 모델
-    var batteryResult: BatteryResult {
-        BatteryResult(
-            percent: batteryPercent,
-            status: BatteryStatus.from(percent: batteryPercent)
-        )
+    // MARK: - Battery
+    /// 배터리 상태
+    var batteryStatus: BatteryStatus {
+        BatteryStatus.from(percent: batteryPercent)
     }
 
-    // 스트레스 레벨 enum 변환
+    /// 실제 보여줄 배터리 이미지
+    var batteryImageName: String {
+        batteryStatus.batteryImage
+    }
+    
+    /// 배경 컬러
+    var batteryBackgroundColor: Color {
+        batteryStatus.backgroundColor
+    }
+
+    /// 배터리 설명
+    var batteryGuideText: String {
+        batteryStatus.guideText
+    }
+
+    // MARK: -스트레스
+    /// 스트레스 레벨 enum 변환
     var stressLevel: StressLevel {
         StressLevel.from(text: stressLevelText)
     }
-    
-    // 스트레스 게이지 비율
-    var stressRatio: CGFloat {
-        CGFloat(pssScore) / 40.0
-    }
-
-    // 스트레스 색상
+ 
+    /// 스트레스 색상
     var stressColor: Color {
         stressLevel.color
     }
-
-    // 스트레스 설명 문구
+    
+    /// 온도계 이미지
+    var stressImageName: String {
+        stressLevel.imageName
+    }
+    /// 스트레스 설명 문구
     var stressDescriptionText: String {
         stressLevel.description
     }
@@ -95,6 +108,7 @@ final class StressReportViewModel: ObservableObject {
         StressBalanceResult.fromOverloadLevel(overloadLevelText)
     }
 
+    // MARK: - 번아웃
     // 번아웃 결과 묶음
     var burnoutResult: BurnoutResult {
         BurnoutResult(
