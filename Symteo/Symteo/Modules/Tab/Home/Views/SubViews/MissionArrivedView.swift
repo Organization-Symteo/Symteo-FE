@@ -18,7 +18,7 @@ struct MissionArrivedView: View {
                 .foregroundColor(.gray900)
 
             Button{
-                viewModel.loadTodayMission()
+                viewModel.openMission()
             } label: {
                 Image("mission_arrival")
                     .resizable()

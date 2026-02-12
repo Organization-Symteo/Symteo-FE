@@ -25,5 +25,5 @@ enum Config {
     
     // 임시 dev-Token
         static let devToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwNzgzNzYzLCJleHAiOjE3NzA4NzAxNjN9.Ulx9ipmNgxGdP-HR4kwg1BsCZCeW8dwdQ357Zp9kh2g"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwODg3NjI4LCJleHAiOjE3NzA5NzQwMjh9.KyeiDaLJtXMusec7SbDvMBtdlgi5hc-AExPiDyHObKQ"
 }

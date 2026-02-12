@@ -13,6 +13,7 @@ struct MissionWritingView: View {
     @State private var tempImage: UIImage? = nil
     @State private var showSubmitConfirm: Bool = false
     @State private var showExitConfirm: Bool = false
+    @EnvironmentObject var container: DIContainer 
 
     var body: some View {
         ZStack {
@@ -93,7 +94,6 @@ struct MissionWritingView: View {
     }
 
     // MARK: - Subviews
-
     private var navigationBar: some View {
         ZStack {
             HStack {

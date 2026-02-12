@@ -124,7 +124,19 @@ final class MissionViewModel: ObservableObject {
         return String(format: "%02d시간 %02d분 남음", hours, minutes)
     }
     
-
+    // 오늘의 미션 로드(API 함수) + 화면 상태 분기
+    func openMission() {
+        loadTodayMission()
+        uiState = .confirmed
+    }
+    
+    // 미션 시작 눌렀을 때 화면 분기만 담당
+    func startMission() {
+        // API 없이 그냥 화면만 변경
+        print("🔥 startMission 호출됨")
+        uiState = .writing
+    }
+    
     
     func goBackToArrived() {
         uiState = .arrived
@@ -165,21 +177,22 @@ final class MissionViewModel: ObservableObject {
                 self.restarted = mission.restarted
                 self.timeRemaining = mission.remainingSeconds
 
-                startTimer()
+                self.startTimer()
 
-                self.uiState = .confirmed
+               // self.uiState = .confirmed
+             
             }
             .store(in: &cancellables)
     }
 
     // MARK: - API: Start Mission
-    /// 미션을 시작하는 API 호출
+    /// 미션을 제출 시작하는 API 호출
     ///
     /// 필요 조건:
     /// - missionId 존재
     /// - 업로드된 이미지 URL 존재
     ///
-    func startMission() {
+    func submitMission() {
         
         print("🧡 startMission 요청 시작")
         print("missionId:", missionId as Any)
@@ -206,7 +219,7 @@ final class MissionViewModel: ObservableObject {
         )
 
         container.useCaseService.missionServise
-            .startMission(missionId: missionId, data: request)
+            .submitMission(missionId: missionId, data: request)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 self?.isLoading = false
@@ -222,7 +235,7 @@ final class MissionViewModel: ObservableObject {
                 
                 self?.userMissionId = result.userMissionId
                 self?.remainingSeconds = result.remainingSeconds
-                self?.uiState = .writing
+                // self?.uiState = .writing
         
             }
             .store(in: &cancellables)
@@ -274,7 +287,8 @@ final class MissionViewModel: ObservableObject {
                 },
                 receiveValue: { [weak self] _ in
                     print("미션 제출 완료")
-                    self?.uiState = .completed   
+                    self?.uiState = .completed
+                    self?.container.navigationRouter.pop()
                 }
             )
             .store(in: &cancellables)

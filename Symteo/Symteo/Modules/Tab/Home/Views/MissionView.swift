@@ -39,7 +39,7 @@ struct MissionView: View {
                MissionWritingView(viewModel: viewModel)
 
            case .completed:
-               HomeView(container: DIContainer())
+               EmptyView()
            }
        }
 }

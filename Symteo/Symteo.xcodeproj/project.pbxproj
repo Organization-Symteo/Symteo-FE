@@ -22,8 +22,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				Modules/Tab/Report/ViewModels/Secret.xcconfig,
-				Modules/Tab/Report/Views/Secret.xcconfig,
 			);
 			target = 688E6EEF2F0D1833007A7C57 /* Symteo */;
 		};

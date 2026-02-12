@@ -10,9 +10,9 @@ import Alamofire
 
 enum MissionRouter {
     case fetchTodayMission // 오늘의 미션 조회
-    case startMission(missionId: Int, data: MissionStartRequest) // 미션 시작
+    case submitMission(missionId: Int, data: MissionStartRequest) // 미션 제출 시작
     case saveMissionDraft(userMissionId: Int, data: MissionDraftRequest) // 미션 텍스트 제출
-    case completeMission(userMissionId: Int) // 미션 완료
+    case completeMission(userMissionId: Int) // 미션 제출 완료
     case restartTodayMission // 미션 새로고침
 }
 
@@ -30,16 +30,15 @@ extension MissionRouter: APITargetType {
         switch self {
         case .fetchTodayMission:
             return "/api/v1/missions/today"
-        case .startMission(let missionId, _):
-            return "/api/v1/missions/{missionId}/submissions"
+        case .submitMission(let missionId, _):
+            return "/api/v1/missions/\(missionId)/submissions"
         case .saveMissionDraft(let userMissionId, _):
             return "/api/v1/missions/\(userMissionId)/drafts"
         case .completeMission(let userMissionId):
             return "/api/v1/missions/\(userMissionId)/status"
         case .restartTodayMission:
             return "/api/v1/missions/today-mission/refresh"
-            
-            //api/v1/missions/today-mission/refresh
+     
         }
     }
     
@@ -47,9 +46,9 @@ extension MissionRouter: APITargetType {
         switch self {
         case .fetchTodayMission:
             return .get
-        case .startMission, .saveMissionDraft, .completeMission:
+        case .submitMission, .saveMissionDraft:
             return .post
-        case .restartTodayMission:
+        case .completeMission, .restartTodayMission:
             return .patch
         }
     }
@@ -58,7 +57,7 @@ extension MissionRouter: APITargetType {
         switch self {
         case .fetchTodayMission:
             return .requestPlain
-        case .startMission(_, let data):
+        case .submitMission(_, let data):
             return .requestJSONEncodable(data)
         case .saveMissionDraft(_, let data):
             return .requestJSONEncodable(data)
@@ -90,7 +89,7 @@ extension MissionRouter: APITargetType {
               }
             }
             """.data(using: .utf8)!
-        case .startMission:
+        case .submitMission:
             return """
                    {
                      "isSuccess": true,

@@ -99,7 +99,8 @@ struct MissionIntroView: View {
                 text: "미션 시작",
                 isDisabled: false,
                 action: {
-                    viewModel.startMission()/// API startMission함수 호출(missionId가 필요함)
+                    print("🔥 버튼 눌림")
+                    viewModel.startMission()
                 }
             )
             .padding()

@@ -17,7 +17,7 @@ protocol MissionServiceProtocol {
     func fetchTodayMission() -> AnyPublisher<TodayMissionResult, APIError>
     
     /// 미션 시작
-    func startMission(missionId: Int,data: MissionStartRequest) -> AnyPublisher<MissionStartResult, APIError>
+    func submitMission(missionId: Int,data: MissionStartRequest) -> AnyPublisher<MissionStartResult, APIError>
     
     /// 미션 텍스트 제출
     func saveMissionDraft(userMissionId: Int,data: MissionDraftRequest) -> AnyPublisher<MissionDraftResult, APIError>
@@ -47,8 +47,8 @@ final class MissionService: MissionServiceProtocol {
     }
     
     // MARK: - 미션 시작
-    func startMission(missionId: Int,data: MissionStartRequest) -> AnyPublisher<MissionStartResult, APIError> {
-        provider.requestResult(MissionRouter.startMission(missionId: missionId, data: data),type: MissionStartResult.self)
+    func submitMission(missionId: Int,data: MissionStartRequest) -> AnyPublisher<MissionStartResult, APIError> {
+        provider.requestResult(MissionRouter.submitMission(missionId: missionId, data: data),type: MissionStartResult.self)
     }
     
     // MARK: - 미션 텍스트 임시 저장
