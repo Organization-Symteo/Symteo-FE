@@ -78,9 +78,6 @@ struct MySymteoView: View {
                     EmptyView()   // 🔥 임시 처리
 
                     
-                default:
-                    EmptyView()
-
 
 
                 }

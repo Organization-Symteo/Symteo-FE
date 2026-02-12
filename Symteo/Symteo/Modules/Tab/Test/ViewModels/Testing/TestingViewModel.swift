@@ -304,37 +304,29 @@ final class SurveyViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
 
             // 최종 완료 처리
-            .sink { [weak self] completion in
+            .sink(receiveCompletion: { [weak self] completion in
                 guard let self else { return }
 
                 self.isSubmitting = false
 
-                // 에러 발생 시 메시지 저장
                 if case let .failure(error) = completion {
                     self.submitErrorMessage = error.localizedDescription
                 }
-
-
-            } receiveValue: { [weak self] reportId in
+            }, receiveValue: { [weak self] (reportId: Int) in
                 guard let self else { return }
 
                 self.createdReportId = reportId
 
                 let key = "reportId_\(self.kind.testTypeString)"
                 UserDefaults.standard.set(reportId, forKey: key)
-                
+
                 // 디버그용 print
-                    print(" 리포트 생성 성공")
-                    print("저장 key:", key)
-                    print("저장 reportId:", reportId)
-                    print("UserDefaults 저장 확인:",
-                          UserDefaults.standard.integer(forKey: key))
-
-            } receiveValue: { [weak self] res in
-                self?.createdDiagnoseId = res.testId
-
-            }
-
+                print(" 리포트 생성 성공")
+                print("저장 key:", key)
+                print("저장 reportId:", reportId)
+                print("UserDefaults 저장 확인:",
+                      UserDefaults.standard.integer(forKey: key))
+            })
             .store(in: &cancellables)
     }
     

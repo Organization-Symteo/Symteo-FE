@@ -8,7 +8,7 @@ import Foundation
 import Moya
 
 protocol APITargetType: TargetType {}
-/*
+
 extension APITargetType {
 
 
@@ -25,33 +25,5 @@ extension APITargetType {
     
     var validationType: ValidationType { .none }
          
-}
-
-*/
-
-// 임시
-extension APITargetType {
-    var headers: [String: String]? {
-        return [
-            "Content-Type": "application/json",
-            "Authorization": "Bearer \(Config.devToken)"
-        ]
-    }
-    
-    var validationType: ValidationType { .none }
-         
-}
-*/
-
-// 임시
-extension APITargetType {
-    var headers: [String: String]? {
-        return [
-            "Content-Type": "application/json",
-            "Authorization": "Bearer \(Config.devToken)"
-        ]
-    }
-    
-    var validationType: ValidationType { .none }
 }
 
