@@ -16,6 +16,7 @@ class UseCaseService {
 
 
     init() {
+
        self.missionServise = .init()
        self.homeService = .init()
         self.reportService = .init()

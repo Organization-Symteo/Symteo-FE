@@ -28,18 +28,3 @@ extension APITargetType {
 }
 
 
-/*
-// 임시
-extension APITargetType {
-    var headers: [String: String]? {
-        return [
-            "Content-Type": "application/json",
-            "Authorization": "Bearer \(Config.devToken)"
-        ]
-    }
-    
-    var validationType: ValidationType { .none }
-         
-}
-*/
-
