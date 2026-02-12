@@ -217,7 +217,7 @@ final class SurveyViewModel: ObservableObject {
                     self.submitErrorMessage = error.localizedDescription
                 }
             } receiveValue: { [weak self] res in
-                self?.createdDiagnoseId = res.diagnoseId
+                self?.createdDiagnoseId = res.testId
             }
             .store(in: &cancellables)
     }

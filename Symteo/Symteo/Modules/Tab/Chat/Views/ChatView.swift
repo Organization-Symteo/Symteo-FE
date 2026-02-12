@@ -12,6 +12,7 @@ struct ChatView: View {
     
     @StateObject var viewModel: ChatViewModel
 
+    @EnvironmentObject var container: DIContainer
     // MARK: - Init
 
     /// DIContainer을 주입받아 초기화
@@ -53,7 +54,7 @@ struct ChatView: View {
             }
             
             Button(action: {
-               
+                container.navigationRouter.push(.counselsetting)
             }) {
                 Image("consultsetting")
                     .resizable()
