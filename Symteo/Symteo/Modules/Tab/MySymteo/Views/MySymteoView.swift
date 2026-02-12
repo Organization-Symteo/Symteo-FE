@@ -42,6 +42,7 @@ struct MySymteoView: View {
 
                 switch destination {
 
+ 
                 case .basetab:
                     BaseTabView()
                         .environmentObject(container)
@@ -77,6 +78,8 @@ struct MySymteoView: View {
                     EmptyView()   // 🔥 임시 처리
 
 
+                case .counselsetting:
+                    CounselSettingView()
                 }
             }
         }

@@ -4,12 +4,14 @@
 //
 //  Created by 박병선 on 1/29/26.
 //
+
+
 import Foundation
 import Moya
+ 
+final class TokenProvider: TokenProviding {
 
-class TokenProvider: TokenProviding {
-    
-    private let userSession = "appNameUser"
+
     private let keyChain = KeychainService.shared
    //private let provider = MoyaProvider<AuthRouter>()
     
@@ -31,6 +33,7 @@ class TokenProvider: TokenProviding {
     
     //임시
     var accessToken: String? {
+
         get {
             if let userInfo = keyChain.loadToken(),
                !userInfo.accessToken.isEmpty,
@@ -47,6 +50,9 @@ class TokenProvider: TokenProviding {
             userInfo.accessToken = newValue ?? "토큰 정보 없음"
             keyChain.saveToken(userInfo)
         }
+
+        
+
     }
 
     
@@ -61,6 +67,7 @@ class TokenProvider: TokenProviding {
             guard var userInfo = keyChain.loadToken() else { return }
             userInfo.refreshToken = newValue ?? "토큰 정보 없음"
             keyChain.saveToken(userInfo)
+
         }
     }
      

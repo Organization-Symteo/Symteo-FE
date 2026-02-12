@@ -62,10 +62,13 @@ struct NavigationRoutingView: View {
                         ServicePolicyView()
 
 
+                    case .counselsetting:
+                        CounselSettingView()
                     }
                 }
         }
     }
+    
 }
 
 #Preview {
