@@ -19,20 +19,14 @@ class DIContainer: ObservableObject {
     /// 선택된 탭을 제어
     @Published var selectedTab: TabItem
     
-    
-    
     /// DIContainer 초기화 함수
     /// 외부에서 navigationRouter와 useCaseService를 주입받아 사용할 수 있도록 구성
     /// 기본값으로는 각각 새로운 인스턴스를 생성하여 초기화
     init(
         navigationRouter: NavigationRouter = .init(),
-        selectedTab: TabItem = .home,
-        
-    
+        selectedTab: TabItem = .home
     ) {
         self.navigationRouter = navigationRouter
         self.selectedTab = selectedTab
-        
-
     }
 }

@@ -58,7 +58,7 @@ class KeychainService {
         do {
             return try JSONDecoder().decode(TokenInfo.self, from: data)
         } catch {
-            print("JSON 디코딩 실패:", error)
+            print("❌ JSON 디코딩 실패:", error)
             return nil
         }
     }

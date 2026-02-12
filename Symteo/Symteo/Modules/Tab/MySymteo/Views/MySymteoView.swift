@@ -43,7 +43,6 @@ struct MySymteoView: View {
 
                 switch destination {
 
- 
                 case .basetab:
                     BaseTabView()
                         .environmentObject(container)
@@ -75,8 +74,6 @@ struct MySymteoView: View {
                     ServicePolicyView()
 
 
-                case .counselsetting:
-                    CounselSettingView()
                 }
             }
         }

@@ -10,7 +10,6 @@ import SwiftUI
 struct OnboardingView: View {
 
     @State private var currentPage = 0
-    @EnvironmentObject var sessionManager: SessionManager
 
     private let images = [
         "img_onboarding_1",
@@ -73,7 +72,9 @@ struct OnboardingView: View {
                 currentPage += 1
             }
         } else {
-            sessionManager.finishOnboarding()   }
+            // 페이지 이동
+            print("온보딩 종료")
+        }
     }
 }
 

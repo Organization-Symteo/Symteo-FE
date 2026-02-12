@@ -10,40 +10,42 @@
 import SwiftUI
 
 struct RootView: View {
-
+    
+    //데이터 수명 관리 (30일 리셋 로직)
     @AppStorage("lastResetDate") private var lastResetDate: Date?
-
+    
     @EnvironmentObject var container: DIContainer
     @EnvironmentObject var sessionManager: SessionManager
 
+    
+    //splash 상태 관리
     @State private var showSplash = true
-
     var body: some View {
-        ZStack {
-            if showSplash {
+        ZStack{
+            if showSplash{
                 SplashView()
                     .transition(.opacity)
-            } else {
-                switch sessionManager.flow {
-                case .onboarding:
-                    OnboardingView()
-                case .loggedOut:
-                    LoginNavigationView()
-                case .needsNickname:
-                    NicknameEditView()
-                case .needsCounselor:
-                    CounselSettingView()
-                case .home:
-                    NavigationRoutingView()
+            } else{
+                Group{
+                    if sessionManager.isLoggedIn{
+                        NavigationRoutingView()
+                            .environmentObject(container)
+                            .environmentObject(sessionManager)
+                    } else {
+                        LoginView()
+                            .environmentObject(container)
+                            .environmentObject(sessionManager)
+                    }
                 }
             }
         }
-        .environmentObject(container)
-        .environmentObject(sessionManager)
-        .task {
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            withAnimation(.easeInOut(duration: 0.25)) { showSplash = false }
-            await sessionManager.bootstrap()
+        .task{
+            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초
+
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            showSplash = false
+                        }
         }
     }
 }
+

@@ -6,7 +6,6 @@
 //
 import SwiftUI
 
-
 // 미션의 진행상태별로 분기하는 뷰입니다
 
 struct MissionView: View {

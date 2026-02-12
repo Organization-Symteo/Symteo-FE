@@ -9,9 +9,6 @@ import SwiftUI
 
 struct NicknameEditView: View {
 
-    @EnvironmentObject var sessionManager: SessionManager
-    @EnvironmentObject var loginRouter: LoginRouter
-    @EnvironmentObject var container: DIContainer
     @Environment(\.dismiss) private var dismiss
     @State private var nickname: String = ""
     @State private var showError: Bool = false
@@ -99,12 +96,6 @@ struct NicknameEditView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
-        // 기존 닉네임이 있다면 불러오기
-        .onAppear {
-            if let existingNickname = sessionManager.nickname {
-                self.nickname = existingNickname
-            }
-        }
     }
 
     // MARK: - Validation
@@ -118,25 +109,16 @@ struct NicknameEditView: View {
     }
 
     private func saveNickname() {
-        guard isValid else { return }
-
-        // 1. 상태 업데이트: 닉네임 저장 및 등록 상태 반영
-        sessionManager.applyNicknameSaved(nickname)
-
-        // 2. 초기 진입 흐름 판단 로직
-        // applyNicknameSaved 호출 후 flow가 .needsCounselor로 바뀌었다면 초기 진입 상황입니다.
-        if sessionManager.flow == .needsCounselor {
-    
-            container.navigationRouter.push(.counselsetting)
-        } else {
-            // 일반 수정 모드인 경우 화면을 닫습니다.
-            dismiss()
+        guard isValid else {
+            showError = true
+            return
         }
+
+        // TODO: 서버 / 로컬 저장 연동
+        dismiss()
     }
 }
 
 #Preview {
     NicknameEditView()
-        .environmentObject(SessionManager(keychain: .shared))
-        .environmentObject(LoginRouter())
 }

@@ -23,9 +23,6 @@ enum NavigationDestination: Equatable, Hashable{
     case setting
     case privacy
     case service
-    
-    case counselsetting
-
 
 
 }

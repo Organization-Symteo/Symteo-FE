@@ -4,56 +4,69 @@
 //
 //  Created by 김지우 on 1/12/26.
 //
+
+
 import SwiftUI
 
 struct LoginView: View {
+    
+    // MARK: - Property
     @EnvironmentObject var sessionManager: SessionManager
-    @EnvironmentObject var loginRouter: LoginRouter
-    @StateObject private var viewModel: LoginViewModel
-
-    init(sessionManager: SessionManager, loginRouter: LoginRouter) {
-        _viewModel = StateObject(wrappedValue: LoginViewModel(
-            sessionManager: sessionManager,
-            loginRouter: loginRouter
-        ))
-    }
-
+    @StateObject private var viewModel = LoginViewModel()
+    
+    //약관 동의 여부
     @AppStorage("AgreeTerms") private var agreeTerms: Bool = false
+    
+    // 팝업 표시 상태
     @State private var showTermsPopup: Bool = false
+    
     @State private var termsSheet: TermsSheetType? = nil
 
+
+    // MARK: - Body
+
     var body: some View {
-        ZStack {
-            if showTermsPopup {
-                Color.black.opacity(0.35).ignoresSafeArea()
-                PopUpView(title: "심터의 이용약관 및 개인정보 취급방침에\n동의하고 시작합니다.", message: "", confirmTitle: "동의하기", cancelTitle: "동의하지 않기", onConfirm: {
+        ZStack{
+            
+            //약관 동의 팝업 오버레이
+            if showTermsPopup{
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                
+                PopUpView(title: "심터의 이용약관 및 개인정보 취급방침에\n동의하고 시작합니다.",message:nil,confirmTitle: "동의하기", cancelTitle: "동의하지 않기", onConfirm: {
                     agreeTerms = true
                     showTermsPopup = false
                 }, onCancel: {
                     showTermsPopup = true
                 })
                 .transition(.scale.combined(with: .opacity))
+                
             }
             
             VStack(spacing: 8) {
                 logoview
-                Spacer().frame(height: 16)
                 
-                ForEach(viewModel.providers, id: \.self) { provider in
+                Spacer()
+                    .frame(height:16)
+                
+                ForEach(viewModel.providers) { provider in
                     SocialLoginButton(icon: provider.icon, title: provider.title) {
-                        viewModel.tapLogin(provider: provider) {
-                            print("신규 유저 처리 로직 실행")
+                        viewModel.tapLogin(provider: provider){
+                            sessionManager.login()
                         }
                     }
                 }
-                Spacer().frame(height: 77)
+                Spacer()
+                    .frame(height:77)
                 termsRow
-            }
+            }//VStackend
             .allowsHitTesting(!showTermsPopup)
             .padding(.horizontal, 26)
-        }
-        .task {
-            if !agreeTerms {
+        }//ZStackend
+        .task{
+            //agreeTerms = false //테스트용
+            
+            if !agreeTerms{
                 await Task.yield()
                 showTermsPopup = true
             }
@@ -62,30 +75,83 @@ struct LoginView: View {
             TermsBottomSheet(type: sheet)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
+
         }
     }
-
+    
+    // MARK: - Top Contents
+    //로고+텍스트
     private var logoview: some View {
-        VStack {
+        VStack{
             Image(.symlogoBig)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 420)
                 .frame(maxWidth: .infinity)
                 .clipped()
+
+            
             Text("나만의 멘탈 케어 솔루션")
                 .font(.PretendardMedium(size: 16))
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+            
         }
     }
-
+    
+    // MARK: - Botton Contents
+    //안심 이용약관 & 데이터 처리 동의
     private var termsRow: some View {
-        HStack(spacing: 2) {
-            Button { termsSheet = .safeTerms } label: { Text("안심 이용약관") }.buttonStyle(.plain)
-            Text("&").foregroundStyle(.gray400)
-            Button { termsSheet = .dataConsent } label: { Text("데이터 처리 동의") }.buttonStyle(.plain)
+        HStack(spacing:2){
+            Button {
+                termsSheet = .safeTerms
+            } label: {
+                Text("안심 이용약관")
+            }
+            .buttonStyle(.plain)
+            
+            Text("&")
+                .foregroundStyle(.gray400)
+
+            
+            Button {
+                termsSheet = .dataConsent
+            } label: {
+                Text("데이터 처리 동의")
+            }
+            .buttonStyle(.plain)
         }
         .font(.PretendardMedium(size: 14))
         .foregroundStyle(Color.gray400)
+    }
+    
+}
+
+    
+    
+
+
+
+
+    
+
+        
+    
+
+    
+        
+    
+
+
+
+struct LoginView_Preview: PreviewProvider {
+    static var devices = ["iPhone 17 Pro"]
+    
+    static var previews: some View {
+        ForEach(devices, id: \.self) { device in
+            LoginView()
+                .previewDevice(PreviewDevice(rawValue: device))
+                .previewDisplayName(device)
+        }
     }
 }

@@ -8,7 +8,6 @@ import Foundation
 import SwiftUI
 import Combine
 
-
 final class StressReportViewModel: ObservableObject {
     
     // MARK: - Raw Scores (서버에서 받는 값)
