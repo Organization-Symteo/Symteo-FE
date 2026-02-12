@@ -6,30 +6,32 @@
 import Foundation
 import Combine
 import SwiftUI
-
 @MainActor
 final class LoginViewModel: ObservableObject {
-
-    let providers: [SocialProvider] = SocialProvider.allCases
-
+    private let sessionManager: SessionManager
+    private let loginRouter: LoginRouter
     private let authService: AuthServicing
     private let kakaoLoginManager: KakaoLoginManager
     private var cancellables = Set<AnyCancellable>()
+    
+    let providers: [SocialProvider] = SocialProvider.allCases
 
     init(
+        sessionManager: SessionManager,
+        loginRouter: LoginRouter,
         authService: AuthServicing = AuthService(),
         kakaoLoginManager: KakaoLoginManager = KakaoLoginManager()
     ) {
+        self.sessionManager = sessionManager
+        self.loginRouter = loginRouter
         self.authService = authService
         self.kakaoLoginManager = kakaoLoginManager
     }
 
     func tapLogin(provider: SocialProvider, onSuccess: @escaping () -> Void) {
-        switch provider {
-        case .kakao:
+        if provider == .kakao {
             loginWithKakao(onSuccess: onSuccess)
-
-        case .naver, .google:
+        } else {
             onSuccess()
         }
     }
@@ -38,33 +40,28 @@ final class LoginViewModel: ObservableObject {
         Task {
             do {
                 let accessToken = try await kakaoLoginManager.loginAccessToken()
-
                 authService.login(provider: .kakao, token: accessToken)
                     .receive(on: DispatchQueue.main)
-                    .sink { completion in
-                        if case let .failure(error) = completion {
-                            print("로그인 실패:", error)
-                        }
-                    } receiveValue: { result in
+                    .sink { _ in } receiveValue: { [weak self] result in
+                        // SessionManager 상태 업데이트 -> RootView의 flow 전환 트리거
+                        self?.sessionManager.applySocialLoginResult(
+                            accessToken: result.accessToken,
+                            refreshToken: result.refreshToken,
+                            userId: result.userId,
+                            isRegistered: result.isRegistered,
+                            nickname: result.nickname
+                        )
+                        
                         if result.isRegistered {
-                            onSuccess()
+                            self?.loginRouter.push(.nickname)
                         } else {
                             onSuccess()
                         }
                     }
                     .store(in: &cancellables)
-
             } catch {
-                print("카카오 로그인 실패:", error)
+                print("로그인 실패: \(error)")
             }
         }
-    }
-
-    private func loginWithNaver() {
-        print("네이버 로그인")
-    }
-
-    private func loginWithGoogle() {
-        print("구글 로그인")
     }
 }
