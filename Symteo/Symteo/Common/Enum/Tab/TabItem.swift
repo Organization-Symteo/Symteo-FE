@@ -34,11 +34,11 @@ enum TabItem: String, CaseIterable{
     
     var systemIconFill: String{
         switch self{
-        case .home: return "home_fill"
-        case .test: return "test_fill"
-        case .report: return "report_fill"
-        case .chat: return "chat_fill"
-        case .profile: return "profile_fill"
+        case .home: return "homefill"
+        case .test: return "testfill"
+        case .report: return "reportfill"
+        case .chat: return "chatfill"
+        case .profile: return "profilefill"
 
         }
     }
