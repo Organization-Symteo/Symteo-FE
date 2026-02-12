@@ -57,7 +57,22 @@ struct MainReportView: View {
                     cancelTitle: "취소",
                     onConfirm: {
                         viewModel.isShowingNoReportPopUp = false
-                        // TODO: 진단하기 이동 로직
+
+                        switch viewModel.pendingReportType {
+                        case .anxiety:
+                            container.navigationRouter.push(.depressionTest)
+
+                        case .stress:
+                            container.navigationRouter.push(.stressTest)
+
+                        case .attachment:
+                            container.navigationRouter.push(.typeTest)
+
+                        case .none:
+                            break
+                        }
+
+                        viewModel.pendingReportType = nil
                     },
                     onCancel: {
                         viewModel.isShowingNoReportPopUp = false
@@ -98,23 +113,15 @@ struct MainReportView: View {
                 title: "우울·불안 리포트",
                 subtitle: "내 마음 속에 숨은 비구름을 확인해봐요",
                 hasReport: viewModel.hasAnxietyReport,
+                onTap: {   //  [수정] destination 제거 → onTap 사용
+                     if case let .available(reportId) = viewModel.anxietyReportStatus {
+                         container.navigationRouter.push(.anxietyReport(reportId: reportId))
+                     } else {
+                         viewModel.pendingReportType = .anxiety
+                         viewModel.isShowingNoReportPopUp = true
+                     }
+                 }
 
-                destination: {
-                    Group {
-                           if case let .available(reportId) = viewModel.stressReportStatus {
-                               StressReportView(
-                                   viewModel: StressReportViewModel(
-                                       reportId: reportId,
-                                       container: container
-                                   )
-                               )
-                           }
-                       }
-                },
-
-                onEmptyTap: {
-                    viewModel.isShowingNoReportPopUp = true
-                }
             )
 
             ReportListRow(
@@ -122,21 +129,14 @@ struct MainReportView: View {
                 title: "스트레스 리포트",
                 subtitle: "어깨에 짊어진 무거운 짐을 내려놓을 시간",
                 hasReport: viewModel.hasStressReport,
-                destination: {
-                    Group {
-                        if case let .available(reportId) = viewModel.stressReportStatus {
-                            StressReportView(
-                                viewModel: StressReportViewModel(
-                                    reportId: reportId,
-                                    container: container
-                                )
-                            )
-                        }
-                    }
-                },
-                onEmptyTap: {
-                    viewModel.isShowingNoReportPopUp = true
-                }
+                onTap: {   //  [수정] destination 제거 → onTap 사용
+                     if case let .available(reportId) = viewModel.stressReportStatus {
+                         container.navigationRouter.push(.stressReport(reportId: reportId))
+                     } else {
+                         viewModel.pendingReportType = .attachment
+                         viewModel.isShowingNoReportPopUp = true
+                     }
+                 }
             )
 
             ReportListRow(
@@ -144,23 +144,14 @@ struct MainReportView: View {
                 title: "애착 리포트",
                 subtitle: "나의 애착유형과 성향을 알아가는 시간",
                 hasReport: viewModel.hasAttachmentReport,
-
-                destination: {
-                    Group {
-                        if case let .available(reportId) = viewModel.attachmentReportStatus {
-                            AttachmentReportView(
-                                viewModel: AttachmentReportViewModel(
-                                    reportId: reportId,
-                                    container: container
-                                )
-                            )
-                        }
-                    }
-                },
-
-                onEmptyTap: {
-                    viewModel.isShowingNoReportPopUp = true
-                }
+                onTap: {   //  [수정] destination 제거 → onTap 사용
+                     if case let .available(reportId) = viewModel.attachmentReportStatus {
+                         container.navigationRouter.push(.attachmentReport(reportId: reportId))
+                     } else {
+                         viewModel.pendingReportType = .attachment
+                         viewModel.isShowingNoReportPopUp = true
+                     }
+                 }
             )
         }
         .padding(.vertical, 8)
@@ -211,12 +202,23 @@ struct MainReportView: View {
                 ForEach(0..<viewModel.promotionList.count, id: \.self) { index in
                     let item = viewModel.promotionList[index]
                     
-                    NavigationLink(destination: promoDestinationView(for: item.type)) {
+                    Button {   //  [수정] NavigationLink → Button
+                        switch item.type {
+                        case .anxiety:
+                            container.navigationRouter.push(.depressionTest)
+
+                        case .stress:
+                            container.navigationRouter.push(.stressTest)
+
+                        case .attachment:
+                            container.navigationRouter.push(.typeTest)
+                        }
+                    } label: {
                         Image(item.imageName)
                             .resizable()
                             .scaledToFit()
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.plain)   // [수정] plain 버튼 스타일 유지
                     .tag(index)
                 }
             }
@@ -226,8 +228,8 @@ struct MainReportView: View {
             .shadow(color: Color.black.opacity(0.03), radius: 14, x: 0,y: 6)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(height: 140)
-            
-            // 커스텀 인디케이터
+
+            // 인디케이터는 그대로 유지
             HStack(spacing: 6) {
                 Spacer()
                 ForEach(0..<viewModel.promotionList.count, id: \.self) { index in
@@ -238,18 +240,6 @@ struct MainReportView: View {
                 }
                 Spacer()
             }
-        }
-    }
-    
-    @ViewBuilder
-    private func promoDestinationView(for type: PromotionType) -> some View {
-        switch type {
-        case .anxiety:
-            Text("우울 진단 테스트 화면")
-        case .stress:
-            Text("스트레스 진단 테스트 화면")
-        case .attachment:
-            Text("성향 진단 테스트 화면")
         }
     }
 }

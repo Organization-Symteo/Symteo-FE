@@ -8,6 +8,7 @@ import SwiftUI
 import Foundation
 import Combine
 
+// 이 파일에 있는 API 함수 : getAnxietyDepressionReport() 
 @MainActor
 final class AnxietyReportViewModel: ObservableObject {
 

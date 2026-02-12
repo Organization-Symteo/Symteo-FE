@@ -20,6 +20,7 @@ struct NavigationRoutingView: View {
                         BaseTabView()
                             .environmentObject(container)
 
+                    // MARK: -진단 화면
                     case .depressionTest:
                         DepressionTestHome()
                             .environmentObject(container)
@@ -33,10 +34,24 @@ struct NavigationRoutingView: View {
                             .environmentObject(container)
 
                     case let .survey(kind):
-                        SurveyView(kind: kind)
+                        SurveyView(kind: kind, container: container)
+                            .environmentObject(container)
+                        
+                    // MARK: -리포트 화면
+                    case let .anxietyReport(reportId):
+                        AnxietyReportView(reportId: reportId,container: container)
                             .environmentObject(container)
 
-                        
+                    case let .stressReport(reportId):
+                        StressReportView(reportId: reportId,container: container)
+                            .environmentObject(container)
+                  
+
+                    case let .attachmentReport(reportId):
+                        AttachmentReportView(reportId: reportId,container: container)
+                            .environmentObject(container)
+
+                    // MARK: -마이심터 화면 
                     case .setting:
                         SettingView()
                         

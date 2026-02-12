@@ -19,6 +19,8 @@ final class MainReportViewModel: ObservableObject {
     // 하단 프로모션 배너 현재 페이지
     @Published var currentPromoPage: Int = 0
     
+    @Published var pendingReportType: ReportType? = nil
+    
     
     // 메인 리포트 목록 (고정 데이터)
     let reportList: [ReportItem] = [

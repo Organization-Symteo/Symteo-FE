@@ -10,7 +10,7 @@ import SwiftUI
 /// 아이콘 + 제목/설명 + 오른쪽 화살표로 구성됨
 /// 리포트가 존재할 경우 NavigationLink로 이동
 /// 리포트가 없을 경우 팝업 등을 띄우는 액션 실행
-struct ReportListRow<Destination: View>: View {
+struct ReportListRow: View {
 
     /// 왼쪽에 표시할 아이콘 이미지 이름
     let icon: String
@@ -25,7 +25,8 @@ struct ReportListRow<Destination: View>: View {
     /// true  → 리포트 화면으로 이동 가능
     /// false → 리포트 없음 팝업 표시
     let hasReport: Bool
-
+    
+/* 수정 전
     /// 리포트가 있을 때 이동할 목적지 View
     /// NavigationLink에서 호출되므로 클로저 형태로 전달
     let destination: () -> Destination
@@ -33,7 +34,11 @@ struct ReportListRow<Destination: View>: View {
     /// 리포트가 없을 때 화살표를 눌렀을 경우 실행되는 액션
     /// 예: "저장된 리포트가 없습니다" 팝업 표시
     let onEmptyTap: () -> Void
-
+*/
+    
+    // 수정 후
+    let onTap: () -> Void
+    
     var body: some View {
         HStack(spacing: 12) {
 
@@ -55,7 +60,7 @@ struct ReportListRow<Destination: View>: View {
             }
 
             Spacer()
-
+/*  수정 전 (NavigationLink로 이동)
             // 오른쪽 화살표 영역
             // 리포트 존재 여부에 따라 동작 분기
             if hasReport {
@@ -74,6 +79,14 @@ struct ReportListRow<Destination: View>: View {
                         .frame(width: 40, height: 40)
                 }
             }
+ */
+            // 수정 후 : 버튼 하나로 통합
+            Button(action: onTap) {
+                           Image("chevron_right")
+                               .resizable()
+                               .frame(width: 40, height: 40)
+                       }
+                       .buttonStyle(.plain)
         }
         .padding()
     }

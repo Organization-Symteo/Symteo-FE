@@ -6,6 +6,7 @@
 //
 import Foundation
 import Combine
+import Moya
 
 struct SurveyQuestion: Identifiable, Hashable {
     let id: UUID
@@ -106,7 +107,7 @@ enum SurveyQuestionBank {
         "지난 2주일 동안, 자신이 죽는 것이 더 낫다고 생각하거나 어떤 식으로든 자신을 해칠 것이라고 생각함",
         "지난 2주일 동안, 초조하거나 불안하거나 조마조마하게 느낀다",
         "지난 2주일 동안, 걱정하는 것을 멈추거나 조절할 수가 없다",
-        "지난 2주일 동안, 여러 가지 것들에 대해 걱정을 너무 많이 한다",
+        "지난 2주일 동안, 여러 가지 것들에 대해 걱걱정을 너무 많이 한다",
         "지난 2주일 동안, 편하게 있기가 어렵다",
         "지난 2주일 동안, 너무 안절부절못해서 가만히 있기가 힘들다",
         "지난 2주일 동안, 쉽게 짜증이 나거나 쉽게 성을 내게 된다",
@@ -114,6 +115,7 @@ enum SurveyQuestionBank {
     ]
 }
 
+// MARK: -SurveyViewModel
 final class SurveyViewModel: ObservableObject {
     @Published private(set) var questions: [SurveyQuestion] = []
     @Published var currentIndex: Int = 0
@@ -124,13 +126,36 @@ final class SurveyViewModel: ObservableObject {
 
     let kind: SurveyKind
     private let service: TestService
-
     private var cancellables = Set<AnyCancellable>()
 
-    init(kind: SurveyKind, service: TestService) {
+    // MARK: - 리포트 생성 상태 관리
+
+    /// 생성된 리포트의 ID
+    /// - 진단(diagnose) → 리포트 생성 API 호출 성공 시 서버에서 내려주는 값
+    /// - 값이 세팅되면 ReportView로 화면 전환 트리거로 사용됨
+    @Published var createdReportId: Int? = nil
+
+    /// 리포트 생성 실패 시 사용자에게 보여줄 에러 메시지
+    /// - APIError 발생 시 localizedDescription을 담아 UI에서 토스트/얼럿으로 노출
+    @Published var reportErrorMessage: String? = nil
+
+    /// 리포트 생성 중 여부
+    /// - true: 리포트 생성 API 호출 중 (로딩 인디케이터 표시용)
+    /// - false: 요청 완료 또는 실패
+    @Published var isCreatingReport: Bool = false
+    
+    // MARK: - 의존성 주입 및 비동기 처리
+    /// DIContainer를 통해 의존성 주입
+    let container: DIContainer
+
+
+    // MARK: - 초기화
+
+    init(kind: SurveyKind, service: TestService, container: DIContainer) {
         self.kind = kind
         self.service = service
         self.questions = Self.makeQuestions(kind: kind)
+        self.container = container
     }
 
     static func makeQuestions(kind: SurveyKind) -> [SurveyQuestion] {
@@ -196,33 +221,103 @@ final class SurveyViewModel: ObservableObject {
         if let idx = firstUnansweredIndex() { currentIndex = idx }
     }
 
+ 
+    // MARK: - API 함수
+    ///
+    ///
+    /// 전체 흐름:
+    /// 1. 진단 생성 API 호출
+    /// 2. 생성된 diagnoseId를 기반으로 리포트 생성 API 호출
+    /// 3,  최종적으로 reportId를 저장
+    ///
+    /// 즉,
+    /// submit() 한 번으로 "진단 생성 → 리포트 생성"까지 자동 체인 처리함.
+    ///
+    /// 성공 시: createdDiagnoseId 저장, createdReportId 저장
+    ///
+    /// 실패 시:
+    /// - submitErrorMessage에 에러 메시지 저장
+    ///
+    /// UI 제어:
+    /// - isSubmitting으로 로딩 상태 관리
+    @MainActor
     func submit() {
+
+        // 상태 초기화 (이전 에러/ID 제거)
         submitErrorMessage = nil
         createdDiagnoseId = nil
+        createdReportId = nil
         isSubmitting = true
 
+        // 설문 응답을 서버 전송 형식으로 변환
         let request = CreateTestRequestDTO(
             testType: kind.testTypeString,
             answers: answers
-                .sorted(by: { $0.key < $1.key })
+                .sorted(by: { $0.key < $1.key })   // 문제 번호 순서 보장
                 .map { CreateTestAnswerDTO(questionNo: $0.key + 1, score: $0.value) }
         )
 
         service.createTest(request)
+
+            // 진단 생성 성공 후 → 리포트 생성으로 자동 연결
+            .flatMap { [weak self] res -> AnyPublisher<Int, APIError> in
+                guard let self else {
+                    return Fail(error: APIError.unknown).eraseToAnyPublisher()
+                }
+
+                //  diagnoseId 저장
+                self.createdDiagnoseId = res.diagnoseId
+
+                //  검사 종류에 따라 다른 리포트 생성 API 호출
+                switch self.kind {
+
+                case .depression:
+                    return self.container.useCaseService.reportService
+                        .createDepressionAnxietyReport(diagnoseId: res.diagnoseId)
+                        .map { $0.reportId }
+                        .eraseToAnyPublisher()
+
+                case .stress:
+                    return self.container.useCaseService.reportService
+                        .createStressReport(diagnoseId: res.diagnoseId)
+                        .map { $0.reportId }
+                        .eraseToAnyPublisher()
+
+                case .attachment:
+                    return self.container.useCaseService.reportService
+                        .createAttachmentReport(diagnoseId: res.diagnoseId)
+                        .map { $0.reportId }
+                        .eraseToAnyPublisher()
+                }
+            }
+
+            // 메인 스레드에서 UI 업데이트
             .receive(on: DispatchQueue.main)
+
+            // 최종 완료 처리
             .sink { [weak self] completion in
                 guard let self else { return }
+
                 self.isSubmitting = false
+
+                // 에러 발생 시 메시지 저장
                 if case let .failure(error) = completion {
                     self.submitErrorMessage = error.localizedDescription
                 }
-            } receiveValue: { [weak self] res in
-                self?.createdDiagnoseId = res.diagnoseId
+
+            } receiveValue: { [weak self] reportId in
+                // 리포트 생성 성공 시 reportId 저장
+                self?.createdReportId = reportId
             }
+
             .store(in: &cancellables)
     }
+    
+    
 }
 
+
+// MARK: -Extension
 private extension SurveyKind {
     var testTypeString: String {
         switch self {

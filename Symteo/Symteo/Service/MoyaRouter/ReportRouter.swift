@@ -8,20 +8,24 @@ import Foundation
 import Moya
 
 enum ReportRouter {
+
+    // MARK: - 리포트 생성
     /// 우울&불안 리포트 생성
     case createDepressionAnxietyReport(diagnoseId: Int)
     
-    /// 우울·불안 리포트 상세 조회
-    case getDepressionAnxietyReport(reportId: Int)
-    
     /// 스트레스 리포트 생성
-    case creatStressReport(diagnoseId: Int)
+    case createStressReport(diagnoseId: Int)
+    
+    /// 애착 리포트 생성
+    case createAttachmentReport(diagnoseId: Int)
+    
+    
+    // MARK: - 리포트 조회
+    /// 우울·불안 리포트  조회
+    case getDepressionAnxietyReport(reportId: Int)
     
     /// 스트레스 리포트 조회
     case getStressReport(reportId: Int)
-    
-    /// 애착 리포트 생성
-    case creatAttachmentReport(diagnoseId: Int)
     
     /// 애착 리포트 조회
     case getAttachmentReport(reportId: Int)
@@ -36,29 +40,31 @@ extension ReportRouter: TargetType {
     
     var path: String {
         switch self {
+        
+            /// 생성
         case .createDepressionAnxietyReport(let diagnoseId):
-            return "/api/v1/reports/depression-anxiety/\(diagnoseId)"
+            return "/api/v1/reports/diagnose/\(diagnoseId)/depression-anxiety"
+        case .createStressReport(let diagnoseId):
+            return "/api/v1/reports/diagnose/\(diagnoseId)/stress-burnout"
+        case .createAttachmentReport(let diagnoseId):
+            return "/api/v1/reports/diagnose/\(diagnoseId)/attachment"
             
+            
+            /// 조회
         case .getDepressionAnxietyReport(let reportId):
-            return "/api/v1/reports/\(reportId)/depression-anxiety/\(reportId)"
-            
-        case .creatStressReport(let diagnoseId):
-            return "/api/v1/reports/stress-burnout/\(diagnoseId)"
-            
+            return "/api/v1/reports/\(reportId)/depression-anxiety/\(reportId)"// /api/v1/reports/{reportId}/depression-anxiety/{reportId}
+
         case .getStressReport(let reportId):
             return "/api/v1/reports/\(reportId)/stress-burnout/\(reportId)"
             
-        case .creatAttachmentReport(let diagnoseId):
-            return "/api/v1/reports/attachment/\(diagnoseId)"
-            
         case .getAttachmentReport(let reportId):
-                   return "/reports/\(reportId)/attachments"
+                   return "/api/v1/reports/\(reportId)/attachments"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .createDepressionAnxietyReport, .creatStressReport, .creatAttachmentReport:
+        case .createDepressionAnxietyReport, .createStressReport, .createAttachmentReport:
             return .post
             
         case .getDepressionAnxietyReport, .getStressReport, .getAttachmentReport:
@@ -68,7 +74,7 @@ extension ReportRouter: TargetType {
     
     var task: Task {
         switch self {
-        case .createDepressionAnxietyReport, .creatStressReport, .creatAttachmentReport:
+        case .createDepressionAnxietyReport, .createStressReport, .createAttachmentReport:
             return .requestPlain
         case .getDepressionAnxietyReport, .getStressReport, .getAttachmentReport:
             return .requestPlain
@@ -143,7 +149,7 @@ extension ReportRouter: TargetType {
             }
             """
 
-        case .creatStressReport:
+        case .createStressReport:
             json = """
             {
               "isSuccess": true,
@@ -190,7 +196,7 @@ extension ReportRouter: TargetType {
             }
             """
 
-        case .creatAttachmentReport:
+        case .createAttachmentReport:
             json = """
             {
               "isSuccess": true,

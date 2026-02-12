@@ -13,6 +13,20 @@ struct DepressionAnxietyReportResult: Decodable {
     let createdAt: String
 }
 
+// MARK: - 스트레스 리포트 생성 DTO
+struct StressReportResult: Decodable {
+    let reportId: Int        // 생성된 리포트 ID
+    let testType: String     // 검사 유형 (STRESS_BURNOUT_COMPLEX)
+    let createdAt: String   // 리포트 생성 시각
+}
+
+// MARK: - 애착검사 리포트 생성 DTO
+struct AttachmentReportResult: Decodable {
+    let reportId: Int        // 생성된 리포트 ID
+    let testType: String     // 검사 유형 (ATTACHMENT_TEST)
+    let createdAt: String   // 리포트 생성 시각
+}
+
 // MARK: - 우울/불안 리포트 조회 DTO
 struct DepressionAnxietyReportDetail: Decodable {
     let reportId: Int                    // 리포트 고유 ID
@@ -51,12 +65,6 @@ struct AIInsightCard: Decodable {
 }
 
 
-// MARK: - 스트레스 리포트 생성 DTO
-struct StressReportResult: Decodable {
-    let reportId: Int        // 생성된 리포트 ID
-    let testType: String     // 검사 유형 (STRESS_BURNOUT_COMPLEX)
-    let createdAt: String   // 리포트 생성 시각
-}
 
 // MARK: - 스트레스 리포트 조회 DTO
 struct StressReportDetail: Decodable {
@@ -86,12 +94,6 @@ struct BurnoutResult: Decodable {
     let totalLevel: String            // 종합 번아웃 수준
 }
 
-// MARK: - 애착검사 리포트 생성 DTO
-struct AttachmentReportCreateResult: Decodable {
-    let reportId: Int        // 생성된 리포트 ID
-    let testType: String     // 검사 유형 (ATTACHMENT_TEST)
-    let createdAt: String   // 리포트 생성 시각
-}
 
 // MARK: - 성향(애착) 리포트 조회 Response DTO
 struct AttachmentReportDetail: Decodable {

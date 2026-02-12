@@ -14,17 +14,27 @@ protocol ReportServiceProtocol {
     /// 우울/불안 리포트 생성
     func createDepressionAnxietyReport(diagnoseId: Int) -> AnyPublisher<DepressionAnxietyReportResult, APIError>
     
+    /// 스트레스 리포트 생성
+    func createStressReport(diagnoseId: Int) -> AnyPublisher<StressReportResult, APIError>
+    
+    /// 애착 리포트 생성
+    func createAttachmentReport(diagnoseId: Int) -> AnyPublisher<AttachmentReportResult, APIError>
+     
+    
+    /*
+    /// 리포트 생성 (reportId만 반환하도록 통일)
+      func createDepressionAnxietyReport(diagnoseId: Int) -> AnyPublisher<Int, APIError>
+      func createStressReport(diagnoseId: Int) -> AnyPublisher<Int, APIError>
+      func createAttachmentReport(diagnoseId: Int) -> AnyPublisher<Int, APIError>
+    */
+    
     /// 우울·불안 리포트 상세 조회
     func getDepressionAnxietyReport(reportId: Int) -> AnyPublisher<DepressionAnxietyReportDetail, APIError>
     
-    /// 스트레스 리포트 생성
-    func creatStressReport(diagnoseId: Int) -> AnyPublisher<StressReportResult, APIError>
-    
+
     /// 스트레스 리포트 조회
     func getStressReport(reportId: Int) -> AnyPublisher<StressReportDetail, APIError>
     
-    /// 애착 리포트 생성
-    func CreatAttachmentReport(diagnoseId: Int) -> AnyPublisher<AttachmentReportCreateResult, APIError>
     
     /// 애착 리포트 조회
     func getAttachmentReport(reportId: Int) -> AnyPublisher<AttachmentReportDetail, APIError>
@@ -42,29 +52,60 @@ final class ReportService: ReportServiceProtocol {
         self.provider = provider
     }
 
+    /*
     // MARK: - 우울/불안 리포트 생성
-    func createDepressionAnxietyReport(diagnoseId: Int) -> AnyPublisher<DepressionAnxietyReportResult, APIError> {
-        return provider.requestResult(.createDepressionAnxietyReport(diagnoseId: diagnoseId),type: DepressionAnxietyReportResult.self)
-    }
+      func createDepressionAnxietyReport(diagnoseId: Int) -> AnyPublisher<Int, APIError> {
+          return provider
+              .requestResult(.createDepressionAnxietyReport(diagnoseId: diagnoseId),
+                             type: DepressionAnxietyReportResult.self)
+              .map { $0.reportId }
+              .eraseToAnyPublisher()
+      }
+
+      // MARK: - 스트레스 리포트 생성
+      func createStressReport(diagnoseId: Int) -> AnyPublisher<Int, APIError> {
+          return provider
+              .requestResult(.creatStressReport(diagnoseId: diagnoseId),
+                             type: StressReportResult.self)
+              .map { $0.reportId }
+              .eraseToAnyPublisher()
+      }
+
+      // MARK: - 애착 리포트 생성
+      func createAttachmentReport(diagnoseId: Int) -> AnyPublisher<Int, APIError> {
+          return provider
+              .requestResult(.creatAttachmentReport(diagnoseId: diagnoseId),
+                             type: AttachmentReportCreateResult.self)
+              .map { $0.reportId }
+              .eraseToAnyPublisher()
+      }
+     */
     
+    // MARK: - 우울/불안 리포트 생성
+    func createDepressionAnxietyReport(diagnoseId: Int)-> AnyPublisher<DepressionAnxietyReportResult, APIError> {
+        
+        return provider.requestResult(.createDepressionAnxietyReport(diagnoseId: diagnoseId), type: DepressionAnxietyReportResult.self)
+    }
+
+      // MARK: - 스트레스 리포트 생성
+      func createStressReport(diagnoseId: Int) -> AnyPublisher<StressReportResult, APIError> {
+          return provider.requestResult(.createStressReport(diagnoseId: diagnoseId), type: StressReportResult.self)
+      }
+
+      // MARK: - 애착 리포트 생성
+      func createAttachmentReport(diagnoseId: Int) ->AnyPublisher<AttachmentReportResult, APIError> {
+          return provider.requestResult(.createAttachmentReport(diagnoseId: diagnoseId), type: AttachmentReportResult.self)
+           
+      }
+
     //MARK: - 우울/불안 리포트 조회
     func getDepressionAnxietyReport(reportId: Int) -> AnyPublisher<DepressionAnxietyReportDetail, APIError> {
         return provider.requestResult(.getDepressionAnxietyReport(reportId: reportId),type: DepressionAnxietyReportDetail.self)
     }
     
-    // MARK: - 스트레스 리포트 생성
-       func creatStressReport(diagnoseId: Int) -> AnyPublisher<StressReportResult, APIError> {
-           return provider.requestResult(.creatStressReport(diagnoseId: diagnoseId),type: StressReportResult.self)
-    }
-    
     // MARK: -스트레스 리포트 조회
     func getStressReport(reportId: Int) -> AnyPublisher<StressReportDetail, APIError> {
         return provider.requestResult(.getStressReport(reportId: reportId),type: StressReportDetail.self)
-    }
-    
-    // MARK: - 애착검사 리포트 생성
-    func CreatAttachmentReport(diagnoseId: Int) -> AnyPublisher<AttachmentReportCreateResult, APIError> {
-        return provider.requestResult(.creatAttachmentReport(diagnoseId: diagnoseId),type: AttachmentReportCreateResult.self)
     }
     
     // MARK: - 애착검사 리포트 조회

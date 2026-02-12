@@ -160,6 +160,8 @@
 /* Begin XCBuildConfiguration section */
 		688E6EF92F0D1833007A7C57 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 688E6EF22F0D1833007A7C57 /* Symteo */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -226,6 +228,8 @@
 		};
 		688E6EFA2F0D1833007A7C57 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 688E6EF22F0D1833007A7C57 /* Symteo */;
+			baseConfigurationReferenceRelativePath = Secret.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

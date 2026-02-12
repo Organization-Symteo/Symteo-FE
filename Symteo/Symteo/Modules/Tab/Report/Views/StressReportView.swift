@@ -7,10 +7,21 @@
 import SwiftUI
 
 struct StressReportView: View {
-    @Environment(\.dismiss) var dismiss
     @State private var currentPage = 0
-    @ObservedObject var viewModel: StressReportViewModel
+    @StateObject var viewModel: StressReportViewModel
+    @EnvironmentObject var container: DIContainer
+    @Environment(\.dismiss) var dismiss
 
+    // MARK: -initializer
+    init(reportId: Int, container: DIContainer) {
+          _viewModel = StateObject(
+              wrappedValue: StressReportViewModel(
+                  reportId: reportId,
+                  container: container
+              )
+          )
+      }
+    
     /*
     //  수정 전 예시 배터리 결과
     let batteryResult = BatteryResult(

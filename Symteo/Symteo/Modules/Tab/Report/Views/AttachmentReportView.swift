@@ -11,7 +11,16 @@ struct AttachmentReportView: View {
     @State private var currentPage = 0
     @StateObject var viewModel: AttachmentReportViewModel
     @EnvironmentObject var container: DIContainer
-    
+  
+    // MARK: -initializer
+    init(reportId: Int, container: DIContainer) {
+          _viewModel = StateObject(
+              wrappedValue: AttachmentReportViewModel(
+                  reportId: reportId,
+                  container: container
+              )
+          )
+      }
     var body: some View {
         ZStack(alignment: .top) {
             

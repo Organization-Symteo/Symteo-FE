@@ -38,7 +38,6 @@ struct MySymteoView: View {
             }
             .padding(.horizontal, Layout.horizontalPadding)
             .background(Color(.gray5).ignoresSafeArea())
-
             .navigationDestination(for: NavigationDestination.self) { destination in
 
                 switch destination {
@@ -60,7 +59,7 @@ struct MySymteoView: View {
                         .environmentObject(container)
 
                 case let .survey(kind):
-                    SurveyView(kind: kind)
+                    SurveyView(kind: kind, container: container)
                         .environmentObject(container)
 
                     
@@ -72,6 +71,10 @@ struct MySymteoView: View {
                     
                 case .service:
                     ServicePolicyView()
+                    
+                    
+                default:
+                    EmptyView()   // 🔥 임시 처리
 
 
                 }

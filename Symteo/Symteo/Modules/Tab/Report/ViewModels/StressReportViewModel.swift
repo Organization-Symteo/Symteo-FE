@@ -8,6 +8,7 @@ import SwiftUI
 import Combine
 import Moya
 
+// 이 파일에 있는 API 함수 : getStressReport() 
 @MainActor
 final class StressReportViewModel: ObservableObject {
 
