@@ -63,7 +63,7 @@ struct MissionEmptyView: View {
                 .foregroundStyle(.gray500)
 
             NavigationLink {
-                MissionView()
+               // MissionView(container: DIContainer)
             } label: {
                 Text("미션 하러가기")
                     .font(.PretendardRegular(size: 14))

@@ -6,6 +6,7 @@
 //
 import Foundation
 import Moya
+import Alamofire
 
 enum HomeRouter {
     case updateTodayWeather(weather: Int) // 감정 날씨 수정(Request Body 없음)

@@ -24,6 +24,7 @@ struct CreateTestAnswerDTO: Encodable, Decodable, Hashable {
 
 
 struct CreateDiagnosisResultDTO: Decodable {
+
     let diagnoseId: Int
     
     struct CreateTestResponseDTO: Decodable {
@@ -55,4 +56,7 @@ struct CreateDiagnosisResultDTO: Decodable {
             )
         }
     }
+
+    let testId: Int
+
 }
