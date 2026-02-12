@@ -13,8 +13,8 @@ enum Config {
     }
 
     static var kakaoKey: String {
-        guard let value = Bundle.main.object(forInfoDictionaryKey: "KAKAO_KEY") as? String else {
-            fatalError("KAKAO_KEY not found in Info.plist")
+        guard let value = Bundle.main.object(forInfoDictionaryKey: "KAKAO_NATIVE_APP_KEY") as? String else {
+            fatalError("KAKAO_NATIVE_APP_KEY not found in Info.plist")
         }
         return value
     }

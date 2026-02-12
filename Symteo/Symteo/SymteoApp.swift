@@ -13,10 +13,19 @@ struct SymteoApp: App {
     @StateObject private var sessionManager = SessionManager(keychain: .shared)
     
     init() {
-        if let appKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO_NATIVE_APP_KEY") as? String {
+        let bundleId = Bundle.main.bundleIdentifier ?? "nil"
+        let appKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO_NATIVE_APP_KEY") as? String
+
+        print("bundleId =", bundleId)
+        print("kakaoKey =", appKey ?? "nil")
+
+        if let appKey {
             KakaoSDK.initSDK(appKey: appKey)
+        } else {
+            assertionFailure("KAKAO_NATIVE_APP_KEY is missing in Info.plist")
         }
     }
+
     
     var body: some Scene {
         WindowGroup {
