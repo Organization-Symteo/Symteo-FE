@@ -7,7 +7,7 @@
 
 import Foundation
 import Moya
-
+ 
 final class TokenProvider: TokenProviding {
 
     private let keyChain = KeychainService.shared
@@ -27,20 +27,20 @@ final class TokenProvider: TokenProviding {
     }
 
     func clearTokens() {
-        keyChain.deleteToken()
+        _ = keyChain.deleteToken()
     }
 
     private func upsertTokens(accessToken: String?, refreshToken: String?) {
-        if var userInfo = keyChain.loadToken() {
-            if let accessToken { userInfo.accessToken = accessToken }
-            if let refreshToken { userInfo.refreshToken = refreshToken }
-            keyChain.saveToken(userInfo)
+        if var tokenInfo = keyChain.loadToken() {
+            if let accessToken { tokenInfo.accessToken = accessToken }
+            if let refreshToken { tokenInfo.refreshToken = refreshToken }
+            keyChain.saveToken(tokenInfo)
         } else {
-            let userInfo = TokenInfo(
+            let tokenInfo = TokenInfo(
                 accessToken: accessToken ?? "",
                 refreshToken: refreshToken ?? ""
             )
-            keyChain.saveToken(userInfo)
+            keyChain.saveToken(tokenInfo)
         }
     }
 }

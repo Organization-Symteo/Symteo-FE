@@ -7,6 +7,7 @@
 import Foundation
 import Combine
 
+
 final class AnxietyReportViewModel: ObservableObject {
     @Published var currentStatus: OverallResultStatus = .caution // 현재 결과값
     @Published var score: Int = 65 // 실제 점수

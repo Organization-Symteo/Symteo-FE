@@ -8,14 +8,14 @@
 import Foundation
 import Alamofire
 
-class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
-    private var tokenProviding: TokenProviding
-    private var isRefreshing: Bool = false
-    private var requestToRetry: [(RetryResult) -> Void] = []
-    
+final class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
+
+    private let tokenProviding: TokenProviding
+
     init(tokenProviding: TokenProviding) {
         self.tokenProviding = tokenProviding
     }
+
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         var urlRequest = urlRequest
@@ -49,4 +49,22 @@ class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
         }
     }
      */
+
+    /*
+
+    func adapt(
+        _ urlRequest: URLRequest,
+        for session: Session,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    ) {
+        var request = urlRequest
+
+        if let token = tokenProviding.accessToken, !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        completion(.success(request))
+    }
+     */
+
 }

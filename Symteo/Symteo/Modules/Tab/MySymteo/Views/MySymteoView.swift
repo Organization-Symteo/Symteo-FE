@@ -43,7 +43,7 @@ struct MySymteoView: View {
 
                 switch destination {
 
-
+ 
                 case .basetab:
                     BaseTabView()
                         .environmentObject(container)

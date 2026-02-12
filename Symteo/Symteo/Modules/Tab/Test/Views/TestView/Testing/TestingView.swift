@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-import SwiftUI
+
 
 struct SurveyView: View {
     @EnvironmentObject private var container: DIContainer
@@ -85,12 +85,12 @@ struct SurveyView: View {
             onCancel: modalCancelAction
         )
 
-        .onChange(of: viewModel.createdTestId) { _, newValue in
+        .onChange(of: viewModel.createdDiagnoseId, initial: false) { oldValue, newValue in
             guard newValue != nil else { return }
             container.navigationRouter.reset()
             dismiss()
         }
-        .onChange(of: viewModel.submitErrorMessage) { _, msg in
+        .onChange(of: viewModel.submitErrorMessage, initial: false) { _, msg in
             guard let msg else { return }
             presentAlert(title: "제출에 실패했어요", message: msg, confirm: "확인", cancel: nil) {}
         }
