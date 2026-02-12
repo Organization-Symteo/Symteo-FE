@@ -49,10 +49,6 @@ struct BaseTabView: View {
             case .report:
                 MainReportView()
 
-           
-              
-
-               
 
             }
         }
