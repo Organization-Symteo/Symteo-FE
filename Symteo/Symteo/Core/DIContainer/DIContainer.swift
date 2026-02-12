@@ -19,7 +19,7 @@ class DIContainer: ObservableObject {
     /// API 호출을 담당하는 서비스 객체
     @Published var useCaseService: UseCaseService
 
-    
+
     /// 선택된 탭을 제어
     @Published var selectedTab: TabItem
     
@@ -35,6 +35,7 @@ class DIContainer: ObservableObject {
 
         selectedTab: TabItem = .home
         
+
 
     ) {
         self.navigationRouter = navigationRouter

@@ -9,10 +9,11 @@ import Foundation
 import Combine
 import Moya
 
+
 @MainActor
 final class MainReportViewModel: ObservableObject {
     // 메인 리포트 화면 전용 ViewModel (UI 상태 + 리포트 존재 여부 관리)
-    
+
     @Published var userName: String = "따오기"
     // 헤더에 표시할 사용자 이름 (추후 로그인 정보로 교체 예정)
     

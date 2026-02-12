@@ -55,25 +55,25 @@ struct BaseTabView: View {
     //각 탭에 해당하는 뷰
     @ViewBuilder
     private func tabView(tab: TabItem) -> some View {
-        Group {
             switch tab {
             case .home:
-                HomeView()
-                    .environmentObject(container)
+                HomeView(container: container)
+            case .chat:
+                ChatView(container: container)
+        
+
             case .test:
                 TestHomeView()
                     .environmentObject(container)
             case .profile:
                 MySymteoView()
-             case .chat:
-                ChatView(container: container)
+
             case .report:
                 MainReportView(userName: "따오기", container: container)
 
 
-            }
         }
-        .environmentObject(container)
+       // .environmentObject(container)
         
     }
 }

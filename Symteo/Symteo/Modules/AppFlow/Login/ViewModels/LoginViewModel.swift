@@ -43,7 +43,7 @@ final class LoginViewModel: ObservableObject {
                 authService.login(provider: .kakao, token: accessToken)
                     .receive(on: DispatchQueue.main)
                     .sink { _ in } receiveValue: { [weak self] result in
-                        // SessionManager 상태 업데이트 -> RootView의 flow 전환 트리거
+                        
                         self?.sessionManager.applySocialLoginResult(
                             accessToken: result.accessToken,
                             refreshToken: result.refreshToken,

@@ -77,9 +77,12 @@ struct MySymteoView: View {
                 default:
                     EmptyView()   // 🔥 임시 처리
 
+                    
+                default:
+                    EmptyView()
 
-                case .counselsetting:
-                    CounselSettingView()
+
+
                 }
             }
         }

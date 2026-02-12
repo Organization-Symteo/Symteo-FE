@@ -7,18 +7,16 @@
 import SwiftUI
 
 struct MissionIntroView: View {
-    let onBack: () -> Void
-    let onContinue: () -> Void
-    @State private var missionState: MissionState = .arrived
-    @StateObject private var viewModel = MissionViewModel()
-    
+    @ObservedObject var viewModel: MissionViewModel
+
     var body: some View {
         VStack(spacing: 0) {
+
             // 1. 커스텀 네비게이션 바
             ZStack {
                 HStack {
-                    Button {
-                        missionState = .arrived
+                    Button{
+                        viewModel.goBackToArrived()
                     } label: {
                         Image(systemName: "arrow.left")
                             .font(.system(size: 16, weight: .regular))
@@ -26,7 +24,7 @@ struct MissionIntroView: View {
                     }
                     Spacer()
                 }
-                
+
                 Text("오늘의 미션")
                     .font(.PretendardRegular(size: 14))
                     .foregroundStyle(.gray600)
@@ -41,7 +39,7 @@ struct MissionIntroView: View {
                 Text("남은 시간")
                     .font(.PretendardRegular(size: 14))
                     .foregroundStyle(.gray600)
-                
+
                 Text(viewModel.timeRemainingString())
                     .font(.PretendardMedium(size: 22))
                     .foregroundStyle(.gray900)
@@ -53,35 +51,37 @@ struct MissionIntroView: View {
                 Image("mission_bg_envelope")
                     .resizable()
                     .frame(width: 390, height: 300)
-                    .offset(x: 80, y: 40) // 오른쪽(x)으로 60, 아래(y)로 40만큼 이동
-  
+                    .offset(x: 80, y: 40)
 
-                // --- 미션 질문 카드 (흰색 카드) ---
                 VStack(spacing: 0) {
                     Spacer()
-                    
-                    Text(viewModel.currentMission)
-                        .font(.PretendardMedium(size: 18))
+
+                    Text(viewModel.missionContent)
+                        .font(.OwnGlyphPDH(size: 16))
                         .multilineTextAlignment(.center)
                         .lineSpacing(8)
-                        .foregroundStyle(.gray900)
+                        .foregroundColor(.gray700)
                         .padding(.horizontal, 20)
-                    
+
                     Spacer()
-                    
-                    // 새로고침 버튼
-                    Button(action: {
-                        Task { await viewModel.fetchMission() }
-                    }) {
-                        VStack(spacing: 6) {
+                    VStack (spacing: 0) {
+                        // 새로고침 (서버 재요청)
+                        Button {
+                            viewModel.restartTodayMission()
+                        } label: {
                             Image(systemName: "arrow.clockwise")
                                 .font(.system(size: 24, weight: .medium))
-                            Text("(\(viewModel.refreshCount)회)")
-                                .font(.PretendardMedium(size: 14))
+                                .foregroundColor(.gray)
                         }
-                        .foregroundStyle(.gray)
+
+                        .padding(.bottom, 30)
+                        
+                        Text("(\(viewModel.refreshCount)회)")
+                            .font(.OwnGlyphPDH(size: 12))
+                            .foregroundColor(.gray700)
+                            .padding(.bottom)
+
                     }
-                    .padding(.bottom, 30)
                 }
                 .frame(width: 225, height: 272)
                 .background(Color.white)
@@ -91,7 +91,6 @@ struct MissionIntroView: View {
                         .stroke(Color(hex: "707070"), lineWidth: 4)
                 )
             }
-            // ZStack 자체에 여백을 주어 배경 이미지가 잘리지 않게 함
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)
 
@@ -102,15 +101,14 @@ struct MissionIntroView: View {
                 text: "미션 시작",
                 isDisabled: false,
                 action: {
-                    onContinue()
+                    print("🔥 버튼 눌림")
+                    viewModel.startMission()
                 }
             )
-
+            .padding()
         }
         .background(Color.white.ignoresSafeArea())
     }
 }
 
-#Preview {
-    MissionIntroView(onBack: {}, onContinue: {})
-}
+
