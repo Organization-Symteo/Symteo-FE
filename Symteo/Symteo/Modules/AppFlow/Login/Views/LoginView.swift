@@ -42,7 +42,7 @@ struct LoginView: View {
                 ForEach(viewModel.providers, id: \.self) { provider in
                     SocialLoginButton(icon: provider.icon, title: provider.title) {
                         viewModel.tapLogin(provider: provider) {
-                            print("신규 유저 처리 로직 실행")
+                            
                         }
                     }
                 }
