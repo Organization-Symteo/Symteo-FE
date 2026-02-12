@@ -17,15 +17,15 @@ class APIManager: @unchecked Sendable {
     private let session: Session
     private let loggerPlugin: PluginType
     
-    /*
+    
     private init() {
         tokenProvider = TokenProvider()
         accessTokenRefresher = AccessTokenRefresher(tokenProviding: tokenProvider)
         session = Session(interceptor: accessTokenRefresher)
         loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
     }
-    */
     
+    /*
     /// 임시 이니셜라이저
  
     private init() {
@@ -36,7 +36,7 @@ class APIManager: @unchecked Sendable {
         session = Session()
         loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
     }
-    
+    */
     
     /// 실제 API 요청용 MoyaProvider
     public func createProvider<T: TargetType>(for targetType: T.Type) -> MoyaProvider<T> {

@@ -92,10 +92,17 @@ final class HomeViewModel: ObservableObject {
                     self?.isLoading = false
                 }
             } receiveValue: { [weak self] result in
-                self?.nickname = result.nickname
-                self?.todayLine = result.todayLine
-                self?.selectedWeather = EmotionWeather(rawValue: result.todayWeather)
-                self?.isLoading = false
+                guard let self else {return}
+                self.nickname = result.nickname ?? "따오기"
+                self.todayLine = result.todayLine ?? ""
+                    
+                    if let weather = result.todayWeather {
+                        self.selectedWeather = EmotionWeather(rawValue: weather)
+                    } else {
+                        self.selectedWeather = nil
+                    }
+
+                    self.isLoading = false
             }
             .store(in: &cancellables)
     }

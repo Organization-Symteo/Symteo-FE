@@ -28,14 +28,6 @@ enum Config {
 
 
 
-    static var devToken: String {
-        // If DEV_TOKEN is optional in some builds, return empty string when missing.
-        // Adjust this behavior if you prefer a fatalError instead.
-        guard let value = Bundle.main.object(forInfoDictionaryKey: "DEV_TOKEN") as? String else {
-            return ""
-
-        }
-        return value
-    }
+   
 
 }

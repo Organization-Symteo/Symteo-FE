@@ -30,7 +30,7 @@ struct CustomToastView: View {
                     onCancelTapped()
                 } label: {
                     Image(systemName: "xmark")
-                        .foregroundColor(Color.white)
+                        .foregroundStyle(Color.white)
                 }
             }
             .padding()

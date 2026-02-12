@@ -128,7 +128,7 @@ private extension MissionDetailView {
 
             Text("오늘의 미션")
                 .font(.PretendardRegular(size: 14))
-                .foregroundColor(.gray600)
+                .foregroundStyle(.gray600)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -141,11 +141,11 @@ private extension MissionDetailView {
             HStack(spacing: 8) {
                 Text("#\(String(format: "%02d", mission.id))")
                     .font(.PretendardMedium(size: 12))
-                    .foregroundColor(.gray700)
+                    .foregroundStyle(.gray700)
 
                 Text(mission.completedAt.formattedDate)
                     .font(.PretendardMedium(size: 12))
-                    .foregroundColor(.gray700)
+                    .foregroundStyle(.gray700)
 
             }
             .padding(.horizontal, 12)
@@ -157,7 +157,7 @@ private extension MissionDetailView {
             /// 미션 질문 (title)
             Text(mission.title)
                 .font(.PretendardRegular(size: 16))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
                 .lineSpacing(4)
         }
         .padding(20)

@@ -28,7 +28,7 @@ struct ServicePolicyView: View {
                     
                     Text("서비스 약관 및 정책")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.gray900)
+                        .foregroundStyle(.gray900)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -97,7 +97,7 @@ struct PolicyTitle: View {
     var body: some View {
         Text(text)
             .font(.PretendardMedium(size: 16))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
             .padding(.bottom, 12)
     }
 }
@@ -108,7 +108,7 @@ struct PolicySubTitle: View {
     var body: some View {
         Text(text)
             .font(.PretendardMedium(size: 14))
-            .foregroundColor(.gray900)
+            .foregroundStyle(.gray900)
             .padding(.bottom, 4)
     }
 }
@@ -125,7 +125,7 @@ struct PolicyContent: View {
     var body: some View {
         Text(text)
             .font(.PretendardRegular(size: 12))
-            .foregroundColor(.gray900)
+            .foregroundStyle(.gray900)
             .lineSpacing(4)
             .padding(.bottom, bottomPadding)
     }

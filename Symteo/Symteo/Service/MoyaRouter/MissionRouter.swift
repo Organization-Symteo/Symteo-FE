@@ -68,11 +68,11 @@ extension MissionRouter: APITargetType {
         }
     }
     
-    /*
+    
     var headers: [String : String]? {
         ["Content-Type": "application/json"]
     }
-    */
+    
     
     var sampleData: Data {
         switch self {

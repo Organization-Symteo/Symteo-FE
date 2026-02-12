@@ -60,7 +60,7 @@ struct MissionIntroView: View {
                         .font(.OwnGlyphPDH(size: 16))
                         .multilineTextAlignment(.center)
                         .lineSpacing(8)
-                        .foregroundColor(.gray700)
+                        .foregroundStyle(.gray700)
                         .padding(.horizontal, 20)
 
                     Spacer()
@@ -71,14 +71,14 @@ struct MissionIntroView: View {
                         } label: {
                             Image(systemName: "arrow.clockwise")
                                 .font(.system(size: 24, weight: .medium))
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                         }
 
                         .padding(.bottom, 30)
                         
                         Text("(\(viewModel.refreshCount)회)")
                             .font(.OwnGlyphPDH(size: 12))
-                            .foregroundColor(.gray700)
+                            .foregroundStyle(.gray700)
                             .padding(.bottom)
 
                     }

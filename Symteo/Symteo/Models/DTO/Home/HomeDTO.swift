@@ -16,7 +16,7 @@ struct TodayWeatherResponse: Codable {
 
 /// 홈 화면 전체 내용 조회 Response
 struct HomeResponse: Codable {
-    let todayLine: String
-    let todayWeather: Int
-    let nickname: String
+    let todayLine: String?
+    let todayWeather: Int?
+    let nickname: String?
 }

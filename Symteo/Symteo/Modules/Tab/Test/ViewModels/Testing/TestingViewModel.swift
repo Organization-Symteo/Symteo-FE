@@ -330,12 +330,8 @@ final class SurveyViewModel: ObservableObject {
                     print("UserDefaults 저장 확인:",
                           UserDefaults.standard.integer(forKey: key))
 
-            } receiveValue: { [weak self] res in
-                self?.createdDiagnoseId = res.testId
-
             }
-
-            .store(in: &cancellables)
+                .store(in: &cancellables)
     }
     
     

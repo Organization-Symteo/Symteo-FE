@@ -36,7 +36,7 @@ struct SettingView: View {
                     
                     Text("환경 설정")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.gray900)
+                        .foregroundStyle(.gray900)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -133,11 +133,11 @@ struct SettingView: View {
                         HStack {
                             Text("앱 정보")
                                 .font(.PretendardMedium(size: 14))
-                                .foregroundColor(.gray900)
+                                .foregroundStyle(.gray900)
                             Spacer()
                             Text("0.0.1")
                                 .font(.PretendardRegular(size: 14))
-                            .foregroundColor(.gray700)                }
+                            .foregroundStyle(.gray700)                }
                         .padding(.vertical, 72)
                     }
                     .padding(.horizontal, 16)
@@ -221,7 +221,7 @@ struct SettingView: View {
     private func sectionTitle(_ title: String) -> some View {
         Text(title)
             .font(.PretendardSemiBold(size: 16))
-            .foregroundColor(.gray900)
+            .foregroundStyle(.gray900)
             .padding(.vertical, 16)
     }
     
@@ -229,12 +229,12 @@ struct SettingView: View {
         HStack {
             Text(title)
                 .font(.PretendardMedium(size: 14))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .foregroundColor(.gray700)
+                .foregroundStyle(.gray700)
         }
         .padding(.vertical, 16)
     }
@@ -249,7 +249,7 @@ struct SettingView: View {
             HStack {
                 Text(title)
                     .font(.PretendardMedium(size: 14))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
 
                 Spacer()
 
