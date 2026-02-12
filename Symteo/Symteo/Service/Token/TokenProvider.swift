@@ -4,41 +4,43 @@
 //
 //  Created by 박병선 on 1/29/26.
 //
-import Foundation
-import Moya
 
 import Foundation
 import Moya
-
+ 
 final class TokenProvider: TokenProviding {
 
     private let keyChain = KeychainService.shared
 
     var accessToken: String? {
-        get {
-            if let userInfo = keyChain.loadToken(),
-               !userInfo.accessToken.isEmpty,
-               userInfo.accessToken != "토큰 정보 없음" {
-                return userInfo.accessToken
-            }
-            return Config.devToken
-        }
-        set {
-            guard var userInfo = keyChain.loadToken() else { return }
-            userInfo.accessToken = newValue ?? "토큰 정보 없음"
-            keyChain.saveToken(userInfo)
-        }
+        get { keyChain.loadToken()?.accessToken }
+        set { upsertTokens(accessToken: newValue, refreshToken: nil) }
     }
 
     var refreshToken: String? {
-        get {
-            guard let userInfo = keyChain.loadToken() else { return nil }
-            return userInfo.refreshToken
-        }
-        set {
-            guard var userInfo = keyChain.loadToken() else { return }
-            userInfo.refreshToken = newValue ?? "토큰 정보 없음"
-            keyChain.saveToken(userInfo)
+        get { keyChain.loadToken()?.refreshToken }
+        set { upsertTokens(accessToken: nil, refreshToken: newValue) }
+    }
+
+    func setTokens(accessToken: String, refreshToken: String) {
+        upsertTokens(accessToken: accessToken, refreshToken: refreshToken)
+    }
+
+    func clearTokens() {
+        _ = keyChain.deleteToken()
+    }
+
+    private func upsertTokens(accessToken: String?, refreshToken: String?) {
+        if var tokenInfo = keyChain.loadToken() {
+            if let accessToken { tokenInfo.accessToken = accessToken }
+            if let refreshToken { tokenInfo.refreshToken = refreshToken }
+            keyChain.saveToken(tokenInfo)
+        } else {
+            let tokenInfo = TokenInfo(
+                accessToken: accessToken ?? "",
+                refreshToken: refreshToken ?? ""
+            )
+            keyChain.saveToken(tokenInfo)
         }
     }
 }

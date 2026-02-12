@@ -5,6 +5,8 @@
 //  Created by 박병선 on 1/7/26.
 //
 import SwiftUI
+import Combine
+
 
 // 오늘의 한 줄: api 받아오기
 struct HomeView: View {

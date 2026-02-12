@@ -8,6 +8,7 @@ import SwiftUI
 import Foundation
 import Combine
 
+
 final class AttachmentReportViewModel: ObservableObject {
 
     // MARK: - Raw Scores (서버에서 받는 값)
