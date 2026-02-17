@@ -3,6 +3,7 @@
 //
 //  Created by 김지우 on 1/12/26.
 //
+
 import Foundation
 import Combine
 import SwiftUI
@@ -23,6 +24,9 @@ final class ChatViewModel: ObservableObject {
 
     @Published var alertMessage: String? = nil
 
+    @Published private(set) var isChatStarted: Bool = false
+    @Published var isLoadingReport: Bool = false
+
     private let service: CounselServicing
     private var cancellables = Set<AnyCancellable>()
 
@@ -33,13 +37,13 @@ final class ChatViewModel: ObservableObject {
     }
 
     init() {
-        
         let provider = APIManager.shared.createProvider(for: ChatRouter.self)
         self.service = CounselService(provider: provider)
     }
 
     func onAppearIfNeeded() {
         if messages.isEmpty {
+            isChatStarted = false
             messages = [
                 .model("안녕하세요! 저는 맞춤형 상담 AI ○○○이에요."),
                 .model("아래에서 선택하시면 해당하는 서비스를 이용하실 수 있어요.")
@@ -53,8 +57,9 @@ final class ChatViewModel: ObservableObject {
         guard !text.isEmpty else { return }
         guard !isSending else { return }
 
-        textInput = ""
+        isChatStarted = true
 
+        textInput = ""
         messages.append(.user(text))
         shouldScrollToBottom.toggle()
 
@@ -75,6 +80,46 @@ final class ChatViewModel: ObservableObject {
                 self.shouldScrollToBottom.toggle()
             }
             .store(in: &cancellables)
+    }
+
+    func loadReport(buttonTitle: String, reportType: String, reportId: Int = 0) {
+        guard !isLoadingReport else { return }
+
+        isChatStarted = true
+        isLoadingReport = true
+
+        messages.append(.user(buttonTitle))
+        messages.append(.model("불러오는 중..."))
+        shouldScrollToBottom.toggle()
+
+        service.fetchReport(chatRoomId: chatRoomId, reportType: reportType, reportId: reportId)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isLoadingReport = false
+
+                if case let .failure(err) = completion {
+                    if self.isLastLoadingBubble {
+                        self.messages.removeLast()
+                    }
+                    self.alertMessage = self.describe(err)
+                }
+            } receiveValue: { [weak self] dto in
+                guard let self else { return }
+                self.chatRoomId = dto.chatRoomId
+
+                if self.isLastLoadingBubble {
+                    self.messages.removeLast()
+                }
+                self.messages.append(.model(dto.AiResponse))
+                self.shouldScrollToBottom.toggle()
+            }
+            .store(in: &cancellables)
+    }
+
+    private var isLastLoadingBubble: Bool {
+        guard let last = messages.last else { return false }
+        return last.role == .model && last.content == "불러오는 중..."
     }
 
     func tapEndIcon() { isShowingEndPopup = true }
@@ -102,6 +147,7 @@ final class ChatViewModel: ObservableObject {
             } receiveValue: { [weak self] summary in
                 guard let self else { return }
                 self.endSummary = summary
+
                 self.chatRoomId = nil
                 self.messages.removeAll()
                 self.onAppearIfNeeded()
@@ -129,5 +175,9 @@ final class ChatViewModel: ObservableObject {
         default:
             return "네트워크 오류가 발생했습니다."
         }
+    }
+
+    func clearAlert() {
+        alertMessage = nil
     }
 }

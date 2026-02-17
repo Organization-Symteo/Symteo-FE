@@ -329,8 +329,8 @@ final class SurveyViewModel: ObservableObject {
                           UserDefaults.standard.integer(forKey: key))
 
             }
-                .store(in: &cancellables)
-
+                
+)
     }
     
     

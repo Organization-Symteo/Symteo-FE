@@ -1,4 +1,3 @@
-//
 //  ChatRouter.swift
 //  Symteo
 //
@@ -11,14 +10,13 @@ import Alamofire
 
 enum ChatRouter {
     case saveSetting(request: CounselSettingRequestDTO)
-    case sendMessage(body: [String: Any])     // chatRoomId에 null을 넣기 위해 Dictionary로 처리
+    case sendMessage(body: [String: Any])
     case endChat(request: CounselEndRequestDTO)
+    case fetchReport(query: [String: Any])
 }
 
 extension ChatRouter: APITargetType {
     var baseURL: URL { URL(string: Config.baseUrl)! }
-
-
 
     var path: String {
         switch self {
@@ -26,6 +24,8 @@ extension ChatRouter: APITargetType {
             return "/api/v1/counsels/setting"
         case .sendMessage, .endChat:
             return "/api/v1/counsels"
+        case .fetchReport:
+            return "/api/v1/counsels/report"
         }
     }
 
@@ -34,6 +34,7 @@ extension ChatRouter: APITargetType {
         case .saveSetting: return .put
         case .sendMessage: return .post
         case .endChat: return .patch
+        case .fetchReport: return .get
         }
     }
 
@@ -43,11 +44,13 @@ extension ChatRouter: APITargetType {
             return .requestJSONEncodable(request)
 
         case let .sendMessage(body):
-            // JSONEncoding + NSNull() 지원
             return .requestParameters(parameters: body, encoding: JSONEncoding.default)
 
         case let .endChat(request):
             return .requestJSONEncodable(request)
+
+        case let .fetchReport(query):
+            return .requestParameters(parameters: query, encoding: URLEncoding.queryString)
         }
     }
 

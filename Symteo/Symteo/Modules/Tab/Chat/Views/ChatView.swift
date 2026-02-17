@@ -1,4 +1,3 @@
-//
 //  ChatView.swift
 //  Symteo
 //
@@ -15,32 +14,30 @@ struct ChatView: View {
         ZStack {
             VStack(spacing: 0) {
                 header
-                
+
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             dateDivider(date: "2026년 1월 8일 목요일")
-                            
+
                             ForEach(viewModel.messages) { msg in
                                 bubble(msg)
                                     .id(msg.id)
                             }
-                            
-                            if viewModel.messages.count < 3 {
-                                
-                                Spacer()
-                                    .frame(height: 80)
-                                
+
+                            if !viewModel.isChatStarted {
+                                Spacer().frame(height: 80)
+
                                 Text("AI 상담은 의학적 진단 및 치료가 아닌 정서적 지원을 제공합니다.")
                                     .font(.PretendardRegular(size: 12))
                                     .foregroundStyle(.gray400)
                                     .padding(.vertical, 10)
-                                
-                                Spacer()
-                                    .frame(height: 160)
+
+                                Spacer().frame(height: 160)
+
                                 reportQuickButtons
                             }
-                            
+
                             Color.clear.frame(height: 1).id("BOTTOM")
                         }
                         .padding(.horizontal, 20)
@@ -52,8 +49,6 @@ struct ChatView: View {
                         }
                     }
                 }
-                
-
 
                 inputBar
                     .padding(.horizontal, 20)
@@ -66,20 +61,36 @@ struct ChatView: View {
         }
         .background(Color.white)
         .onAppear { viewModel.onAppearIfNeeded() }
+        .alert("알림", isPresented: Binding(
+            get: { viewModel.alertMessage != nil },
+            set: { newValue in
+                if !newValue { viewModel.clearAlert() }
+            }
+        )) {
+            Button("확인") { viewModel.clearAlert() }
+        } message: {
+            Text(viewModel.alertMessage ?? "")
+        }
     }
 
-    // MARK: - Components
-    
     private var header: some View {
         HStack {
-            Button { viewModel.tapEndIcon() } label: {
-                Image(systemName: "rectangle.portrait.and.arrow.right")
-                    .foregroundStyle(.gray900)
+            if viewModel.isChatStarted {
+                Button { viewModel.tapEndIcon() } label: {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                        .foregroundStyle(.gray900)
+                }
+            } else {
+                Color.clear.frame(width: 24, height: 24)
             }
+
             Spacer()
+
             Text("심터AI")
                 .font(.PretendardMedium(size: 18))
+
             Spacer()
+
             Button {
                 container.navigationRouter.push(.counselsetting)
             } label: {
@@ -113,7 +124,7 @@ struct ChatView: View {
                     .fill(Color.green400)
                     .frame(width: 40, height: 40)
                     .overlay(Image(systemName: "face.smiling").foregroundStyle(.white))
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(msg.content)
                         .font(.PretendardRegular(size: 15))
@@ -122,7 +133,7 @@ struct ChatView: View {
                         .background(Color.white)
                         .clipShape(RoundedCorner(radius: 12, corners: [.topRight, .bottomLeft, .bottomRight]))
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                    
+
                     Text("11:24")
                         .font(.PretendardRegular(size: 10))
                         .foregroundColor(.gray400)
@@ -144,8 +155,19 @@ struct ChatView: View {
     private var reportQuickButtons: some View {
         HStack(spacing: 12) {
             quickButton(title: "내 우울·불안\n리포트 불러오기", icon: "chatreport2") {
+                viewModel.loadReport(
+                    buttonTitle: "내 우울·불안 리포트 불러오기",
+                    reportType: "DEPRESSION_ANXIETY_COMPLEX",
+                    reportId: 0
+                )
             }
+
             quickButton(title: "내 스트레스\n리포트 불러오기", icon: "chatreport1") {
+                viewModel.loadReport(
+                    buttonTitle: "내 스트레스 리포트 불러오기",
+                    reportType: "STRESS_BURNOUT_COMPLEX",
+                    reportId: 0
+                )
             }
         }
         .padding(.top, 12)
@@ -157,10 +179,9 @@ struct ChatView: View {
                 Image(icon)
                     .frame(width: 24, height: 24)
                     .foregroundStyle(.gray400)
-                
-                Spacer()
-                    .frame(width:10)
-                
+
+                Spacer().frame(width: 10)
+
                 Text(title)
                     .font(.PretendardMedium(size: 13))
                     .multilineTextAlignment(.leading)
@@ -193,7 +214,7 @@ struct ChatView: View {
             .disabled(viewModel.textInput.isEmpty || viewModel.isSending)
         }
     }
-    
+
     private var endPopup: some View {
         ZStack {
             Color.black.opacity(0.35).ignoresSafeArea()

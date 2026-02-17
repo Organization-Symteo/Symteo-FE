@@ -1,4 +1,3 @@
-//
 //  ChatDTO.swift
 //  Symteo
 //
@@ -6,8 +5,6 @@
 //
 
 import Foundation
-
-
 
 // MARK: - Setting
 
@@ -18,8 +15,6 @@ struct CounselSettingRequestDTO: Encodable {
     let answerFormat: String?
     let tone: String?
 }
-
-// setting 성공 응답이 문자열이라 별도 처리 (requestPlainString)
 
 // MARK: - Send Message (POST)
 
@@ -42,4 +37,13 @@ struct CounselEndResultDTO: Decodable {
     let chatSummary: String
     let userSummary: String
     let aiSummary: String
+}
+
+// MARK: - Report (GET)
+
+struct CounselReportResultDTO: Decodable {
+    let userId: Int
+    let chatRoomId: Int
+    let userRequest: String
+    let AiResponse: String
 }
