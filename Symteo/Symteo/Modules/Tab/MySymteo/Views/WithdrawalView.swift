@@ -28,7 +28,7 @@ struct WithdrawalView: View {
 
                 Text("회원 탈퇴")
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -38,13 +38,13 @@ struct WithdrawalView: View {
                 VStack(alignment: .leading) {
                     Text("회원 탈퇴 전 주의 사항")
                         .font(.PretendardMedium(size: 16))
-                        .foregroundColor(.gray900)
+                        .foregroundStyle(.gray900)
                         .padding(.top, 20)
                         .padding(.bottom, 4)
 
                     Text("탈퇴 시 모든 서비스 이용내역이 삭제되며 복구가 불가능합니다.\n또한 같은 계정 정보로 재가입이 7일 동안 불가능합니다.")
                         .font(.PretendardMedium(size: 12))
-                        .foregroundColor(.gray500)
+                        .foregroundStyle(.gray500)
                         //.lineSpacing(4)
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -67,7 +67,7 @@ struct WithdrawalView: View {
 
                             Text("(필수) 위 주의 사항을 모두 확인했으며, 탈퇴에 동의합니다.")
                                 .font(.PretendardMedium(size: 14))
-                                .foregroundColor(.gray900)
+                                .foregroundStyle(.gray900)
                         }
                     }
                     .padding(.top, 24)
@@ -85,7 +85,7 @@ struct WithdrawalView: View {
                 } label: {
                     Text("탈퇴하기")
                         .font(.PretendardSemiBold(size: 16))
-                        .foregroundColor(.gray700)
+                        .foregroundStyle(.gray700)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(Color.gray100)
@@ -99,7 +99,7 @@ struct WithdrawalView: View {
                 } label: {
                     Text("취소")
                         .font(.PretendardSemiBold(size: 16))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(Color.maingreen)
@@ -119,12 +119,12 @@ struct WithdrawalView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text("• \(title)")
                 .font(.PretendardMedium(size: 14))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
 
             if !desc.isEmpty {
                 Text(desc)
                     .font(.PretendardMedium(size: 12))
-                    .foregroundColor(.gray500)
+                    .foregroundStyle(.gray500)
             }
         }
     }

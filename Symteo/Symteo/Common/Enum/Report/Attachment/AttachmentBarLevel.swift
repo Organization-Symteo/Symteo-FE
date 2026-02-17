@@ -25,6 +25,16 @@ enum AttachmentBarLevel {
             return .high
         }
     }
+    
+    static func fromServer(label: String) -> AttachmentBarLevel {
+            switch label {
+            case "매우 낮음": return .veryLow
+            case "낮음": return .low
+            case "보통": return .medium
+            case "높음": return .high
+            default: return .medium
+            }
+        }
 
     // UI 색상
     var color: Color {

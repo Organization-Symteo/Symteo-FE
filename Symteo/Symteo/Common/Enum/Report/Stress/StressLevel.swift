@@ -6,13 +6,25 @@
 //
 import SwiftUI
 
+
 enum StressLevel {
     case good        // 양호
     case caution     // 주의
     case danger      // 위험
     case critical    // 매우 위험
 
-    // MARK: - 점수 → 등급 변환
+    // MARK: - 서버 문자열 → enum 변환
+    static func from(text: String) -> StressLevel {
+            switch text {
+            case "양호": return .good
+            case "주의": return .caution
+            case "위험": return .danger
+            case "매우 위험": return .critical
+            default: return .caution
+            }
+        }
+    
+    // MARK: - 점수 → 등급 변환 (보조 / fallback)
     static func from(score: Int) -> StressLevel {
         switch score {
         case 0...13:
@@ -30,31 +42,41 @@ enum StressLevel {
     var color: Color {
         switch self {
         case .good:
-            return Color(hex: "#63B19B")   // 초록
+            return Color(hex: "#63B19B")
         case .caution:
-            return Color(hex: "#FFE8A9")   // 노랑
+            return Color(hex: "#FFE8A9")
         case .danger:
-            return Color(hex: "#FFAC79")   // 주황
+            return Color(hex: "#FFAC79")
         case .critical:
-            return Color(hex: "#F4574F")   // 빨강
+            return Color(hex: "#F4574F")
         }
     }
 
     // MARK: - 상태 텍스트
     var title: String {
         switch self {
-        case .good:
-            return "양호"
-        case .caution:
-            return "주의"
-        case .danger:
-            return "위험"
-        case .critical:
-            return "매우 위험"
+        case .good: return "양호"
+        case .caution: return "주의"
+        case .danger: return "위험"
+        case .critical: return "매우 위험"
         }
     }
+    
+    // MARK: - 온도계 이미지
+    var imageName: String {
+            switch self {
+            case .good:
+                return "stress_good"
+            case .caution:
+                return "stress_caution"
+            case .danger:
+                return "stress_danger"
+            case .critical:
+                return "stress_critical"
+            }
+        }
 
-    // MARK: - 상세 멘트 (서버 오기 전까지는 로컬)
+    // MARK: - 상세 멘트 (UI용)
     var description: String {
         switch self {
         case .good:
@@ -67,15 +89,14 @@ enum StressLevel {
             return "심리적으로 많이 지친 상태입니다. 전문적인 상담이나 심층 진단을 권장해요."
         }
     }
-    
-    
-    // MARK: - 상세 점수 
+
+    // MARK: - 점수 범위 텍스트
     var rangeText: String {
-           switch self {
-           case .good: return "0~13점"
-           case .caution: return "14~26점"
-           case .danger: return "27~30점"
-           case .critical: return "31점 이상"
-           }
-       }
+        switch self {
+        case .good: return "0~13점"
+        case .caution: return "14~26점"
+        case .danger: return "27~30점"
+        case .critical: return "31점 이상"
+        }
+    }
 }

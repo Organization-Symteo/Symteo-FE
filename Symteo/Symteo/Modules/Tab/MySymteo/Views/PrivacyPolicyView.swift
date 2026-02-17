@@ -28,7 +28,7 @@ struct PrivacyPolicyView: View {
 
                     Text("개인정보 처리방침")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.gray900)
+                        .foregroundStyle(.gray900)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)

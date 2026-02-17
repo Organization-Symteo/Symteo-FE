@@ -6,10 +6,13 @@
 //
 import Foundation
 
+
 protocol TokenProviding {
     var accessToken: String? { get set }
    // func refreshToken(completion: @escaping (String?, Error?) -> Void)
 }
+
+
 
 struct TokenInfo: Codable {
     var accessToken: String

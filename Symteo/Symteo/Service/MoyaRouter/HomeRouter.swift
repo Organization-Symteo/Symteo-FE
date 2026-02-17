@@ -43,10 +43,10 @@ extension HomeRouter: APITargetType {
         }
     }
 
-    /*
+    
     var headers: [String : String]? {
         ["Content-Type": "application/json"]
-    } */
+    }
     
     
     var sampleData: Data {

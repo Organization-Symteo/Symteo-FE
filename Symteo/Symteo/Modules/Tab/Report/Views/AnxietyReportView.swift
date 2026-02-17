@@ -9,23 +9,21 @@ import SwiftUI
 struct AnxietyReportView: View {
     @State private var currentPage = 0
     @StateObject private var viewModel: AnxietyReportViewModel
-
-    init(phqScore: Int, gadScore: Int) {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var container: DIContainer
+    
+    // MARK: -이니셜라이저
+    init(reportId: Int,container: DIContainer) {
         _viewModel = StateObject(
             wrappedValue: AnxietyReportViewModel(
-                phqScore: phqScore,
-                gadScore: gadScore
+                reportId: reportId,
+                container: container
             )
         )
     }
+    
 
-    let overallResult = OverallResult(
-        phqScore: 9,
-        gadScore: 9,
-        averageScore: 9,
-        status: .attention
-    )
-
+    // MARK: -Body
     var body: some View {
         ZStack(alignment: .top) {
 
@@ -46,9 +44,10 @@ struct AnxietyReportView: View {
                         )
                         .ignoresSafeArea(edges: .top)
 
-                    ReportNavigationBar()
+                    ReportNavigationBar(userName: "따오기")
 
-                    OverallResultSection(result: overallResult)
+                    /// 종합 결과 섹션
+                    OverallResultSection(result: viewModel.overallResult)
                         .padding(.horizontal, 20)
                         .offset(y: 70)
                 }
@@ -57,27 +56,52 @@ struct AnxietyReportView: View {
                 // 스크롤 영역
                 ScrollView {
                     VStack(spacing: 20) {
+                            TabView(selection: $currentPage) {
+                                /// 우울 결과 카드
+                                DepressionResultCard(data: viewModel.depressionResult)
+                                    .tag(0)
+                                
+                                /// 불안 결과 카드
+                                AnxietyResultCard(data: viewModel.anxietyResult)
+                                    .tag(1)
+                            }
+                            .tabViewStyle(.page(indexDisplayMode: .never))
+                            .frame(height: UIScreen.main.bounds.height * 0.75)
 
-                        TabView(selection: $currentPage) {
-                            DepressionResultCard(data: .preview)
-                                .tag(0)
-
-                            AnxietyResultCard(data: .preview)
-                                .tag(1)
-                        }
-                        .tabViewStyle(.page(indexDisplayMode: .never))
-                        .frame(height: UIScreen.main.bounds.height * 0.75)
-
+                        
+                        /// 커스텀 인디케이터
                         customIndicator
-                        AIPrecisionSection()
-                        EmergencyResponseSection()
-                        ReportBottomBar()
+                        
+                        /// AI 설명 섹션
+                        AIPrecisionSection(items: viewModel.aiInsightCards)
+                        
+                        /// 긴급 대응섹션 (PHQ-9 9번 응답 시에만)
+                        if viewModel.isEmergency {
+                            EmergencyResponseSection()
+                        }
+
+                        /// 하단 바
+                        ReportBottomBar( onConsultTap: {
+                            container.navigationRouter.push(.service) /// 상담사 버튼
+                        },
+                        onOtherTestTap: {
+                            container.navigationRouter.pop() ///dismiss()
+                        })
                     }
                     .padding(.top, 60) // 겹친 카드 아래 여백
                 }
             }
+            // 로딩
+            if viewModel.isLoading {
+                ReportLoadingView()
+            }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            if viewModel.summary == nil {
+                   viewModel.getAnxietyDepressionReport()
+               }
+        }
     }
 
     private var customIndicator: some View {
@@ -102,9 +126,3 @@ struct AnxietyReportView: View {
 }
 
 
-#Preview {
-    AnxietyReportView(
-            phqScore: 14,
-            gadScore: 11
-        )
-}

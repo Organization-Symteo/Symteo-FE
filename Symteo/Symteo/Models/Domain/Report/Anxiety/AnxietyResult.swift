@@ -14,7 +14,7 @@ struct AnxietyResult {
     let description: String?
 }
 
-
+/*
 /// 프리뷰용 더미데이터
 extension AnxietyResult {
 
@@ -38,5 +38,6 @@ extension AnxietyResult {
         description: "현재 불안 상태는 중증도 입니다.현재 불안 상태는 중증도 입니다. 현재 불안 상태는 중증도 입니다. 현재 불안 상태는 중증도 입니다. 현재 불안 상태는 중증도 입니다. "
     )
 }
+*/
 
 

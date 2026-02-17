@@ -250,7 +250,7 @@ struct HomeView: View {
                 } label: {
                     Text("정밀 상담 시작")
                         .font(.PretendardSemiBold(size: 16))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(.maingreen)

@@ -32,7 +32,7 @@ struct NicknameEditView: View {
 
                 Text("닉네임 수정")
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -42,7 +42,7 @@ struct NicknameEditView: View {
             Text("심터에서 사용할\n닉네임을 알려주세요!")
                 .font(.PretendardMedium(size: 22))
                 .lineSpacing(8)
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
                 .padding(.top, 21)
                 .padding(.horizontal, 16)
 
@@ -62,11 +62,11 @@ struct NicknameEditView: View {
             if showError {
                 HStack(spacing: 6) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.red)
+                        .foregroundStyle(.red)
 
                     Text("2-10자 이내로 입력해주세요")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.red)
+                        .foregroundStyle(.red)
                 }
                 .padding(.top, 8)
                 .padding(.horizontal, 16)
@@ -75,11 +75,11 @@ struct NicknameEditView: View {
 
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
 
                     Text("사용 가능한 닉네임이에요")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
                 .padding(.top, 8)
                 .padding(.horizontal, 16)

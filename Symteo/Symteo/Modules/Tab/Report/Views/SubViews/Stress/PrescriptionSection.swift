@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+// StressReportView에서 심터 처방을 보여주는 하위뷰입니다. 
 struct PrescriptionSection: View {
 
     var body: some View {
@@ -35,8 +36,8 @@ struct PrescriptionSection: View {
 
             // CTA 버튼
             Button(action: {
-                // TODO: 상담화면 연결
-                print("AI 상담사와 함께")
+                // TODO: 채팅 화면 연결
+                print("상담사 연결 ")
             }) {
                 HStack(spacing: 16) {
 
@@ -72,10 +73,6 @@ struct PrescriptionSection: View {
         }
         .padding(24)
         .padding(.horizontal, 20)
-        //.cardStyle()
-    }
-}
 
-#Preview {
-    PrescriptionSection()
+    }
 }

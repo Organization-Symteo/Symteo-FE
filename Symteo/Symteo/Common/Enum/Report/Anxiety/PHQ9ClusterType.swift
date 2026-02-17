@@ -12,6 +12,20 @@ enum PHQ9ClusterType {
 }
 
 extension PHQ9ClusterType {
+
+        static func from(serverName: String) -> PHQ9ClusterType {
+            switch serverName {
+            case "핵심 증상":
+                return .core
+            case "신체 증상":
+                return .physical
+            case "심리 증상":
+                return .psychological
+            default:
+                return .core   // fallback (서버 변경 대비)
+            }
+        }
+    
     
     var title: String {
         switch self {

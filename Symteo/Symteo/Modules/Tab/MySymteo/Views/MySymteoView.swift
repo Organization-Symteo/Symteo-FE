@@ -38,7 +38,6 @@ struct MySymteoView: View {
             }
             .padding(.horizontal, Layout.horizontalPadding)
             .background(Color(.gray5).ignoresSafeArea())
-
             .navigationDestination(for: NavigationDestination.self) { destination in
 
                 switch destination {
@@ -61,7 +60,7 @@ struct MySymteoView: View {
                         .environmentObject(container)
 
                 case let .survey(kind):
-                    SurveyView(kind: kind)
+                    SurveyView(kind: kind, container: container)
                         .environmentObject(container)
 
                     
@@ -73,10 +72,11 @@ struct MySymteoView: View {
                     
                 case .service:
                     ServicePolicyView()
-
+                    
                     
                 default:
-                    EmptyView()
+                    EmptyView()   // 🔥 임시 처리
+
 
 
 
@@ -91,7 +91,7 @@ struct MySymteoView: View {
         HStack {
             Text("MY 심터")
                 .font(.PretendardSemiBold(size: 18))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
 
             Spacer()
 
@@ -119,11 +119,11 @@ struct MySymteoView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("안녕하신가요?")
                     .font(.PretendardRegular(size: 14))
-                    .foregroundColor(.gray700)
+                    .foregroundStyle(.gray700)
 
                 Text("\(userName) 님")
                     .font(.PretendardSemiBold(size: 18))
-                    .foregroundColor(.gray900)
+                    .foregroundStyle(.gray900)
             }
 
             Spacer()
@@ -144,24 +144,24 @@ struct MySymteoView: View {
             } label: {
                 HStack(spacing: 12) {
                     Image("img-mission")
-                        .foregroundColor(.gray700)
+                        .foregroundStyle(.gray700)
                         .frame(width: 40, height: 40)
 
                     VStack(alignment: .leading, spacing: 0) {
                         Text("미션·상담기록")
                             .font(.PretendardMedium(size: 16))
-                            .foregroundColor(.gray900)
+                            .foregroundStyle(.gray900)
 
                         Text("한 눈에 다시 보기")
                             .font(.PretendardMedium(size: 12))
-                            .foregroundColor(.gray600)
+                            .foregroundStyle(.gray600)
                     }
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.gray500)
+                        .foregroundStyle(.gray500)
                 }
                 .padding(.horizontal, Layout.cardInnerPadding)
                 .padding(.vertical, 18)
@@ -183,7 +183,7 @@ struct MySymteoView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("월간 상태변화 추이")
                 .font(.PretendardSemiBold(size: 16))
-                .foregroundColor(.gray900)
+                .foregroundStyle(.gray900)
 
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -194,11 +194,11 @@ struct MySymteoView: View {
                 VStack(spacing: 8) {
                     Image("img-lock")
                         .font(.system(size: 16))
-                        .foregroundColor(.gray500)
+                        .foregroundStyle(.gray500)
 
                     Text("업데이트 예정")
                         .font(.PretendardSemiBold(size: 16))
-                        .foregroundColor(.gray900)
+                        .foregroundStyle(.gray900)
                 }
             }
             .frame(height: 307)

@@ -14,7 +14,17 @@ enum AttachmentType {
 }
 
 extension AttachmentType {
-
+    static func from(serverValue: String?) -> AttachmentType {
+            switch serverValue {
+            case "안정형": return .secure
+            case "불안형": return .anxious
+            case "공포 회피형": return .fearfulAvoidant
+            case "거부 회피형": return .dismissiveAvoidant
+            default: return .secure
+            }
+        }
+    
+    
     var title: String {
         switch self {
         case .anxious: return "불안형"
