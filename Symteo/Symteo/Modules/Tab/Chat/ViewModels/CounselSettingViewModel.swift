@@ -14,14 +14,14 @@ import Moya
 final class CounselSettingViewModel: ObservableObject {
 
     @Published var sections: [CounselSection] = [
-        CounselSection(title: "대화 분위기", options: ["친근함", "따뜻함", "차분함"], isMultiSelect: false),
-        CounselSection(title: "도움방식", options: ["공감 & 경청형", "해결 & 조언형", "팩트형"], isMultiSelect: false),
-        CounselSection(title: "역할", options: ["상담사", "친구", "멘탈 코치"], isMultiSelect: false),
-        CounselSection(title: "답변형식", options: ["짧고 간결", "길고 자세히", "상황에 맞게"], isMultiSelect: false),
+        CounselSection(title: "대화 분위기", options: ["친근함", "따뜻함", "차분함"], isMultiSelect: true),
+        CounselSection(title: "도움방식", options: ["공감 & 경청형", "해결 & 조언형", "팩트형"], isMultiSelect: true),
+        CounselSection(title: "역할", options: ["상담사", "친구", "멘탈 코치"], isMultiSelect: true),
+        CounselSection(title: "답변형식", options: ["짧고 간결", "길고 자세히", "상황에 맞게"], isMultiSelect: true),
         CounselSection(title: "말투", options: ["존댓말", "반말"], isMultiSelect: false)
     ]
 
-    @Published var selections: [String: Set<String>] = [
+    @Published var selections: [String: [String]] = [
         "대화 분위기": ["친근함"],
         "도움방식": ["공감 & 경청형"],
         "역할": ["상담사"],
@@ -41,24 +41,23 @@ final class CounselSettingViewModel: ObservableObject {
     }
 
     func toggleOption(sectionTitle: String, option: String, isMultiSelect: Bool) {
-        var currentSet = selections[sectionTitle] ?? []
+        var current = selections[sectionTitle] ?? []
 
         if isMultiSelect {
-            if currentSet.contains(option) {
-                currentSet.remove(option)
+            if let idx = current.firstIndex(of: option) {
+                current.remove(at: idx)
             } else {
-                currentSet.insert(option)
+                current.append(option) // 마지막 선택을 맨 뒤로
             }
         } else {
-            currentSet.removeAll()
-            currentSet.insert(option)
+            current = [option]
         }
 
-        selections[sectionTitle] = currentSet
+        selections[sectionTitle] = current
     }
 
     func isSelected(sectionTitle: String, option: String) -> Bool {
-        selections[sectionTitle]?.contains(option) ?? false
+        (selections[sectionTitle] ?? []).contains(option)
     }
 
     func saveSettings(onSuccess: @escaping () -> Void) {
@@ -67,11 +66,11 @@ final class CounselSettingViewModel: ObservableObject {
         alertMessage = nil
 
         let dto = CounselSettingRequestDTO(
-            atmosphere: mapAtmosphere(first(of: "대화 분위기")),
-            supportStyle: mapSupportStyle(first(of: "도움방식")),
-            roleCounselor: mapRole(first(of: "역할")),
-            answerFormat: mapAnswerFormat(first(of: "답변형식")),
-            tone: mapTone(first(of: "말투"))
+            atmosphere: mapAtmosphere(last(of: "대화 분위기")),
+            supportStyle: mapSupportStyle(last(of: "도움방식")),
+            roleCounselor: mapRole(last(of: "역할")),
+            answerFormat: mapAnswerFormat(last(of: "답변형식")),
+            tone: mapTone(last(of: "말투"))
         )
 
         service.saveSetting(dto)
@@ -81,6 +80,11 @@ final class CounselSettingViewModel: ObservableObject {
                 self.isSaving = false
 
                 if case let .failure(err) = completion {
+                    // COUNSELOR409는 "이미 존재"이므로 앱에서는 성공으로 간주하고 진행
+                    if self.isAlreadyConfigured(err) {
+                        onSuccess()
+                        return
+                    }
                     self.alertMessage = self.describe(err)
                 }
             } receiveValue: { _ in
@@ -91,8 +95,13 @@ final class CounselSettingViewModel: ObservableObject {
 
     func clearAlert() { alertMessage = nil }
 
-    private func first(of sectionTitle: String) -> String? {
-        selections[sectionTitle]?.first
+    private func last(of sectionTitle: String) -> String? {
+        selections[sectionTitle]?.last
+    }
+
+    private func isAlreadyConfigured(_ error: APIError) -> Bool {
+        guard case let .serverError(code, _) = error else { return false }
+        return code == "COUNSELOR409"
     }
 
     private func mapAtmosphere(_ text: String?) -> String? {

@@ -32,7 +32,6 @@ struct CounselEndRequestDTO: Encodable {
 }
 
 struct CounselEndResultDTO: Decodable {
-    let userId: Int
     let chatRoomId: Int
     let chatSummary: String
     let userSummary: String

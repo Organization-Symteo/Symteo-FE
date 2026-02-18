@@ -2,38 +2,57 @@
 //  UserRouter.swift
 //  Symteo
 //
-//  Created by 김지우 on 2/6/26.
-//
-
 
 import Foundation
 import Moya
 import Alamofire
 
 enum UserRouter {
-    case checkNickname(nickname: String)
+    case checkNickname(accessToken: String, nickname: String)
+    case signup(accessToken: String, dto: UserSignupRequestDTO)
 }
 
 extension UserRouter: APITargetType {
-    var baseURL: URL { URL(string: "https://api.symteo.com")! }
+    var baseURL: URL { URL(string: Config.baseUrl)! }
 
     var path: String {
         switch self {
         case .checkNickname:
             return "/api/v1/users/check-nickname"
+        case .signup:
+            return "/api/v1/users/signup"
         }
     }
 
-    var method: Moya.Method { .get }
+    var method: Moya.Method {
+        switch self {
+        case .checkNickname:
+            return .get
+        case .signup:
+            return .post
+        }
+    }
 
     var task: Task {
         switch self {
-        case .checkNickname(let nickname):
-            // 쿼리 파라미터로 nickname 전달
-            return .requestParameters(
-                parameters: ["nickname": nickname],
-                encoding: URLEncoding.queryString
-            )
+        case let .checkNickname(_, nickname):
+            return .requestParameters(parameters: ["nickname": nickname], encoding: URLEncoding.default)
+        case let .signup(_, dto):
+            return .requestJSONEncodable(dto)
         }
     }
+
+    var headers: [String : String]? {
+        let accessToken: String
+        switch self {
+        case let .checkNickname(token, _), let .signup(token, _):
+            accessToken = token
+        }
+        return [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(accessToken)"
+        ]
+    }
+
+    var sampleData: Data { Data() }
 }

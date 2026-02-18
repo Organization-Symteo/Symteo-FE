@@ -10,6 +10,9 @@ import SwiftUI
 struct SettingView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var sessionManager: SessionManager
+
+    @StateObject private var accountViewModel = AccountViewModel()
     
     @State private var alarmOn = false
     @State private var cheerOn = false
@@ -46,7 +49,6 @@ struct SettingView: View {
                     
                     VStack(alignment: .leading, spacing: 0) {
                         
-                        // 알림 설정
                         HStack {
                             sectionTitle("알림 설정")
                             
@@ -72,7 +74,6 @@ struct SettingView: View {
                         
                         Divider().padding(.vertical, 16)
                         
-                        // 사용자 설정
                         sectionTitle("사용자 설정")
                         
                         SettingRowToggle(
@@ -84,7 +85,6 @@ struct SettingView: View {
                         
                         Divider().padding(.vertical, 16)
                         
-                        // 내 계정
                         sectionTitle("내 계정")
                         
                         NavigationLink {
@@ -107,7 +107,6 @@ struct SettingView: View {
                         
                         Divider().padding(.vertical, 16)
                         
-                        // 기타
                         sectionTitle("기타")
                         
                         NavigationLink {
@@ -137,14 +136,14 @@ struct SettingView: View {
                             Spacer()
                             Text("0.0.1")
                                 .font(.PretendardRegular(size: 14))
-                            .foregroundStyle(.gray700)                }
+                            .foregroundStyle(.gray700)
+                        }
                         .padding(.vertical, 72)
                     }
                     .padding(.horizontal, 16)
                 }
             }
             
-            // Logout Popup
             if showLogoutPopup {
 
                 ZStack {
@@ -176,7 +175,6 @@ struct SettingView: View {
                 .zIndex(1)
             }
 
-            // Inquiry Popup
             if showInquiryPopup {
 
                 ZStack {
@@ -209,14 +207,14 @@ struct SettingView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            accountViewModel.bind(sessionManager: sessionManager)
+        }
     }
     
     private func logout() {
-        // TODO: 로그아웃 API 연동
-        print("로그아웃 처리")
+        accountViewModel.logout()
     }
-    
-    // MARK: - Helper
     
     private func sectionTitle(_ title: String) -> some View {
         Text(title)
