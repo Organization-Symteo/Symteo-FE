@@ -10,7 +10,10 @@ import SwiftUI
 struct WithdrawalView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var sessionManager: SessionManager
+
     @State private var isAgreed: Bool = false
+    @StateObject private var accountViewModel = AccountViewModel()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -45,20 +48,15 @@ struct WithdrawalView: View {
                     Text("탈퇴 시 모든 서비스 이용내역이 삭제되며 복구가 불가능합니다.\n또한 같은 계정 정보로 재가입이 7일 동안 불가능합니다.")
                         .font(.PretendardMedium(size: 12))
                         .foregroundStyle(.gray500)
-                        //.lineSpacing(4)
 
                     VStack(alignment: .leading, spacing: 8) {
                         bulletText("계정 정보 및 사용자 설정 정보", "   닉네임 정보, 사용자가 설정했던 모든 정보들 삭제")
-
                         bulletText("상담기록", "   AI 상담사와의 상담기록 내용 및 보관 데이터 삭제")
-
                         bulletText("미션기록", "   미션 정보 및 미션 보관 기록 데이터 삭제")
-
                         bulletText("그 외 모든 구매 기록 및 정보 삭제", "")
                     }
                     .padding(.top, 16)
 
-                    // Agreement
                     Button {
                         isAgreed.toggle()
                     } label: {
@@ -77,11 +75,10 @@ struct WithdrawalView: View {
                 .padding(.horizontal, 16)
             }
 
-            // Bottom Buttons
             HStack(spacing: 12) {
 
                 Button {
-                    // TODO: 탈퇴 API 연동
+                    accountViewModel.withdraw()
                 } label: {
                     Text("탈퇴하기")
                         .font(.PretendardSemiBold(size: 16))
@@ -91,7 +88,7 @@ struct WithdrawalView: View {
                         .background(Color.gray100)
                         .cornerRadius(12)
                 }
-                .disabled(!isAgreed)
+                .disabled(!isAgreed || accountViewModel.isLoading)
                 .opacity(isAgreed ? 1.0 : 0.4)
 
                 Button {
@@ -105,15 +102,17 @@ struct WithdrawalView: View {
                         .background(Color.maingreen)
                         .cornerRadius(12)
                 }
+                .disabled(accountViewModel.isLoading)
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 12)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            accountViewModel.bind(sessionManager: sessionManager)
+        }
     }
-
-    // MARK: - Helper
 
     private func bulletText(_ title: String, _ desc: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {

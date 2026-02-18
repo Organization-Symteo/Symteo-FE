@@ -6,41 +6,44 @@
 //
 
 import Foundation
-import Moya
- 
+
 final class TokenProvider: TokenProviding {
 
-    private let keyChain = KeychainService.shared
+    private let keychain = KeychainService.shared
 
     var accessToken: String? {
-        get { keyChain.loadToken()?.accessToken }
+        get { keychain.loadToken()?.accessToken }
         set { upsertTokens(accessToken: newValue, refreshToken: nil) }
     }
 
     var refreshToken: String? {
-        get { keyChain.loadToken()?.refreshToken }
+        get { keychain.loadToken()?.refreshToken }
         set { upsertTokens(accessToken: nil, refreshToken: newValue) }
     }
 
     func setTokens(accessToken: String, refreshToken: String) {
-        upsertTokens(accessToken: accessToken, refreshToken: refreshToken)
+        let tokenInfo = TokenInfo(accessToken: accessToken, refreshToken: refreshToken)
+        keychain.saveToken(tokenInfo)
     }
 
     func clearTokens() {
-        _ = keyChain.deleteToken()
+        _ = keychain.deleteToken()
     }
 
     private func upsertTokens(accessToken: String?, refreshToken: String?) {
-        if var tokenInfo = keyChain.loadToken() {
-            if let accessToken { tokenInfo.accessToken = accessToken }
-            if let refreshToken { tokenInfo.refreshToken = refreshToken }
-            keyChain.saveToken(tokenInfo)
-        } else {
-            let tokenInfo = TokenInfo(
-                accessToken: accessToken ?? "",
-                refreshToken: refreshToken ?? ""
-            )
-            keyChain.saveToken(tokenInfo)
-        }
+        let current = keychain.loadToken()
+
+        let newAccessToken: String = {
+            if let accessToken { return accessToken }
+            return current?.accessToken ?? ""
+        }()
+
+        let newRefreshToken: String = {
+            if let refreshToken { return refreshToken }
+            return current?.refreshToken ?? ""
+        }()
+
+        let tokenInfo = TokenInfo(accessToken: newAccessToken, refreshToken: newRefreshToken)
+        keychain.saveToken(tokenInfo)
     }
 }

@@ -246,7 +246,7 @@ struct HomeView: View {
                 
                 /// 채팅 화면으로 이동
                 NavigationLink {
-                    ChatView(container: container)   // ✅ 기존 container 사용
+                    ChatView()
                 } label: {
                     Text("정밀 상담 시작")
                         .font(.PretendardSemiBold(size: 16))

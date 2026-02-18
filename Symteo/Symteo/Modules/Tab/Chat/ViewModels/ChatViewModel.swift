@@ -1,4 +1,3 @@
-//
 //  ChatViewModel.swift
 //  Symteo
 //
@@ -7,81 +6,178 @@
 
 import Foundation
 import Combine
+import SwiftUI
 import Moya
 
 @MainActor
-class ChatViewModel: ObservableObject {
-    
-    // MARK: - 메시지
-    
-    /// 화면에 띄울 메시지 목록
+final class ChatViewModel: ObservableObject {
+
     @Published var messages: [ChatMessage] = []
-    
-    /// 페이지네이션을 위해, 마지막 메시지의 createdAt 저장
-    @Published var lastCreateAt: String? = nil
-    
-    /// postChat 함수가 로딩 중임을 나타냄
-    @Published var isPostingChat: Bool = false
-    
-    /// getLatestChat, deleteChats 함수가 로딩 중임을 나타냄
-    @Published var isFetchingChats: Bool = false
-    
-    /// 메시지 페이지네이션에서 다음 페이지가 있는지 나타냄
-    @Published var hasNext: Bool = true
-    
-    // 스크롤 트리거
-    @Published var shouldScrollToBottom = false
-    
-    // MARK: - 의존성 주입 및 비동기 처리
-    
-    /// DIContainer를 통해 의존성 주입
-    let container: DIContainer
-    /// Combine 구독 해제를 위한 Set
-    var cancellables = Set<AnyCancellable>()
-    
-    // MARK: - 사용자 입력
-    
-    /// 입력된 채팅 본문
-    @Published var textInput = ""
-    
-    // MARK: - 초기화
-    
-    init(container: DIContainer) {
-        self.container = container
-    }
-    
-    // MARK: - 함수
-    
-    public func sendMessage() async {
-        let text = textInput
-        self.textInput = ""
-        
-        let newMessage = ChatMessage(
-            role: .user,
-            content: text,
-            createdAt: Date().isoYearMonthDayHourMinuteString
-        )
-        messages.append(newMessage)
-    }
-    
-    
-    // MARK: - API
-    
-    /// 채팅 요청 함수 작성 예정
-    
-    /// 이전 대화 기록 조회에서, 커서 페이징 함수 작성 예정
-    
-    // 채팅 기록 초기화 함수 작성 예정
-}
+    @Published var textInput: String = ""
+    @Published var isSending: Bool = false
 
-// MARK: - 보내는 메시지를 띄우기 위한 날짜 변환 함수
+    @Published var shouldScrollToBottom: Bool = false
 
-extension Date {
-    var isoYearMonthDayHourMinuteString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        return formatter.string(from: self)
+    @Published var isShowingEndPopup: Bool = false
+    @Published var isEnding: Bool = false
+    @Published var endSummary: CounselEndResultDTO? = nil
+
+    @Published var alertMessage: String? = nil
+
+    @Published private(set) var isChatStarted: Bool = false
+    @Published var isLoadingReport: Bool = false
+
+    private let service: CounselServicing
+    private var cancellables = Set<AnyCancellable>()
+
+    @AppStorage("chatRoomId") private var storedChatRoomId: Int = 0
+    private var chatRoomId: Int? {
+        get { storedChatRoomId == 0 ? nil : storedChatRoomId }
+        set { storedChatRoomId = newValue ?? 0 }
+    }
+
+    init() {
+        let provider = APIManager.shared.createProvider(for: ChatRouter.self)
+        self.service = CounselService(provider: provider)
+    }
+
+    func onAppearIfNeeded() {
+        if messages.isEmpty {
+            isChatStarted = false
+            messages = [
+                .model("안녕하세요! 저는 맞춤형 상담 AI ○○○이에요."),
+                .model("아래에서 선택하시면 해당하는 서비스를 이용하실 수 있어요.")
+            ]
+            shouldScrollToBottom.toggle()
+        }
+    }
+
+    func sendMessage() {
+        let text = textInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        guard !isSending else { return }
+
+        isChatStarted = true
+
+        textInput = ""
+        messages.append(.user(text))
+        shouldScrollToBottom.toggle()
+
+        isSending = true
+
+        service.sendMessage(chatRoomId: chatRoomId, text: text)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isSending = false
+                if case let .failure(err) = completion {
+                    self.handleSendError(err)
+                }
+            } receiveValue: { [weak self] dto in
+                guard let self else { return }
+                self.chatRoomId = dto.chatRoomId
+                self.messages.append(.model(dto.AiResponse))
+                self.shouldScrollToBottom.toggle()
+            }
+            .store(in: &cancellables)
+    }
+
+    func loadReport(buttonTitle: String, reportType: String, reportId: Int = 0) {
+        guard !isLoadingReport else { return }
+
+        isChatStarted = true
+        isLoadingReport = true
+
+        messages.append(.user(buttonTitle))
+        messages.append(.model("불러오는 중..."))
+        shouldScrollToBottom.toggle()
+
+        service.fetchReport(chatRoomId: chatRoomId, reportType: reportType, reportId: reportId)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isLoadingReport = false
+
+                if case let .failure(err) = completion {
+                    if self.isLastLoadingBubble {
+                        self.messages.removeLast()
+                    }
+                    self.alertMessage = self.describe(err)
+                }
+            } receiveValue: { [weak self] dto in
+                guard let self else { return }
+                self.chatRoomId = dto.chatRoomId
+
+                if self.isLastLoadingBubble {
+                    self.messages.removeLast()
+                }
+                self.messages.append(.model(dto.AiResponse))
+                self.shouldScrollToBottom.toggle()
+            }
+            .store(in: &cancellables)
+    }
+
+    private var isLastLoadingBubble: Bool {
+        guard let last = messages.last else { return false }
+        return last.role == .model && last.content == "불러오는 중..."
+    }
+
+    func tapEndIcon() { isShowingEndPopup = true }
+    func cancelEnd() { isShowingEndPopup = false }
+
+    func confirmEnd() {
+        isShowingEndPopup = false
+        endChat()
+    }
+
+    private func endChat() {
+        guard let chatRoomId else { return }
+        guard !isEnding else { return }
+
+        isEnding = true
+
+        service.endChat(chatRoomId: chatRoomId)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isEnding = false
+                if case let .failure(err) = completion {
+                    self.alertMessage = self.describe(err)
+                }
+            } receiveValue: { [weak self] summary in
+                guard let self else { return }
+                self.endSummary = summary
+
+                self.chatRoomId = nil
+                self.messages.removeAll()
+                self.onAppearIfNeeded()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleSendError(_ error: APIError) {
+        switch error {
+        case let .serverError(code, message):
+            if code == "SETTING404" {
+                alertMessage = "상담사 설정이 필요합니다. 설정에서 저장 후 다시 시도해 주세요."
+            } else {
+                alertMessage = "\(code): \(message)"
+            }
+        default:
+            alertMessage = "네트워크 오류가 발생했습니다."
+        }
+    }
+
+    private func describe(_ error: APIError) -> String {
+        switch error {
+        case let .serverError(code, message):
+            return "\(code): \(message)"
+        default:
+            return "네트워크 오류가 발생했습니다."
+        }
+    }
+
+    func clearAlert() {
+        alertMessage = nil
     }
 }

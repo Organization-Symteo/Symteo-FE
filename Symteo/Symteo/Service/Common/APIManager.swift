@@ -20,7 +20,7 @@ class APIManager: @unchecked Sendable {
     
     private init() {
         tokenProvider = TokenProvider()
-        accessTokenRefresher = AccessTokenRefresher(tokenProviding: tokenProvider)
+        accessTokenRefresher = AccessTokenRefresher(tokenProvider: tokenProvider as! TokenProvider)
         session = Session(interceptor: accessTokenRefresher)
         loggerPlugin = NetworkLoggerPlugin(configuration: .init(logOptions: .verbose))
     }

@@ -24,6 +24,11 @@ final class SessionManager: ObservableObject {
 
     @AppStorage("didFinishOnboarding") private var didFinishOnboarding: Bool = false
 
+    @AppStorage("session_userId") private var storedUserId: Int = 0
+    @AppStorage("session_nickname") private var storedNickname: String = ""
+    @AppStorage("session_isRegistered") private var storedIsRegistered: Bool = false
+    @AppStorage("session_counselorConfigured") private var storedCounselorConfigured: Bool = false
+
     @EnvironmentObject var container: DIContainer
     @Published var userId: Int? = nil
     @Published var nickname: String? = nil
@@ -35,8 +40,14 @@ final class SessionManager: ObservableObject {
 
     private let keychain: KeychainService
 
-    init(keychain: KeychainService) {
+    private let authAccountService: AuthAccountServicing
+
+    init(
+        keychain: KeychainService,
+        authAccountService: AuthAccountServicing = AuthAccountService()
+    ) {
         self.keychain = keychain
+        self.authAccountService = authAccountService
     }
 
     func bootstrap() async {
@@ -48,6 +59,27 @@ final class SessionManager: ObservableObject {
         if let token = keychain.loadToken() {
             accessToken = token.accessToken
             refreshToken = token.refreshToken
+
+            userId = (storedUserId == 0) ? nil : storedUserId
+            nickname = storedNickname.isEmpty ? nil : storedNickname
+            isRegistered = storedIsRegistered
+            counselorConfigured = storedCounselorConfigured
+
+            if let accessToken, let refreshToken, !accessToken.isEmpty, !refreshToken.isEmpty {
+                do {
+                    let refreshed = try await authAccountService.refresh(accessToken: accessToken, refreshToken: refreshToken)
+                    applyRefreshedSession(
+                        accessToken: refreshed.accessToken,
+                        refreshToken: refreshed.refreshToken,
+                        userId: refreshed.userId,
+                        registered: refreshed.registered,
+                        nickname: refreshed.nickname
+                    )
+                } catch {
+                    logout()
+                    return
+                }
+            }
             decideNextFlow()
         } else {
             flow = .loggedOut
@@ -70,6 +102,10 @@ final class SessionManager: ObservableObject {
         self.isRegistered = isRegistered
         self.nickname = nickname
 
+        storedUserId = userId
+        storedIsRegistered = isRegistered
+        storedNickname = nickname ?? ""
+
         keychain.saveToken(.init(accessToken: accessToken, refreshToken: refreshToken))
         decideNextFlow()
     }
@@ -77,11 +113,16 @@ final class SessionManager: ObservableObject {
     func applyNicknameSaved(_ nickname: String) {
         self.nickname = nickname
         self.isRegistered = true
+
+        storedNickname = nickname
+        storedIsRegistered = true
         decideNextFlow()
     }
 
     func applyCounselorConfigured() {
         self.counselorConfigured = true
+
+        storedCounselorConfigured = true
         decideNextFlow()
     }
 
@@ -94,7 +135,33 @@ final class SessionManager: ObservableObject {
         nickname = nil
         isRegistered = false
         counselorConfigured = false
+
+        storedUserId = 0
+        storedNickname = ""
+        storedIsRegistered = false
+        storedCounselorConfigured = false
+
         flow = didFinishOnboarding ? .loggedOut : .onboarding
+    }
+
+    private func applyRefreshedSession(
+        accessToken: String,
+        refreshToken: String,
+        userId: Int,
+        registered: Bool,
+        nickname: String?
+    ) {
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+        self.userId = userId
+        self.isRegistered = registered
+        self.nickname = nickname
+
+        storedUserId = userId
+        storedIsRegistered = registered
+        storedNickname = nickname ?? ""
+
+        keychain.saveToken(.init(accessToken: accessToken, refreshToken: refreshToken))
     }
 
     private func decideNextFlow() {
@@ -121,5 +188,4 @@ final class SessionManager: ObservableObject {
 
         flow = .home
     }
-
 }

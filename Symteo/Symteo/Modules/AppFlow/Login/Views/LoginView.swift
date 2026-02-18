@@ -41,9 +41,13 @@ struct LoginView: View {
                 
                 ForEach(viewModel.providers, id: \.self) { provider in
                     SocialLoginButton(icon: provider.icon, title: provider.title) {
-                        viewModel.tapLogin(provider: provider) {
-                            
-                        }
+                        if !agreeTerms {
+                                                    withAnimation(.spring()) {
+                                                        showTermsPopup = true
+                                                    }
+                                                } else {
+                                                    viewModel.tapLogin(provider: provider) { }
+                                                }
                     }
                 }
                 Spacer().frame(height: 77)
@@ -53,6 +57,8 @@ struct LoginView: View {
             .padding(.horizontal, 26)
         }
         .task {
+            
+            agreeTerms = false
             if !agreeTerms {
                 await Task.yield()
                 showTermsPopup = true
