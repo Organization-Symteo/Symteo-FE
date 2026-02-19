@@ -10,6 +10,8 @@ struct ReportNavigationBar: View {
     let userName: String
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var sessionmanager: SessionManager
+
 
     var body: some View {
         HStack(spacing: 10) {
@@ -29,7 +31,7 @@ struct ReportNavigationBar: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("오늘도 마음을 돌보는")
                     .font(.PretendardSemiBold(size: 16))
-                Text("당신을 응원합니다. \(userName)님")
+                Text("당신을 응원합니다. \(sessionmanager.userName)님")
                     .font(.PretendardSemiBold(size: 16))
             }
             .foregroundStyle(.white)

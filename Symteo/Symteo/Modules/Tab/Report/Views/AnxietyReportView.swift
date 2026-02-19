@@ -11,6 +11,8 @@ struct AnxietyReportView: View {
     @StateObject private var viewModel: AnxietyReportViewModel
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var sessionManager: SessionManager
+
     
     // MARK: -이니셜라이저
     init(reportId: Int,container: DIContainer) {
@@ -44,7 +46,7 @@ struct AnxietyReportView: View {
                         )
                         .ignoresSafeArea(edges: .top)
 
-                    ReportNavigationBar(userName: "따오기")
+                    ReportNavigationBar(userName: sessionManager.userName)
 
                     /// 종합 결과 섹션
                     OverallResultSection(result: viewModel.overallResult)

@@ -39,6 +39,12 @@ final class SessionManager: ObservableObject {
         self.keychain = keychain
         self.authAccountService = authAccountService
     }
+    
+
+    
+    var userName: String {
+        nickname ?? ""
+    }
 
     func bootstrap() async {
         if !didFinishOnboarding {
