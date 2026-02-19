@@ -21,7 +21,7 @@ struct MySymteoView: View {
         static let avatarSize: CGFloat = 64
     }
 
-    private let userName: String = "홍따오기"
+    private let userName: String = ""
 
     var body: some View {
 
@@ -75,7 +75,7 @@ struct MySymteoView: View {
                     
                     
                 default:
-                    EmptyView()   // 🔥 임시 처리
+                    EmptyView()
 
 
 

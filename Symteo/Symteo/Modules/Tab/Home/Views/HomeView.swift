@@ -11,7 +11,7 @@ import Combine
 // 홈 화면 코드입니다. 
 struct HomeView: View {
     // MARK: - Properties
-    @State private var userName: String = "따오기" // 실제 유저 이름으로 수정예정
+    @EnvironmentObject var sessionManager: SessionManager
     @State private var selectedDiagnosis: RecommendationType? // 하단의 추천 검사 분기를 위한 프로퍼티
     @State private var currentPage = 0 // 페이지 스와이프(현재페이지 추적)
     @StateObject private var viewModel : HomeViewModel
@@ -173,7 +173,7 @@ struct HomeView: View {
         private var recommendationSection: some View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 0) {
-                    Text("\(viewModel.nickname)")
+                    Text("\(sessionManager.userName)")
                         .font(.PretendardSemiBold(size: 14))
                         .foregroundStyle(.gray900)
                     
