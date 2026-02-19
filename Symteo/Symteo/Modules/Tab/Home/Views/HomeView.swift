@@ -190,7 +190,14 @@ struct HomeView: View {
                 TabView(selection: $currentPage) {
                     ForEach(Array(recommendationItems.enumerated()), id: \.offset) { index, item in
                         Button {
-                            selectedDiagnosis = item.type
+                            switch item.type {
+                            case .anxiety:
+                                container.navigationRouter.push(.depressionTest)
+                            case .stress:
+                                container.navigationRouter.push(.stressTest)
+                            case .attachment:
+                                container.navigationRouter.push(.typeTest)
+                            }
                         } label: {
                             Image(item.imageName)
                                 .resizable()
@@ -245,8 +252,8 @@ struct HomeView: View {
                     .frame(height: 100)
                 
                 /// 채팅 화면으로 이동
-                NavigationLink {
-                    ChatView()
+                Button{
+                    container.selectedTab = .chat
                 } label: {
                     Text("정밀 상담 시작")
                         .font(.PretendardSemiBold(size: 16))
@@ -269,3 +276,4 @@ struct HomeView: View {
 #Preview {
     HomeView(container: .init())
 }
+

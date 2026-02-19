@@ -70,8 +70,9 @@ struct StressReportView: View {
 
                         customIndicator
                         
-                        PrescriptionSection()
-
+                        PrescriptionSection(onChatTap: {
+                                                    container.selectedTab = .chat
+                                                })
         
                         MainBottomButton(
                             text: "다른 검사하러 가기",

@@ -8,6 +8,8 @@ import SwiftUI
 
 // StressReportView에서 심터 처방을 보여주는 하위뷰입니다. 
 struct PrescriptionSection: View {
+    let onChatTap: () -> Void   // 이벤트 위임
+
     @EnvironmentObject var sessionManager: SessionManager
 
     var body: some View {
@@ -37,7 +39,7 @@ struct PrescriptionSection: View {
 
             // CTA 버튼
             Button(action: {
-                // TODO: 채팅 화면 연결
+                onChatTap()
                 print("상담사 연결 ")
             }) {
                 HStack(spacing: 16) {
