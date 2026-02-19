@@ -8,12 +8,13 @@ import SwiftUI
 
 // StressReportView에서 심터 처방을 보여주는 하위뷰입니다. 
 struct PrescriptionSection: View {
+    @EnvironmentObject var sessionManager: SessionManager
 
     var body: some View {
         VStack(spacing: 24) {
 
             // 타이틀
-            Text("따오기님을 위한 심터의 처방") // TODO: 실제 유저이름
+            Text("\(sessionManager.userName)을 위한 심터의 처방") 
                 .font(.PretendardSemiBold(size: 20))
                 .foregroundStyle(.gray900)
                 .multilineTextAlignment(.center)

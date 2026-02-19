@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AttachmentResultCard: View {
     @ObservedObject var viewModel: AttachmentReportViewModel
+    @EnvironmentObject var sessionManager: SessionManager
+
 
     var body: some View {
         VStack(spacing: 16) {
@@ -30,7 +32,7 @@ struct AttachmentResultCard: View {
 
             if let type = viewModel.attachmentType {
                 AttachmentDescriptionSection(
-                    userName: viewModel.userName,
+                    userName: sessionManager.userName,
                     attachmentType: type,
                     description: viewModel.description
                 )
@@ -78,6 +80,8 @@ private struct AttachmentMapSection: View {
 
 private struct AttachmentDescriptionSection: View {
 
+    @EnvironmentObject var sessionManager: SessionManager
+
     let userName: String
     let attachmentType: AttachmentType
     let description: String
@@ -86,7 +90,7 @@ private struct AttachmentDescriptionSection: View {
         VStack(alignment: .leading, spacing: 12) {
 
             HStack(spacing: 4) {
-                Text("\(userName)님의 애착유형은")
+                Text("\(sessionManager.userName)님의 애착유형은")
                     .font(.PretendardSemiBold(size: 16))
                     .foregroundStyle(.gray900)
 

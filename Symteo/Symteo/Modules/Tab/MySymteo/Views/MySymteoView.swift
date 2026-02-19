@@ -20,9 +20,8 @@ struct MySymteoView: View {
 
         static let avatarSize: CGFloat = 64
     }
-
-    private let userName: String = ""
-
+    
+    @EnvironmentObject var sessionManager: SessionManager
     var body: some View {
 
         NavigationStack(path: $container.navigationRouter.path) {
@@ -121,7 +120,7 @@ struct MySymteoView: View {
                     .font(.PretendardRegular(size: 14))
                     .foregroundStyle(.gray700)
 
-                Text("\(userName) 님")
+                Text("\(sessionManager.userName)님")
                     .font(.PretendardSemiBold(size: 18))
                     .foregroundStyle(.gray900)
             }

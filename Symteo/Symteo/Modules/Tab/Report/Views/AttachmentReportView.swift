@@ -11,6 +11,8 @@ struct AttachmentReportView: View {
     @State private var currentPage = 0
     @StateObject var viewModel: AttachmentReportViewModel
     @EnvironmentObject var container: DIContainer
+    @EnvironmentObject var sessionManager: SessionManager
+
   
     // MARK: -initializer
     init(reportId: Int, container: DIContainer) {
@@ -43,7 +45,7 @@ struct AttachmentReportView: View {
                         .ignoresSafeArea(edges: .top)
                     
                     // 네비게이션 바
-                    ReportNavigationBar(userName: viewModel.userName)
+                    ReportNavigationBar(userName: sessionManager.userName)
                     
                     // 애착유형섹션
                     AttachmentTypeSection(type: .anxious)

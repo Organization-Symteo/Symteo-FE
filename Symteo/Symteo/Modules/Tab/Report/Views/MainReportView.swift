@@ -11,6 +11,8 @@ struct MainReportView: View {
     
     @EnvironmentObject var container: DIContainer
     @StateObject private var viewModel: MainReportViewModel
+    @EnvironmentObject var sessionManager: SessionManager
+    
     
     // MARK: -initializer
     init(
@@ -89,7 +91,7 @@ struct MainReportView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text("\(viewModel.userName)")
+                Text("\(sessionManager.userName)")
                     .font(.PretendardSemiBold(size: 18))
                     .foregroundStyle(Color.gray900)
                 Text("님을 위한")
