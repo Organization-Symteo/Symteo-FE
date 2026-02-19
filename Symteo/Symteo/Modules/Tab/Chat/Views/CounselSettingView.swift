@@ -1,4 +1,3 @@
-//
 //  CounselSettingView.swift
 //  Symteo
 //
@@ -8,10 +7,15 @@
 import SwiftUI
 
 struct CounselSettingView: View {
+
+    let usage: CounselSettingUsage
+
     @StateObject private var viewModel = CounselSettingViewModel()
     @EnvironmentObject var container: DIContainer
     @EnvironmentObject var sessionManager: SessionManager
     @Environment(\.dismiss) private var dismiss
+
+    @State private var showLoading = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -21,11 +25,25 @@ struct CounselSettingView: View {
                 VStack(alignment: .leading, spacing: 32) {
                     Text("내게 맞는 상담 스타일을 설정해보세요")
                         .font(.PretendardRegular(size: 14))
-                        .foregroundStyle(.gray400)
+                        .foregroundStyle(Color.gray400)
                         .padding(.top, 10)
 
                     ForEach(viewModel.sections) { section in
-                        CounselSectionComponent(section: section, viewModel: viewModel)
+                        VStack(alignment: .leading, spacing: 14) {
+                            HStack {
+                                Text(section.title)
+                                    .font(.PretendardBold(size: 14))
+                                    .foregroundStyle(.gray900)
+                            }
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(section.options, id: \.self) { option in
+                                        optionButton(section: section, option: option)
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     Spacer().frame(height: 50)
@@ -38,63 +56,102 @@ struct CounselSettingView: View {
         }
         .navigationBarHidden(true)
         .background(Color.white)
-        .alert("알림", isPresented: Binding(
-            get: { viewModel.alertMessage != nil },
-            set: { newValue in if !newValue { viewModel.clearAlert() } }
-        )) {
-            Button("확인") { viewModel.clearAlert() }
-        } message: {
-            Text(viewModel.alertMessage ?? "")
+        .onAppear {
+            viewModel.loadExistingSettingIfNeeded(usage: usage)
+        }
+        .fullScreenCover(isPresented: $showLoading) {
+            LoadingFlowView(
+                title: "데이터 저장 중...",
+                showsCompletionButtons: false,
+                completedTitle: "저장 완료!"
+            ) {
+                sessionManager.applyCounselorConfigured()
+                showLoading = false
+
+                switch usage {
+                case .onboarding:
+                    break
+                case .chatEdit, .myEdit:
+                    dismiss()
+                }
+            }
+        }
+        .alert(
+            "오류",
+            isPresented: Binding(
+                get: { viewModel.alertMessage != nil },
+                set: { if !$0 { viewModel.alertMessage = nil } }
+            ),
+            actions: { Button("확인", role: .cancel) {} },
+            message: { Text(viewModel.alertMessage ?? "") }
+        )
+    }
+
+    private func optionButton(section: CounselSection, option: String) -> some View {
+        let isSelected = viewModel.isSelected(sectionTitle: section.title, option: option)
+
+        return Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            viewModel.toggleOption(
+                sectionTitle: section.title,
+                option: option,
+                isMultiSelect: section.isMultiSelect
+            )
+        }) {
+            Text(option)
+                .font(.PretendardMedium(size: 14))
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .background(isSelected ? Color.green30 : Color.white)
+                .foregroundStyle(isSelected ? Color.maingreen : Color.gray500)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(isSelected ? Color.green600 : Color.gray200, lineWidth: 1)
+                )
+                .cornerRadius(12)
         }
     }
 
     private var customHeader: some View {
-        ZStack(alignment: .leading) {
-            Button(action: { dismiss() }) {
-                Image(systemName: "arrow.left")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 20, height: 20)
-                    .foregroundStyle(.black)
-            }
-            .padding(.trailing, 4)
-
+        ZStack {
             HStack {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "arrow.left")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                        .foregroundStyle(.black)
+                }
+                Spacer()
+            }
+
+            HStack(spacing: 6) {
                 Text("맞춤")
-                    .font(.PretendardBold(size: 11))
+                    .font(.PretendardMedium(size: 12))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.green400)
+                    .padding(.vertical, 3)
+                    .background(Color.maingreen)
                     .cornerRadius(12)
 
                 Text("상담사 설정")
-                    .font(.PretendardMedium(size: 16))
-                    .foregroundStyle(.black)
+                    .font(.PretendardRegular(size: 14))
+                    .foregroundStyle(.gray900)
             }
-            .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .overlay(Rectangle().frame(height: 1).foregroundStyle(.gray100), alignment: .bottom)
+        .overlay(Rectangle().frame(height: 1).foregroundStyle(Color.gray100), alignment: .bottom)
     }
 
     private var saveButton: some View {
         Button(action: {
-            viewModel.saveSettings {
-                sessionManager.applyCounselorConfigured()
-
-                if sessionManager.flow == .home {
-                    dismiss()
-                } else {
-                    container.navigationRouter.push(.basetab)
-                }
+            viewModel.save(usage: usage) {
+                showLoading = true
             }
         }) {
             ZStack {
                 Text("저장")
-                    .font(.PretendardMedium(size: 16))
-                    .foregroundStyle(.white)
                     .opacity(viewModel.isSaving ? 0 : 1)
 
                 if viewModel.isSaving {
@@ -102,9 +159,11 @@ struct CounselSettingView: View {
                         .tint(.white)
                 }
             }
+            .font(.PretendardMedium(size: 16))
+            .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(viewModel.isSaving ? Color.green400.opacity(0.6) : Color.green400)
+            .frame(height: 56)
+            .background(Color.maingreen)
             .cornerRadius(12)
         }
         .disabled(viewModel.isSaving)
@@ -113,37 +172,4 @@ struct CounselSettingView: View {
     }
 }
 
-struct CounselSectionComponent: View {
-    let section: CounselSection
-    @ObservedObject var viewModel: CounselSettingViewModel
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(section.title)
-                .font(.PretendardSemiBold(size: 14))
-                .foregroundStyle(.gray900)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(section.options, id: \.self) { option in
-                        OptionButton(
-                            text: option,
-                            isSelected: viewModel.isSelected(sectionTitle: section.title, option: option),
-                            action: {
-                                viewModel.toggleOption(
-                                    sectionTitle: section.title,
-                                    option: option,
-                                    isMultiSelect: section.isMultiSelect
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-#Preview {
-    CounselSettingView()
-}
+#Preview { CounselSettingView(usage: .chatEdit) }

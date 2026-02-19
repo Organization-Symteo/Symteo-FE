@@ -8,7 +8,17 @@
 import Foundation
 import SwiftUI
 import Combine
-import Moya
+
+enum CounselSettingUsage {
+    case onboarding
+    case chatEdit
+    case myEdit
+
+    var isOnboarding: Bool {
+        if case .onboarding = self { return true }
+        return false
+    }
+}
 
 @MainActor
 final class CounselSettingViewModel: ObservableObject {
@@ -21,7 +31,7 @@ final class CounselSettingViewModel: ObservableObject {
         CounselSection(title: "말투", options: ["존댓말", "반말"], isMultiSelect: false)
     ]
 
-    @Published var selections: [String: [String]] = [
+    @Published var selections: [String: Set<String>] = [
         "대화 분위기": ["친근함"],
         "도움방식": ["공감 & 경청형"],
         "역할": ["상담사"],
@@ -30,61 +40,73 @@ final class CounselSettingViewModel: ObservableObject {
     ]
 
     @Published var isSaving: Bool = false
+    @Published var isLoading: Bool = false
     @Published var alertMessage: String? = nil
 
     private let service: CounselServicing
     private var cancellables = Set<AnyCancellable>()
 
-    init() {
-        let provider = APIManager.shared.createProvider(for: ChatRouter.self)
-        self.service = CounselService(provider: provider)
+    init(service: CounselServicing = CounselService()) {
+        self.service = service
     }
 
     func toggleOption(sectionTitle: String, option: String, isMultiSelect: Bool) {
-        var current = selections[sectionTitle] ?? []
+        var currentSet = selections[sectionTitle] ?? []
 
         if isMultiSelect {
-            if let idx = current.firstIndex(of: option) {
-                current.remove(at: idx)
-            } else {
-                current.append(option) // 마지막 선택을 맨 뒤로
-            }
+            if currentSet.contains(option) { currentSet.remove(option) }
+            else { currentSet.insert(option) }
         } else {
-            current = [option]
+            currentSet.removeAll()
+            currentSet.insert(option)
         }
 
-        selections[sectionTitle] = current
+        selections[sectionTitle] = currentSet
     }
 
     func isSelected(sectionTitle: String, option: String) -> Bool {
-        (selections[sectionTitle] ?? []).contains(option)
+        selections[sectionTitle]?.contains(option) ?? false
     }
 
-    func saveSettings(onSuccess: @escaping () -> Void) {
+    func loadExistingSettingIfNeeded(usage: CounselSettingUsage) {
+        guard !usage.isOnboarding else { return }
+        guard !isLoading else { return }
+
+        isLoading = true
+        alertMessage = nil
+
+        service.fetchSetting()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isLoading = false
+
+                if case let .failure(err) = completion {
+                    if case let .serverError(code, _) = err, code == "COUNSELOR404" {
+                        return
+                    }
+                    self.alertMessage = self.describe(err)
+                }
+            } receiveValue: { [weak self] dto in
+                self?.applyFetchedSettingToUI(dto)
+            }
+            .store(in: &cancellables)
+    }
+
+    func save(usage: CounselSettingUsage, onSuccess: @escaping () -> Void) {
         guard !isSaving else { return }
         isSaving = true
         alertMessage = nil
 
-        let dto = CounselSettingRequestDTO(
-            atmosphere: mapAtmosphere(last(of: "대화 분위기")),
-            supportStyle: mapSupportStyle(last(of: "도움방식")),
-            roleCounselor: mapRole(last(of: "역할")),
-            answerFormat: mapAnswerFormat(last(of: "답변형식")),
-            tone: mapTone(last(of: "말투"))
-        )
+        let request = makeRequestDTO()
 
-        service.saveSetting(dto)
+        service.upsertSetting(request)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self else { return }
                 self.isSaving = false
 
                 if case let .failure(err) = completion {
-                    // COUNSELOR409는 "이미 존재"이므로 앱에서는 성공으로 간주하고 진행
-                    if self.isAlreadyConfigured(err) {
-                        onSuccess()
-                        return
-                    }
                     self.alertMessage = self.describe(err)
                 }
             } receiveValue: { _ in
@@ -93,19 +115,24 @@ final class CounselSettingViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func clearAlert() { alertMessage = nil }
-
-    private func last(of sectionTitle: String) -> String? {
-        selections[sectionTitle]?.last
+    private func makeRequestDTO() -> CounselSettingRequestDTO {
+        CounselSettingRequestDTO(
+            atmosphere: mapAtmosphereToServer(pickOne(in: "대화 분위기")) ?? "EMOTIONAL",
+            supportStyle: mapSupportStyleToServer(pickOne(in: "도움방식")) ?? "EMPATHIC",
+            roleCounselor: mapRoleToServer(pickOne(in: "역할")) ?? "COUNSELOR",
+            answerFormat: mapAnswerFormatToServer(pickOne(in: "답변형식")) ?? "SHORT_FORMAT",
+            tone: mapToneToServer(pickOne(in: "말투")) ?? "FORMAL"
+        )
     }
 
-    private func isAlreadyConfigured(_ error: APIError) -> Bool {
-        guard case let .serverError(code, _) = error else { return false }
-        return code == "COUNSELOR409"
+    private func pickOne(in sectionTitle: String) -> String? {
+        guard let section = sections.first(where: { $0.title == sectionTitle }) else { return nil }
+        let selected = selections[sectionTitle] ?? []
+        return section.options.first(where: { selected.contains($0) })
     }
 
-    private func mapAtmosphere(_ text: String?) -> String? {
-        switch text {
+    private func mapAtmosphereToServer(_ ui: String?) -> String? {
+        switch ui {
         case "친근함": return "EMOTIONAL"
         case "따뜻함": return "WARM"
         case "차분함": return "CALM"
@@ -113,8 +140,8 @@ final class CounselSettingViewModel: ObservableObject {
         }
     }
 
-    private func mapSupportStyle(_ text: String?) -> String? {
-        switch text {
+    private func mapSupportStyleToServer(_ ui: String?) -> String? {
+        switch ui {
         case "공감 & 경청형": return "EMPATHIC"
         case "해결 & 조언형": return "SOLUTION"
         case "팩트형": return "FACT"
@@ -122,8 +149,8 @@ final class CounselSettingViewModel: ObservableObject {
         }
     }
 
-    private func mapRole(_ text: String?) -> String? {
-        switch text {
+    private func mapRoleToServer(_ ui: String?) -> String? {
+        switch ui {
         case "상담사": return "COUNSELOR"
         case "친구": return "FRIEND"
         case "멘탈 코치": return "MENTAL_COACH"
@@ -131,20 +158,73 @@ final class CounselSettingViewModel: ObservableObject {
         }
     }
 
-    private func mapAnswerFormat(_ text: String?) -> String? {
-        switch text {
+    private func mapAnswerFormatToServer(_ ui: String?) -> String? {
+        switch ui {
+        case "상황에 맞게": return "SITUATIONAL"
         case "짧고 간결": return "SHORT_FORMAT"
         case "길고 자세히": return "LONG_FORMAT"
-        case "상황에 맞게": return "SITUATIONAL"
         default: return nil
         }
     }
 
-    private func mapTone(_ text: String?) -> String? {
-        switch text {
+    private func mapToneToServer(_ ui: String?) -> String? {
+        switch ui {
         case "존댓말": return "FORMAL"
         case "반말": return "UNFORMAL"
         default: return nil
+        }
+    }
+
+    private func applyFetchedSettingToUI(_ dto: CounselSettingResultDTO) {
+        selections["대화 분위기"] = [mapAtmosphereToUI(dto.atmosphere ?? "EMOTIONAL")]
+        selections["도움방식"] = [mapSupportStyleToUI(dto.supportStyle ?? "EMPATHIC")]
+        selections["역할"] = [mapRoleToUI(dto.roleCounselor ?? "COUNSELOR")]
+        selections["답변형식"] = [mapAnswerFormatToUI(dto.answerFormat ?? "SHORT_FORMAT")]
+        selections["말투"] = [mapToneToUI(dto.tone ?? "FORMAL")]
+    }
+
+    private func mapAtmosphereToUI(_ server: String) -> String {
+        switch server {
+        case "EMOTIONAL": return "친근함"
+        case "WARM": return "따뜻함"
+        case "CALM": return "차분함"
+        default: return "친근함"
+        }
+    }
+
+    private func mapSupportStyleToUI(_ server: String) -> String {
+        switch server {
+        case "EMPATHIC", "EMPATHETIC": return "공감 & 경청형"
+        case "SOLUTION": return "해결 & 조언형"
+        case "FACT": return "팩트형"
+        default: return "공감 & 경청형"
+        }
+    }
+
+    private func mapRoleToUI(_ server: String) -> String {
+        switch server {
+        case "COUNSELOR": return "상담사"
+        case "FRIEND": return "친구"
+        case "MENTAL_COACH": return "멘탈 코치"
+        default: return "상담사"
+        }
+    }
+
+    private func mapAnswerFormatToUI(_ server: String) -> String {
+        switch server {
+        case "SITUATIONAL": return "상황에 맞게"
+        case "SHORT_FORMAT": return "짧고 간결"
+        case "LONG_FORMAT": return "길고 자세히"
+        case "CONVERSATIONAL": return "상황에 맞게"
+        default: return "짧고 간결"
+        }
+    }
+
+    private func mapToneToUI(_ server: String) -> String {
+        switch server {
+        case "FORMAL": return "존댓말"
+        case "UNFORMAL": return "반말"
+        default: return "존댓말"
         }
     }
 

@@ -1,10 +1,3 @@
-//
-//  SessionManager.swift
-//  Symteo
-//
-//  Created by 김지우 on 1/12/26.
-//
-
 import Foundation
 import SwiftUI
 import Combine
@@ -23,13 +16,11 @@ final class SessionManager: ObservableObject {
     @Published var flow: AppFlow = .loggedOut
 
     @AppStorage("didFinishOnboarding") private var didFinishOnboarding: Bool = false
-
     @AppStorage("session_userId") private var storedUserId: Int = 0
     @AppStorage("session_nickname") private var storedNickname: String = ""
     @AppStorage("session_isRegistered") private var storedIsRegistered: Bool = false
     @AppStorage("session_counselorConfigured") private var storedCounselorConfigured: Bool = false
 
-    @EnvironmentObject var container: DIContainer
     @Published var userId: Int? = nil
     @Published var nickname: String? = nil
     @Published var isRegistered: Bool = false
@@ -39,7 +30,6 @@ final class SessionManager: ObservableObject {
     private(set) var refreshToken: String? = nil
 
     private let keychain: KeychainService
-
     private let authAccountService: AuthAccountServicing
 
     init(
@@ -80,6 +70,7 @@ final class SessionManager: ObservableObject {
                     return
                 }
             }
+
             decideNextFlow()
         } else {
             flow = .loggedOut
@@ -91,11 +82,13 @@ final class SessionManager: ObservableObject {
         flow = .loggedOut
     }
 
-    func applySocialLoginResult(accessToken: String,
-                               refreshToken: String,
-                               userId: Int,
-                               isRegistered: Bool,
-                               nickname: String?) {
+    func applySocialLoginResult(
+        accessToken: String,
+        refreshToken: String,
+        userId: Int,
+        isRegistered: Bool,
+        nickname: String?
+    ) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.userId = userId
@@ -120,15 +113,14 @@ final class SessionManager: ObservableObject {
     }
 
     func applyCounselorConfigured() {
-        self.counselorConfigured = true
-
+        counselorConfigured = true
         storedCounselorConfigured = true
         decideNextFlow()
     }
 
-    @MainActor
     func logout() {
         _ = keychain.deleteToken()
+
         accessToken = nil
         refreshToken = nil
         userId = nil
@@ -166,7 +158,6 @@ final class SessionManager: ObservableObject {
 
     private func decideNextFlow() {
         guard didFinishOnboarding else {
-            print("현재 flow: \(flow)")
             flow = .onboarding
             return
         }

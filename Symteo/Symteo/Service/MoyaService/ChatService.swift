@@ -9,21 +9,28 @@ import Combine
 import Moya
 
 protocol CounselServicing {
-    func saveSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<Int, APIError>
+    func upsertSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<CounselSettingResultDTO, APIError>
+    func fetchSetting() -> AnyPublisher<CounselSettingResultDTO, APIError>
+
     func sendMessage(chatRoomId: Int?, text: String) -> AnyPublisher<CounselSendResultDTO, APIError>
     func endChat(chatRoomId: Int) -> AnyPublisher<CounselEndResultDTO, APIError>
     func fetchReport(chatRoomId: Int?, reportType: String, reportId: Int) -> AnyPublisher<CounselReportResultDTO, APIError>
 }
 
 final class CounselService: CounselServicing {
+
     private let provider: MoyaProvider<ChatRouter>
 
     init(provider: MoyaProvider<ChatRouter> = APIManager.shared.createProvider(for: ChatRouter.self)) {
         self.provider = provider
     }
 
-    func saveSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<Int, APIError> {
-        provider.requestResult(.saveSetting(request: request), type: Int.self)
+    func upsertSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<CounselSettingResultDTO, APIError> {
+        provider.requestResult(.upsertSetting(request: request), type: CounselSettingResultDTO.self)
+    }
+
+    func fetchSetting() -> AnyPublisher<CounselSettingResultDTO, APIError> {
+        provider.requestResult(.fetchSetting, type: CounselSettingResultDTO.self)
     }
 
     func sendMessage(chatRoomId: Int?, text: String) -> AnyPublisher<CounselSendResultDTO, APIError> {
@@ -33,7 +40,10 @@ final class CounselService: CounselServicing {
     }
 
     func endChat(chatRoomId: Int) -> AnyPublisher<CounselEndResultDTO, APIError> {
-        provider.requestResult(.endChat(request: .init(counselId: Int64(chatRoomId))), type: CounselEndResultDTO.self)
+        provider.requestResult(
+            .endChat(request: .init(counselId: Int64(chatRoomId))),
+            type: CounselEndResultDTO.self
+        )
     }
 
     func fetchReport(chatRoomId: Int?, reportType: String, reportId: Int) -> AnyPublisher<CounselReportResultDTO, APIError> {

@@ -16,6 +16,14 @@ struct CounselSettingRequestDTO: Encodable {
     let tone: String?
 }
 
+struct CounselSettingResultDTO: Decodable {
+    let atmosphere: String?
+    let supportStyle: String?
+    let roleCounselor: String?
+    let answerFormat: String?
+    let tone: String?
+}
+
 // MARK: - Send Message (POST)
 
 struct CounselSendResultDTO: Decodable {

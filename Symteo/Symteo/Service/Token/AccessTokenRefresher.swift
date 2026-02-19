@@ -136,5 +136,5 @@ private struct RefreshResultDTO: Decodable {
     let refreshToken: String
     let userId: Int
     let nickname: String?
-    let registered: Bool
+    let isRegistered: Bool
 }

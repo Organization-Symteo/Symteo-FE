@@ -9,7 +9,8 @@ import Moya
 import Alamofire
 
 enum ChatRouter {
-    case saveSetting(request: CounselSettingRequestDTO)
+    case upsertSetting(request: CounselSettingRequestDTO)
+    case fetchSetting
     case sendMessage(body: [String: Any])
     case endChat(request: CounselEndRequestDTO)
     case fetchReport(query: [String: Any])
@@ -20,8 +21,8 @@ extension ChatRouter: APITargetType {
 
     var path: String {
         switch self {
-        case .saveSetting:
-            return "/api/v1/counsels/setting"
+        case .upsertSetting, .fetchSetting:
+            return "/api/v1/users/counselor-settings"
         case .sendMessage:
             return "/api/v1/counsels"
         case .fetchReport:
@@ -33,23 +34,26 @@ extension ChatRouter: APITargetType {
 
     var method: Moya.Method {
         switch self {
-        case .saveSetting: return .put
+        case .upsertSetting: return .patch
+        case .fetchSetting, .fetchReport: return .get
         case .sendMessage: return .post
         case .endChat: return .patch
-        case .fetchReport: return .get
         }
     }
 
     var task: Task {
         switch self {
-        case let .saveSetting(request):
+        case let .upsertSetting(request):
             return .requestJSONEncodable(request)
+
+        case .fetchSetting:
+            return .requestPlain
 
         case let .sendMessage(body):
             return .requestParameters(parameters: body, encoding: JSONEncoding.default)
 
         case let .endChat(request):
-            return .requestJSONEncodable(request) // 바디가 꼭 필요하면 유지
+            return .requestJSONEncodable(request)
 
         case let .fetchReport(query):
             return .requestParameters(parameters: query, encoding: URLEncoding.queryString)

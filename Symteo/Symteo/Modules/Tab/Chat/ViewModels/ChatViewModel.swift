@@ -41,6 +41,23 @@ final class ChatViewModel: ObservableObject {
         self.service = CounselService(provider: provider)
     }
 
+    //날짜 포맷터
+    var todayDateText: String {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "ko_KR")
+            formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+            formatter.dateFormat = "yyyy년 M월 d일 EEEE"
+            return formatter.string(from: Date())
+        }
+    
+    var currentTime: String{
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: Date())
+    }
+    
     func onAppearIfNeeded() {
         if messages.isEmpty {
             isChatStarted = false

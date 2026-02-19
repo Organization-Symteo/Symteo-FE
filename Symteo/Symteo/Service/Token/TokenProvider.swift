@@ -33,17 +33,15 @@ final class TokenProvider: TokenProviding {
     private func upsertTokens(accessToken: String?, refreshToken: String?) {
         let current = keychain.loadToken()
 
-        let newAccessToken: String = {
-            if let accessToken { return accessToken }
-            return current?.accessToken ?? ""
-        }()
+        let newAccessToken = accessToken ?? current?.accessToken
+        let newRefreshToken = refreshToken ?? current?.refreshToken
 
-        let newRefreshToken: String = {
-            if let refreshToken { return refreshToken }
-            return current?.refreshToken ?? ""
-        }()
-
-        let tokenInfo = TokenInfo(accessToken: newAccessToken, refreshToken: newRefreshToken)
-        keychain.saveToken(tokenInfo)
+        // 둘 중 하나라도 nil이면 저장하지 않거나, 둘 다 있을 때만 저장
+        guard let a = newAccessToken, !a.isEmpty,
+              let r = newRefreshToken, !r.isEmpty else {
+            return
+        }
+        keychain.saveToken(TokenInfo(accessToken: a, refreshToken: r))
     }
+
 }

@@ -269,7 +269,7 @@ final class SurveyViewModel: ObservableObject {
                     return Fail(error: APIError.unknown).eraseToAnyPublisher()
                 }
 
-                // 🔥 디버깅 2
+                
                 print("생성된 diagnoseId:", res.diagnoseId)
                 print("현재 kind (flatMap 안):", self.kind)
                 

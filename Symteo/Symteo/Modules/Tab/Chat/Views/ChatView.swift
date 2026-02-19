@@ -18,7 +18,7 @@ struct ChatView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            dateDivider(date: "2026년 1월 8일 목요일")
+                            dateDivider(date: viewModel.todayDateText)
 
                             ForEach(viewModel.messages) { msg in
                                 bubble(msg)
@@ -77,7 +77,7 @@ struct ChatView: View {
         HStack {
             if viewModel.isChatStarted {
                 Button { viewModel.tapEndIcon() } label: {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Image(.leavechat)
                         .foregroundStyle(.gray900)
                 }
             } else {
@@ -94,8 +94,7 @@ struct ChatView: View {
             Button {
                 container.navigationRouter.push(.counselsetting)
             } label: {
-                Image(systemName: "slider.horizontal.3")
-                    .resizable()
+                Image("consultsetting")
                     .frame(width: 24, height: 24)
                     .foregroundStyle(.gray900)
             }
@@ -123,8 +122,8 @@ struct ChatView: View {
                 Circle()
                     .fill(Color.green400)
                     .frame(width: 40, height: 40)
-                    .overlay(Image(systemName: "face.smiling").foregroundStyle(.white))
-
+                    .overlay(Image(.chatface).frame(width: 10, height: 10))
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text(msg.content)
                         .font(.PretendardRegular(size: 15))
@@ -134,9 +133,9 @@ struct ChatView: View {
                         .clipShape(RoundedCorner(radius: 12, corners: [.topRight, .bottomLeft, .bottomRight]))
                         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
 
-                    Text("11:24")
+                    Text(viewModel.currentTime)
                         .font(.PretendardRegular(size: 10))
-                        .foregroundColor(.gray400)
+                        .foregroundStyle(.gray400)
                 }
                 Spacer()
             } else {
@@ -146,7 +145,7 @@ struct ChatView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(Color.green400)
+                    .background(Color.maingreen)
                     .clipShape(RoundedCorner(radius: 12, corners: [.topLeft, .bottomLeft, .bottomRight]))
             }
         }

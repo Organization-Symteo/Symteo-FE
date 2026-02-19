@@ -32,7 +32,7 @@ struct RootView: View {
                 case .needsNickname:
                     NicknameEditView()
                 case .needsCounselor:
-                    CounselSettingView()
+                    CounselSettingView(usage: .onboarding)
                 case .home:
                     NavigationRoutingView()
                 }
