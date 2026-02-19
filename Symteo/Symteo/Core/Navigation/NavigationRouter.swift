@@ -29,4 +29,10 @@ class NavigationRouter {
     func reset() {
         path = NavigationPath()
     }
+    
+    /// 메인 리포트 화면으로 이동
+    func moveToMainReport() {
+        path = NavigationPath()       // 기존 스택 전부 제거
+        path.append(NavigationDestination.mainReport)      // mainReport만 다시 추가
+    }
 }

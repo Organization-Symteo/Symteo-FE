@@ -82,6 +82,9 @@ struct AttachmentReportView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            viewModel.getAttachmentReport()
+        }
     }
 
     // MARK: - Indicator

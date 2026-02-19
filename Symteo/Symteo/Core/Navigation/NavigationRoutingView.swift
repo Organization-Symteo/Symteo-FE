@@ -39,7 +39,7 @@ struct NavigationRoutingView: View {
                         
                     // MARK: -리포트 화면
                         
-                    case .mainRpeort:
+                    case .mainReport:
                         MainReportView(container: container)
                             .environmentObject(container)
                         

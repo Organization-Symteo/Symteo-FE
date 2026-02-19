@@ -243,6 +243,8 @@ final class SurveyViewModel: ObservableObject {
 
     @MainActor
     func submit() {
+        
+        print("🔥 submit 호출됨")
 
         submitErrorMessage = nil
         createdDiagnoseId = nil
@@ -298,8 +300,22 @@ final class SurveyViewModel: ObservableObject {
 
                 self.createdReportId = reportId
 
+                print("🔥 reportId 받음:", reportId)
+                
                 let key = "reportId_\(self.kind.testTypeString)"
                 UserDefaults.standard.set(reportId, forKey: key)
+                
+                //  여기 추가
+                  switch self.kind {
+                  case .depression:
+                      self.container.navigationRouter.push(.anxietyReport(reportId: reportId))
+
+                  case .stress:
+                      self.container.navigationRouter.push(.stressReport(reportId: reportId))
+
+                  case .attachment:
+                      self.container.navigationRouter.push(.attachmentReport(reportId: reportId))
+                  }
             })
             .store(in: &cancellables)
     }
