@@ -12,7 +12,7 @@ struct MissionIntroView: View {
     var body: some View {
         VStack(spacing: 0) {
 
-            // 1. 커스텀 네비게이션 바
+            // 커스텀 네비게이션 바
             ZStack {
                 HStack {
                     Button{
@@ -34,7 +34,7 @@ struct MissionIntroView: View {
 
             Spacer()
 
-            // 2. 남은 시간 표시
+            //  남은 시간 표시
             VStack(spacing: 8) {
                 Text("남은 시간")
                     .font(.PretendardRegular(size: 14))
@@ -46,7 +46,7 @@ struct MissionIntroView: View {
             }
             .padding(.bottom, 40)
 
-            // 3. 중앙 미션 카드 영역
+            //  중앙 미션 카드 영역
             ZStack {
                 Image("mission_bg_envelope")
                     .resizable()
@@ -96,7 +96,7 @@ struct MissionIntroView: View {
 
             Spacer()
 
-            // 4. 하단 미션 시작 버튼
+            // 하단 미션 시작 버튼
             MainBottomButton(
                 text: "미션 시작",
                 isDisabled: false,

@@ -11,3 +11,18 @@ enum RecommendationType: Hashable {
     case stress       // 스트레스
     case attachment // 성향
 }
+
+extension RecommendationType {
+    var destination: NavigationDestination {
+        switch self {
+        case .anxiety:
+            return .depressionTest
+            
+        case .stress:
+            return .stressTest
+            
+        case .attachment:
+            return .typeTest
+        }
+    }
+}

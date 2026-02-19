@@ -154,7 +154,7 @@ struct HomeView: View {
                 
                 Button {
                     container.navigationRouter.push(.mission) /// 미션화면으로 이동
-                }label: {
+                } label: {
                     Text("하러가기")
                         .font(.PretendardMedium(size: 14))
                         .foregroundStyle(.white)
@@ -190,7 +190,7 @@ struct HomeView: View {
                 TabView(selection: $currentPage) {
                     ForEach(Array(recommendationItems.enumerated()), id: \.offset) { index, item in
                         Button {
-                            selectedDiagnosis = item.type
+                            container.navigationRouter.push(item.type.destination)
                         } label: {
                             Image(item.imageName)
                                 .resizable()
@@ -245,8 +245,9 @@ struct HomeView: View {
                     .frame(height: 100)
                 
                 /// 채팅 화면으로 이동
-                NavigationLink {
-                    ChatView()
+
+                Button{
+                    container.navigationRouter.push(.chat)
                 } label: {
                     Text("정밀 상담 시작")
                         .font(.PretendardSemiBold(size: 16))

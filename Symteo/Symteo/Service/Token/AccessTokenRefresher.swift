@@ -20,6 +20,7 @@ final class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
         self.tokenProvider = tokenProvider
     }
 
+
     func adapt(
         _ urlRequest: URLRequest,
         for session: Session,
@@ -44,6 +45,7 @@ final class AccessTokenRefresher: @unchecked Sendable, RequestInterceptor {
             completion(.doNotRetry)
             return
         }
+
 
         lock.lock()
         requestsToRetry.append(completion)

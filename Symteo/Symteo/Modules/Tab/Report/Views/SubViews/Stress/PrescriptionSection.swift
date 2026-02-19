@@ -9,6 +9,8 @@ import SwiftUI
 // StressReportView에서 심터 처방을 보여주는 하위뷰입니다. 
 struct PrescriptionSection: View {
 
+    let onChatTap: () -> Void   // 이벤트 위임
+    
     var body: some View {
         VStack(spacing: 24) {
 
@@ -35,10 +37,12 @@ struct PrescriptionSection: View {
             .lineSpacing(4)
 
             // CTA 버튼
-            Button(action: {
+            Button{
                 // TODO: 채팅 화면 연결
                 print("상담사 연결 ")
-            }) {
+                onChatTap()
+                
+            } label: {
                 HStack(spacing: 16) {
 
                     Image("report_plan")   // 캘린더 아이콘

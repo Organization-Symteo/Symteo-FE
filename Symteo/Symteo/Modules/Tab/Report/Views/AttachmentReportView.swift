@@ -69,7 +69,7 @@ struct AttachmentReportView: View {
                         customIndicator
                         /// 하단 바
                         ReportBottomBar( onConsultTap: {
-                            container.navigationRouter.push(.service) /// 상담사 버튼
+                            container.navigationRouter.push(.chat) /// 상담사 버튼
                         },
                         onOtherTestTap: {
                             container.navigationRouter.pop() ///dismiss()

@@ -36,6 +36,7 @@ enum NavigationDestination: Equatable, Hashable{
     
 
     case counselsetting
+    case chat
 
 
 

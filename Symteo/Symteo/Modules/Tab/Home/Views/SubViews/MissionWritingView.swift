@@ -15,6 +15,7 @@ struct MissionWritingView: View {
     @State private var showExitConfirm: Bool = false
     @EnvironmentObject var container: DIContainer 
 
+    // MARK: -Body
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -22,8 +23,13 @@ struct MissionWritingView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
+                        /// 미션 헤더
                         missionHeader
+                        
+                        /// 사진 추가 섹션
                         photoSection
+                        
+                        /// 글 추가 섹션
                         memoSection
                     }
                     .padding(.horizontal, 20)
@@ -45,6 +51,7 @@ struct MissionWritingView: View {
                     .ignoresSafeArea()
             }
 
+            /// 완료 팝업
             if showSubmitConfirm {
                 VStack {
                     Spacer()
@@ -158,28 +165,59 @@ struct MissionWritingView: View {
 
     private var memoSection: some View {
         VStack(alignment: .leading, spacing: 12) {
+
             Text("메모")
                 .font(.PretendardSemiBold(size: 14))
 
+            ZStack(alignment: .topLeading) {
 
-            TextEditor(text: $viewModel.memo)
-                .frame(height: 150)
-                .onChange(of: viewModel.memo) { _ in
-                    viewModel.saveDraftIfNeeded(text: viewModel.memo)
+                if viewModel.memo.isEmpty {
+                    Text("오늘 미션과 관련된 감정 일기를 적어보세요")
+                        .font(.PretendardRegular(size: 14))
+                        .foregroundStyle(.gray400)
+                        .padding(.horizontal, 14)
+                        .padding(.top, 14)
                 }
 
+                TextEditor(text: $viewModel.memo)
+                    .font(.PretendardRegular(size: 14))
+                    .padding(10)
+                    .frame(height: 160)
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    )
+            }
+
+            HStack {
+                Spacer()
+                Text("\(viewModel.memo.count) / 300")
+                    .font(.PretendardRegular(size: 12))
+                    .foregroundStyle(.gray400)
+            }
         }
     }
 
     private var photoAddButton: some View {
         Button(action: { showPicker = true }) {
-            VStack {
+            VStack(spacing: 6) {
                 Image(systemName: "plus")
-                
-                Text("\(viewModel.selectedImages.count) / 3장")
+                    .font(.system(size: 20))
+                    .foregroundStyle(.gray500)
 
+                Text("\(viewModel.selectedImages.count) / 3장")
+                    .font(.PretendardRegular(size: 12))
+                    .foregroundStyle( viewModel.selectedImages.isEmpty ? Color.gray400 : Color.maingreen)
             }
             .frame(width: 100, height: 100)
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+            )
+            .cornerRadius(16)
         }
         .disabled(viewModel.selectedImages.count >= 3)
     }

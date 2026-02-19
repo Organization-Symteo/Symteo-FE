@@ -71,6 +71,8 @@ struct NavigationRoutingView: View {
 
                     case .counselsetting:
                         CounselSettingView()
+                    case .chat:
+                        ChatView()
                     }
                 }
         }

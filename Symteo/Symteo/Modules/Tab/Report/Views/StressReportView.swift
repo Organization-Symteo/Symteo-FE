@@ -69,8 +69,10 @@ struct StressReportView: View {
                         .frame(height: UIScreen.main.bounds.height * 0.75)
 
                         customIndicator
-                        
-                        PrescriptionSection()
+
+                        PrescriptionSection(onChatTap: {
+                            container.navigationRouter.push(.chat)
+                        })
 
         
                         MainBottomButton(
