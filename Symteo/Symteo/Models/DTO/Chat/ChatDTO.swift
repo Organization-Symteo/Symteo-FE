@@ -28,7 +28,7 @@ struct CounselSendResultDTO: Decodable {
 // MARK: - End Chat (PATCH)
 
 struct CounselEndRequestDTO: Encodable {
-    let chatRoomId: Int
+    let counselId: Int64
 }
 
 struct CounselEndResultDTO: Decodable {

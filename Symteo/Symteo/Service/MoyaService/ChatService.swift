@@ -33,7 +33,7 @@ final class CounselService: CounselServicing {
     }
 
     func endChat(chatRoomId: Int) -> AnyPublisher<CounselEndResultDTO, APIError> {
-        provider.requestResult(.endChat(request: .init(chatRoomId: chatRoomId)), type: CounselEndResultDTO.self)
+        provider.requestResult(.endChat(request: .init(counselId: Int64(chatRoomId))), type: CounselEndResultDTO.self)
     }
 
     func fetchReport(chatRoomId: Int?, reportType: String, reportId: Int) -> AnyPublisher<CounselReportResultDTO, APIError> {

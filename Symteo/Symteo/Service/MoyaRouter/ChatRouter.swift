@@ -22,10 +22,12 @@ extension ChatRouter: APITargetType {
         switch self {
         case .saveSetting:
             return "/api/v1/counsels/setting"
-        case .sendMessage, .endChat:
+        case .sendMessage:
             return "/api/v1/counsels"
         case .fetchReport:
             return "/api/v1/counsels/report"
+        case let .endChat(request):
+            return "/api/v1/counsels/\(request.counselId)/summary"
         }
     }
 
@@ -47,7 +49,7 @@ extension ChatRouter: APITargetType {
             return .requestParameters(parameters: body, encoding: JSONEncoding.default)
 
         case let .endChat(request):
-            return .requestJSONEncodable(request)
+            return .requestJSONEncodable(request) // 바디가 꼭 필요하면 유지
 
         case let .fetchReport(query):
             return .requestParameters(parameters: query, encoding: URLEncoding.queryString)
