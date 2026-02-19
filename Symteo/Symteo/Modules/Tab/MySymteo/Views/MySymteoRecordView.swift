@@ -24,7 +24,7 @@ struct MySymteoRecordView: View {
                 MissionRecordSection(isEmpty: false)
                     .tag(0)
 
-                CounselingRecordSection(isEmpty: false)
+                CounselingRecordSection()
                     .tag(1)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

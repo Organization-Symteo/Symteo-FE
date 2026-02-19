@@ -5,12 +5,18 @@
 //  Created by 박병선 on 2/7/26.
 //
 //  CounselingListView의 상세 화면입니다.
+//
 import SwiftUI
 
 struct CounselingDetailView: View {
 
+    /// 목록(리스트)에서 넘어온 최소 정보 (date/title/counselId 포함)
     let record: CounselingRecord
+
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var container: DIContainer
+
+    @StateObject private var viewModel = CounselingDetailViewModel()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -25,11 +31,29 @@ struct CounselingDetailView: View {
 
                     dateChip
 
-                    summarySection
+                    // Loading / Error
+                    if viewModel.isLoading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                        .padding(.top, 8)
+                    }
 
-                    userSection
+                    if let err = viewModel.errorMessage {
+                        Text(err)
+                            .font(.PretendardRegular(size: 12))
+                            .foregroundStyle(.red)
+                    }
 
-                    aiSection
+                    let displayed = viewModel.record ?? record
+
+                    summarySection(displayed)
+
+                    userSection(displayed)
+
+                    aiSection(displayed)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 24)
@@ -39,12 +63,19 @@ struct CounselingDetailView: View {
             bottomCTA
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            viewModel.load(
+                chatRoomId: record.counselId,
+                fallbackDate: record.date,
+                fallbackTitle: record.title
+            )
+        }
     }
 }
 
-//MARK: -SubViews
+// MARK: - SubViews
 private extension CounselingDetailView {
-    
+
     var headerView: some View {
         ZStack {
             HStack {
@@ -57,7 +88,7 @@ private extension CounselingDetailView {
                 }
                 Spacer()
             }
-            
+
             Text("상담기록")
                 .font(.PretendardMedium(size: 16))
                 .foregroundStyle(.gray900)
@@ -65,20 +96,22 @@ private extension CounselingDetailView {
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
     }
-    
-    var missionBanner: some View {
-        HStack{
-            
-            VStack(alignment: .leading, spacing: 5) {
-                Text("오늘만 참여할 수 있는 미션이 있어요👀")
-                    .font(.PretendardRegular(size: 16))
-                    .foregroundStyle(.green700)
-                Text("오늘의 미션 하러가기")
-                    .font(.PretendardSemiBold(size: 16))
-                    .foregroundStyle(.green800)
-            }
-            Spacer()
 
+    var missionBanner: some View {
+        Button {
+            // 미션 화면으로 이동
+            container.navigationRouter.push(.mission)
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("오늘만 참여할 수 있는 미션이 있어요👀")
+                        .font(.PretendardRegular(size: 16))
+                        .foregroundStyle(.green700)
+                    Text("오늘의 미션 하러가기")
+                        .font(.PretendardSemiBold(size: 16))
+                        .foregroundStyle(.green800)
+                }
+                Spacer()
                 Image("img-record")
                     .resizable()
                     .frame(width: 74, height: 65)
@@ -87,10 +120,12 @@ private extension CounselingDetailView {
             .frame(maxWidth: .infinity)
             .background(Color.green30)
             .padding(.horizontal, -20)
+        }
+        .buttonStyle(.plain)
     }
-    
+
     var dateChip: some View {
-        Text(record.date)
+        Text((viewModel.record?.date.isEmpty == false ? viewModel.record!.date : record.date))
             .font(.PretendardRegular(size: 13))
             .foregroundStyle(.gray600)
             .padding(.horizontal, 14)
@@ -98,75 +133,70 @@ private extension CounselingDetailView {
             .background(Color.gray5)
             .cornerRadius(20)
     }
-    
-    var summarySection: some View {
+
+    func summarySection(_ record: CounselingRecord) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            
             Text("상담 요약")
                 .font(.PretendardSemiBold(size: 16))
                 .foregroundStyle(.gray700)
-            
+
             Divider()
-            
-            VStack(alignment: .leading, spacing: 12) {
-                infoRow(title: "주제", value: record.title)
-                infoRow(title: "감정 상태", value: record.emotion)
+
+            HStack(spacing: 12) {
+                Text("주제")
+                    .font(.PretendardSemiBold(size: 14))
+                    .foregroundStyle(.gray900)
+
+                Text(record.title)
+                    .font(.PretendardRegular(size: 14))
+                    .foregroundStyle(.gray900)
             }
         }
     }
-    
-    func infoRow(title: String, value: String) -> some View {
-        HStack(spacing: 12) {
-            Text(title)
-                .font(.PretendardSemiBold(size: 14))
-                .foregroundStyle(.gray900)
-            
-            Text(value)
-                .font(.PretendardRegular(size: 14))
-                .foregroundStyle(.gray900)
-        }
-    }
-    
-    var userSection: some View {
+
+    func userSection(_ record: CounselingRecord) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(icon: "mySymteo_pencil", title: "사용자")
-            
-            Text(record.userContent)
+
+            Text(record.userContent.isEmpty ? "요약이 없습니다." : record.userContent)
                 .font(.PretendardRegular(size: 14))
                 .foregroundStyle(.gray900)
         }
     }
-    var aiSection: some View {
+
+    func aiSection(_ record: CounselingRecord) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(icon: "mySymteo_message", title: "AI 답변")
-            
-            Text(record.aiResponse)
+
+            Text(record.aiResponse.isEmpty ? "요약이 없습니다." : record.aiResponse)
                 .font(.PretendardRegular(size: 14))
                 .foregroundStyle(.gray900)
         }
     }
-    
+
     func sectionHeader(icon: String, title: String) -> some View {
         HStack(spacing: 8) {
             Image(icon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-            
+
             Text(title)
                 .font(.PretendardSemiBold(size: 15))
                 .foregroundStyle(.gray900)
         }
     }
-    
+
     var bottomCTA: some View {
         Button(action: {
-            // TODO: 액션 추가
+            // AI 상담 화면으로 이동
+            container.selectedTab = .chat
         }) {
             HStack {
                 Image("message_notify_circle")
                     .resizable()
                     .frame(width: 32, height: 32)
+
                 VStack(alignment: .leading) {
                     Text("다른 내용으로 상담하고 싶어요")
                         .font(.PretendardRegular(size: 14))
@@ -175,39 +205,38 @@ private extension CounselingDetailView {
                         .font(.PretendardSemiBold(size: 16))
                         .foregroundStyle(.green600)
                 }
-               
+
                 Spacer()
             }
-            .frame(width: 300, height: 25)
+            .frame(maxWidth: .infinity)
             .padding()
             .background(
                 LinearGradient(
                     colors: [
                         Color(hex: "#9EE3CF"),
-                        Color(hex: "#E4F0CA")],
+                        Color(hex: "#E4F0CA")
+                    ],
                     startPoint: .leading,
-                    endPoint: .trailing))
+                    endPoint: .trailing
+                )
+            )
             .cornerRadius(16)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 12)
         }
     }
 }
 
+// MARK: - Preview
 #Preview("Counseling Record Detail") {
     CounselingDetailView(
         record: CounselingRecord(
-            date: "2025년 11월 04일",
+            counselId: 1,
+            date: "2026년 2월 20일",
             title: "직장 스트레스와 번아웃 상담",
-            emotion: "지침",
-            userContent: """
-팀장님과의 갈등으로 퇴사까지 고민하고 있습니다.
-무기력감이 심하고 가슴이 답답한 느낌이 자주 듭니다.
-병원에 가야 할지 고민 중입니다.
-""",
-            aiResponse: """
-현재 느끼는 감정은 충분히 이해할 수 있어요.
-지금은 자신을 탓하기보다 작은 휴식부터 시작해보세요.
-증상이 지속된다면 전문적인 상담이나 병원 진료도 추천드립니다.
-"""
+            userContent: "로딩 전 임시 텍스트",
+            aiResponse: "로딩 전 임시 텍스트"
         )
     )
+    .environmentObject(DIContainer())
 }
