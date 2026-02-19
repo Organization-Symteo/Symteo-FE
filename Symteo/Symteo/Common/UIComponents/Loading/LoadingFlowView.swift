@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 import Combine
 
 struct LoadingFlowView: View {
@@ -55,7 +54,7 @@ struct LoadingFlowView: View {
                     print("홈으로")
                 },
                 onTapRight: {
-                    print("리포트 보기")
+                    onFinish()
                 }
             )
         }
@@ -68,7 +67,7 @@ struct LoadingFlowView: View {
             }
         }
         .task {
-            // TODO: 여기에서 실제 async 작업을 수행하고, 끝나면 didFinishWork = true 로만 바꿔주세요
+            // 여기에서 실제 async 작업을 수행하고, 끝나면 didFinishWork = true 로만 바꿔주세요
             try? await Task.sleep(nanoseconds: 2_000_000_000)
             didFinishWork = true
         }
@@ -106,3 +105,4 @@ struct LoadingFlowView: View {
         )
     }
 }
+

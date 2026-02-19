@@ -4,6 +4,7 @@
 //
 //  Created by 김지우 on 1/25/26.
 //
+
 import Foundation
 import Combine
 import Moya
@@ -31,7 +32,7 @@ enum SurveyQuestionBank {
         "최근 1개월 내, 자신의 뜻대로 일이 진행된다고 느낀 적은 얼마나 있었나요?",
         "최근 1개월 내, 매사를 잘 컨트롤하고 있다고 느낀 적이 얼마나 있었나요?",
         "최근 1개월 내, 당신이 통제할 수 없는 범위에서 발생한 일 때문에 화가 난 적이 얼마나 있었나요?",
-        "최근 1개월 내, 어려운 일이 너무 많이 쌓여서 극복할 수 없다고 느낀 적이 얼마나 있었나요?",
+        "최근 1개월 내, 어려운 일이 너무 많이 쌓여서 극복할 수 없다고 느낀 적은 얼마나 있었나요?",
         "최근 1개월 내, 일을 마친 후 심한 피로를 느낀다.",
         "최근 1개월 내, 업무 시작 전부터 지친 느낌이 든다.",
         "최근 1개월 내, 업무가 정신적으로 고갈된다는 생각이 자주 든다.",
@@ -115,42 +116,39 @@ enum SurveyQuestionBank {
     ]
 }
 
-// MARK: -SurveyViewModel
+// MARK: - SurveyViewModel
 final class SurveyViewModel: ObservableObject {
+
     @Published private(set) var questions: [SurveyQuestion] = []
     @Published var currentIndex: Int = 0
     @Published var answers: [Int: Int] = [:]
+
+    // 설문 제출 진행 상태
     @Published var isSubmitting: Bool = false
+
+    // 제출 실패 시 사용자에게 표시할 에러 메시지
     @Published var submitErrorMessage: String? = nil
+
+    // 생성된 진단 ID
     @Published var createdDiagnoseId: Int? = nil
+
+    // 생성된 리포트 ID
+    @Published var createdReportId: Int? = nil
+
+    // 리포트 생성 실패 시 메시지
+    @Published var reportErrorMessage: String? = nil
+
+    // 리포트 생성 중 여부
+    @Published var isCreatingReport: Bool = false
 
     let kind: SurveyKind
     private let service: TestService
     private var cancellables = Set<AnyCancellable>()
 
-    // MARK: - 리포트 생성 상태 관리
-
-    /// 생성된 리포트의 ID
-    /// - 진단(diagnose) → 리포트 생성 API 호출 성공 시 서버에서 내려주는 값
-    /// - 값이 세팅되면 ReportView로 화면 전환 트리거로 사용됨
-    @Published var createdReportId: Int? = nil
-
-    /// 리포트 생성 실패 시 사용자에게 보여줄 에러 메시지
-    /// - APIError 발생 시 localizedDescription을 담아 UI에서 토스트/얼럿으로 노출
-    @Published var reportErrorMessage: String? = nil
-
-    /// 리포트 생성 중 여부
-    /// - true: 리포트 생성 API 호출 중 (로딩 인디케이터 표시용)
-    /// - false: 요청 완료 또는 실패
-    @Published var isCreatingReport: Bool = false
-    
-    // MARK: - 의존성 주입 및 비동기 처리
-    /// DIContainer를 통해 의존성 주입
+    // DIContainer를 통한 의존성 주입
     let container: DIContainer
 
-
     // MARK: - 초기화
-
     init(kind: SurveyKind, service: TestService, container: DIContainer) {
         self.kind = kind
         self.service = service
@@ -158,6 +156,7 @@ final class SurveyViewModel: ObservableObject {
         self.container = container
     }
 
+    // 설문 종류에 따라 질문 구성
     static func makeQuestions(kind: SurveyKind) -> [SurveyQuestion] {
         let texts: [String]
         let options: [String]
@@ -174,9 +173,12 @@ final class SurveyViewModel: ObservableObject {
             options = SurveyOptionPreset.depression
         }
 
-        return texts.map { SurveyQuestion(id: UUID(), text: $0, options: options) }
+        return texts.map {
+            SurveyQuestion(id: UUID(), text: $0, options: options)
+        }
     }
 
+    // 진행률 계산
     var progress: CGFloat {
         guard !questions.isEmpty else { return 0 }
         return CGFloat(currentIndex + 1) / CGFloat(questions.count)
@@ -218,67 +220,51 @@ final class SurveyViewModel: ObservableObject {
     }
 
     func jumpToFirstUnanswered() {
-        if let idx = firstUnansweredIndex() { currentIndex = idx }
+        if let idx = firstUnansweredIndex() {
+            currentIndex = idx
+        }
     }
 
- 
-    // MARK: - API 함수
-    ///
-    ///
-    /// 전체 흐름:
-    /// 1. 진단 생성 API 호출
-    /// 2. 생성된 diagnoseId를 기반으로 리포트 생성 API 호출
-    /// 3,  최종적으로 reportId를 저장
-    ///
-    /// 즉,
-    /// submit() 한 번으로 "진단 생성 → 리포트 생성"까지 자동 체인 처리함.
-    ///
-    /// 성공 시: createdDiagnoseId 저장, createdReportId 저장
-    ///
-    /// 실패 시:
-    /// - submitErrorMessage에 에러 메시지 저장
-    ///
-    /// UI 제어:
-    /// - isSubmitting으로 로딩 상태 관리
+    // MARK: - 설문 제출 및 리포트 생성
+
+    // 전체 처리 흐름
+    // 1. 진단 생성 API 호출
+    // 2. diagnoseId를 이용해 리포트 생성 API 호출
+    // 3. reportId 저장
+    //
+    // 성공 시
+    // - createdDiagnoseId 세팅
+    // - createdReportId 세팅
+    //
+    // 실패 시
+    // - submitErrorMessage 세팅
+    //
+    // 로딩 상태는 isSubmitting으로 관리
+
     @MainActor
     func submit() {
-        
-        // 디버깅 1
-        print("현재 kind:", kind)
-        print("testTypeString:", kind.testTypeString)
 
-        // 상태 초기화 (이전 에러/ID 제거)
         submitErrorMessage = nil
         createdDiagnoseId = nil
         createdReportId = nil
         isSubmitting = true
 
-        // 설문 응답을 서버 전송 형식으로 변환
         let request = CreateTestRequestDTO(
             testType: kind.testTypeString,
             answers: answers
-                .sorted(by: { $0.key < $1.key })   // 문제 번호 순서 보장
+                .sorted(by: { $0.key < $1.key })
                 .map { CreateTestAnswerDTO(questionNo: $0.key + 1, score: $0.value) }
         )
 
         service.createTest(request)
-
-            // 진단 생성 성공 후 → 리포트 생성으로 자동 연결
             .flatMap { [weak self] res -> AnyPublisher<Int, APIError> in
                 guard let self else {
                     return Fail(error: APIError.unknown).eraseToAnyPublisher()
                 }
 
-                
-                print("생성된 diagnoseId:", res.diagnoseId)
-                print("현재 kind (flatMap 안):", self.kind)
-                
-                //  diagnoseId 저장
                 self.createdDiagnoseId = res.diagnoseId
-            
-                //  검사 종류에 따라 다른 리포트 생성 API 호출
-                switch self.kind {
 
+                switch self.kind {
                 case .depression:
                     return self.container.useCaseService.reportService
                         .createDepressionAnxietyReport(diagnoseId: res.diagnoseId)
@@ -292,18 +278,13 @@ final class SurveyViewModel: ObservableObject {
                         .eraseToAnyPublisher()
 
                 case .attachment:
-                    print("👉 attachment 리포트 생성 시도")
                     return self.container.useCaseService.reportService
                         .createAttachmentReport(diagnoseId: res.diagnoseId)
                         .map { $0.reportId }
                         .eraseToAnyPublisher()
                 }
             }
-
-            // 메인 스레드에서 UI 업데이트
             .receive(on: DispatchQueue.main)
-
-            // 최종 완료 처리
             .sink(receiveCompletion: { [weak self] completion in
                 guard let self else { return }
 
@@ -312,38 +293,28 @@ final class SurveyViewModel: ObservableObject {
                 if case let .failure(error) = completion {
                     self.submitErrorMessage = error.localizedDescription
                 }
-            }, receiveValue: { [weak self] (reportId: Int) in
+            }, receiveValue: { [weak self] reportId in
                 guard let self else { return }
 
                 self.createdReportId = reportId
 
                 let key = "reportId_\(self.kind.testTypeString)"
                 UserDefaults.standard.set(reportId, forKey: key)
-
-                // 디버그용 print
-
-                    print(" 리포트 생성 성공")
-                    print("저장 key:", key)
-                    print("저장 reportId:", reportId)
-                    print("UserDefaults 저장 확인:",
-                          UserDefaults.standard.integer(forKey: key))
-
-            }
-                
-)
+            })
+            .store(in: &cancellables)
     }
-    
-    
 }
 
-
-// MARK: -Extension
+// MARK: - SurveyKind Extension
 private extension SurveyKind {
     var testTypeString: String {
         switch self {
-        case .stress: return TestType.stressBurnoutComplex.rawValue
-        case .attachment: return TestType.attachmentTest.rawValue
-        case .depression: return TestType.depressionAnxietyComplex.rawValue
+        case .stress:
+            return TestType.stressBurnoutComplex.rawValue
+        case .attachment:
+            return TestType.attachmentTest.rawValue
+        case .depression:
+            return TestType.depressionAnxietyComplex.rawValue
         }
     }
 }

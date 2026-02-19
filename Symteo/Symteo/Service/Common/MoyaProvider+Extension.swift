@@ -11,28 +11,38 @@ import Moya
 import CombineMoya
 
 extension MoyaProvider {
+
     func requestResult<T: Decodable>(
         _ target: Target,
         type: T.Type
     ) -> AnyPublisher<T, APIError> {
+
         return self.requestPublisher(target)
-            .map(APIResponse<T>.self)
-            .tryMap { response in
-                if response.isSuccess {
-                    if let result = response.result {
-                        /// API 요청에 성공한 경우 -> 응답 결과 리턴
+            .tryMap { moyaResponse -> T in
+                // ✅ 여기서 직접 decode + RAW 출력
+                let decoded: APIResponse<T>
+                do {
+                    decoded = try JSONDecoder().decode(APIResponse<T>.self, from: moyaResponse.data)
+                } catch {
+                    print("❌ decode error:", error)
+                    print("RAW:", String(data: moyaResponse.data, encoding: .utf8) ?? "nil")
+                    throw APIError.decodingError
+                }
+
+                if decoded.isSuccess {
+                    if let result = decoded.result {
                         return result
                     } else {
-                        /// 응답 결과 디코딩에 실패함 -> 디코딩 에러 리턴
+                        // 성공인데 result가 nil인 케이스(명세/DTO 불일치 가능)
+                        print("⚠️ isSuccess=true but result is nil")
+                        print("RAW:", String(data: moyaResponse.data, encoding: .utf8) ?? "nil")
                         throw APIError.decodingError
                     }
                 } else {
-                    /// API 요청에 성공했으나, 백엔드 서버 에러가 발생한 경우 -> 서버 에러 리턴
-                    throw APIError.serverError(code: response.code, message: response.message)
+                    throw APIError.serverError(code: decoded.code, message: decoded.message)
                 }
             }
             .mapError { error in
-                /// API 요청에 실패함 -> 에러 리턴
                 if let moya = error as? MoyaError {
                     return .moyaError(moya)
                 } else if let api = error as? APIError {
@@ -43,20 +53,27 @@ extension MoyaProvider {
             }
             .eraseToAnyPublisher()
     }
-    
+
     func requestStatus(
         _ target: Target
     ) -> AnyPublisher<StatusResponseOnly, APIError> {
+
         return self.requestPublisher(target)
-            .map(StatusResponseOnly.self)
-            .tryMap { response in
-                if response.isSuccess {
-                    return response
+            .tryMap { moyaResponse -> StatusResponseOnly in
+                // ✅ 여기서도 직접 decode + RAW 출력
+                let decoded: StatusResponseOnly
+                do {
+                    decoded = try JSONDecoder().decode(StatusResponseOnly.self, from: moyaResponse.data)
+                } catch {
+                    print("❌ decode error:", error)
+                    print("RAW:", String(data: moyaResponse.data, encoding: .utf8) ?? "nil")
+                    throw APIError.decodingError
+                }
+
+                if decoded.isSuccess {
+                    return decoded
                 } else {
-                    throw APIError.serverError(
-                        code: response.code,
-                        message: response.message
-                    )
+                    throw APIError.serverError(code: decoded.code, message: decoded.message)
                 }
             }
             .mapError { error in
@@ -71,4 +88,3 @@ extension MoyaProvider {
             .eraseToAnyPublisher()
     }
 }
-

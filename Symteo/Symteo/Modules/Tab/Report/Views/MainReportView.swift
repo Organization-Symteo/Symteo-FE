@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MainReportView: View {
+    
+
     let userName: String
     @EnvironmentObject var container: DIContainer
     @StateObject private var viewModel: MainReportViewModel
@@ -136,7 +138,7 @@ struct MainReportView: View {
                      if case let .available(reportId) = viewModel.stressReportStatus {
                          container.navigationRouter.push(.stressReport(reportId: reportId))
                      } else {
-                         viewModel.pendingReportType = .attachment
+                         viewModel.pendingReportType = .stress
                          viewModel.isShowingNoReportPopUp = true
                      }
                  }

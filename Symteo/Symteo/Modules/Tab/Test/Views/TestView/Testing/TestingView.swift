@@ -8,8 +8,13 @@
 import SwiftUI
 
 
-
 struct SurveyView: View {
+    
+    private enum Layout {
+           static let questionBoxHeight: CGFloat = 170
+           static let questionToOptionsSpacing: CGFloat = 24
+       }
+    
     @EnvironmentObject private var container: DIContainer
     @Environment(\.dismiss) private var dismiss
 
@@ -23,8 +28,16 @@ struct SurveyView: View {
     @State private var modalConfirmAction: () -> Void = {}
     @State private var modalCancelAction: () -> Void = {}
 
+    @State private var showLoading: Bool = false
+
     init(kind: SurveyKind, container: DIContainer) {
-        _viewModel = StateObject(wrappedValue: SurveyViewModel(kind: kind, service: TestService(), container: container))
+        _viewModel = StateObject(
+            wrappedValue: SurveyViewModel(
+                kind: kind,
+                service: TestService(),
+                container: container
+            )
+        )
     }
 
     var body: some View {
@@ -38,39 +51,47 @@ struct SurveyView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     headerRow
                         .padding(.bottom, 28)
-                    
-                    Text(viewModel.currentQuestion.text)
-                        .font(.PretendardMedium(size: 20))
-                        .foregroundStyle(.gray900)
-                        .lineSpacing(6)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.bottom, 44)
-                    
-                    VStack(spacing: 12) {
-                        ForEach(Array(viewModel.currentQuestion.options.enumerated()), id: \.offset) { idx, text in
-                            SurveyOptionButton(
-                                text: text,
-                                isSelected: viewModel.isSelected(optionIndex: idx)
-                            ) {
-                                viewModel.select(optionIndex: idx)
-                            }
-                        }
-                    }
-                    
-                    if viewModel.isLast {
-                        MainBottomButton(
-                            text: viewModel.isSubmitting ? "제출 중..." : "제출",
-                            isDisabled: viewModel.isSubmitting
-                        ) {
-                            handleSubmitTap()
-                        }
-                        .padding(.top, 20)
-                        .padding(.bottom, 24)
-                    }
-                }
+                    ScrollView {
+                                            Text(viewModel.currentQuestion.text)
+                                                .font(.PretendardMedium(size: 20))
+                                                .foregroundStyle(.gray900)
+                                                .lineSpacing(6)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                        }
+                                        .scrollIndicators(.hidden)
+                                        .frame(height: Layout.questionBoxHeight)
+                                        .clipped()
 
-                .padding(.horizontal, 24)
-            }
+                                        Spacer().frame(height: Layout.questionToOptionsSpacing)
+
+                                        VStack(spacing: 12) {
+                                            ForEach(Array(viewModel.currentQuestion.options.enumerated()), id: \.offset) { idx, text in
+                                                SurveyOptionButton(
+                                                    text: text,
+                                                    isSelected: viewModel.isSelected(optionIndex: idx)
+                                                ) {
+                                                    viewModel.select(optionIndex: idx)
+                                                }
+                                            }
+                                        }
+
+                                        if viewModel.isLast {
+                                            MainBottomButton(
+                                                text: viewModel.isSubmitting ? "제출 중..." : "제출",
+                                                isDisabled: viewModel.isSubmitting
+                                            ) {
+                                                handleSubmitTap()
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.horizontal, -17)   
+
+                                            .padding(.top,12)
+                                            .padding(.bottom, 24)
+                                        }
+                                    }
+                                    .padding(.horizontal, 24)
+                                }
         }
         .navigationBarHidden(true)
         .background(Color.white)
@@ -84,15 +105,28 @@ struct SurveyView: View {
             onConfirm: modalConfirmAction,
             onCancel: modalCancelAction
         )
-
-        .onChange(of: viewModel.createdDiagnoseId, initial: false) { oldValue, newValue in
-            guard newValue != nil else { return }
-            container.navigationRouter.reset()
-            dismiss()
-        }
         .onChange(of: viewModel.submitErrorMessage, initial: false) { _, msg in
             guard let msg else { return }
+            showLoading = false
             presentAlert(title: "제출에 실패했어요", message: msg, confirm: "확인", cancel: nil) {}
+        }
+        .fullScreenCover(isPresented: $showLoading) {
+            ReportLoadingFlowScreen(
+                container: container,
+                kind: viewModel.kind,
+                reportId: viewModel.createdReportId,
+                onTapHome: {
+                    showLoading = false
+                    container.navigationRouter.reset()
+                    dismiss()
+                },
+                onTapReport: { reportId in
+                    showLoading = false
+                    container.navigationRouter.push(
+                        viewModel.kind.reportDestination(reportId: reportId)
+                    )
+                }
+            )
         }
     }
 
@@ -176,7 +210,7 @@ struct SurveyView: View {
                 cancel: "나가기",
                 onConfirm: { viewModel.jumpToFirstUnanswered() },
                 onCancel: { exitToTestHome() }
-            ) 
+            )
         } else {
             presentAlert(
                 title: "작성을 완료하셨나요?",
@@ -184,6 +218,7 @@ struct SurveyView: View {
                 confirm: "작성완료",
                 cancel: "돌아가기"
             ) {
+                showLoading = true
                 viewModel.submit()
             }
         }
@@ -217,18 +252,12 @@ struct SurveyView: View {
         isModalPresented = true
     }
 
-    
     private func exitToTestHome() {
         container.navigationRouter.reset()
         dismiss()
     }
-
 }
 
-
-/*
 #Preview {
-    SurveyView(kind:.stress)
+    SurveyView(kind: .stress, container: DIContainer())
 }
-
-*/
