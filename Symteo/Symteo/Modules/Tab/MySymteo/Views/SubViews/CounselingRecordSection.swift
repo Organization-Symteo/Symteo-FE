@@ -6,22 +6,28 @@
 //
 import SwiftUI
 
+import SwiftUI
+
 struct CounselingRecordSection: View {
 
-    let isEmpty: Bool
+    @StateObject private var viewModel = CounselingRecordListViewModel()
 
     var body: some View {
-        VStack{
+        VStack {
             CounselingRecordInfoBanner()
-            
-            if isEmpty {
+
+            if viewModel.records.isEmpty {
                 CouselingEmptyView()
             } else {
                 CounselingRecordListView()
             }
         }
+        .onAppear {
+            viewModel.load()
+        }
     }
 }
+
 
 struct CounselingRecordInfoBanner: View {
     var body: some View {
@@ -51,6 +57,8 @@ struct CounselingRecordInfoBanner: View {
 
 
 struct CouselingEmptyView: View {
+    
+    @EnvironmentObject var container: DIContainer
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -64,7 +72,7 @@ struct CouselingEmptyView: View {
                 .foregroundStyle(.gray500)
 
             Button {
-                // TODO: 상담 화면 연결
+                container.selectedTab = .chat
             } label: {
                 Text("상담 하러가기")
                     .font(.PretendardRegular(size: 14))

@@ -60,3 +60,26 @@ struct CounselReportResultDTO: Decodable {
     let userRequest: String
     let AiResponse: String
 }
+
+
+
+// 전체 상담 조회(GET) - result item
+struct CounselHistoryItemDTO: Decodable, Identifiable {
+    var id: Int { counselId }
+
+    let dateTime: String
+    let chatSummary: String?
+    let counselId: Int
+}
+
+// 단일 상담 조회(GET) - result
+struct CounselHistoryDetailDTO: Decodable {
+    let userId: Int
+    let chatRoomId: Int
+    let chatSummary: String
+    let userSummary: String
+    let aiSummary: String
+}
+
+// 삭제(DELETE) - result(Int: 삭제된 chatRoomId)
+typealias CounselDeleteResultDTO = Int

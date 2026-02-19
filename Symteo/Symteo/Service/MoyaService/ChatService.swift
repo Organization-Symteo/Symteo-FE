@@ -17,7 +17,11 @@ protocol CounselServicing {
     func endChat(chatRoomId: Int) -> AnyPublisher<CounselEndResultDTO, APIError>
 
     func fetchReport(chatRoomId: Int?, reportType: String, reportId: Int) -> AnyPublisher<CounselReportResultDTO, APIError>
-}
+    func fetchCounselList() -> AnyPublisher<[CounselHistoryItemDTO], APIError>
+    func fetchCounselDetail(chatRoomId: Int) -> AnyPublisher<CounselHistoryDetailDTO, APIError>
+    func deleteCounsel(chatRoomId: Int) -> AnyPublisher<Int, APIError>
+    
+   }
 
 final class CounselService: CounselServicing {
 
@@ -59,4 +63,16 @@ final class CounselService: CounselServicing {
             type: CounselReportResultDTO.self
         )
     }
+    
+    func fetchCounselList() -> AnyPublisher<[CounselHistoryItemDTO], APIError> {
+            provider.requestResult(.fetchCounselList, type: [CounselHistoryItemDTO].self)
+        }
+
+        func fetchCounselDetail(chatRoomId: Int) -> AnyPublisher<CounselHistoryDetailDTO, APIError> {
+            provider.requestResult(.fetchCounselDetail(chatRoomId: chatRoomId), type: CounselHistoryDetailDTO.self)
+        }
+
+        func deleteCounsel(chatRoomId: Int) -> AnyPublisher<Int, APIError> {
+            provider.requestResult(.deleteCounsel(chatRoomId: chatRoomId), type: Int.self)
+        }
 }

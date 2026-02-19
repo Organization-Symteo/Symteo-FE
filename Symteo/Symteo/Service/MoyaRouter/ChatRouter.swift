@@ -14,6 +14,9 @@ enum ChatRouter {
     case sendMessage(body: [String: Any])
     case endChat(request: CounselEndRequestDTO)
     case fetchReport(request: CounselReportRequestDTO)
+    case fetchCounselList                 // GET /api/v1/counsels
+    case fetchCounselDetail(chatRoomId: Int) // GET /api/v1/counsels/{id}
+    case deleteCounsel(chatRoomId: Int)
 }
 
 extension ChatRouter: APITargetType {
@@ -23,21 +26,24 @@ extension ChatRouter: APITargetType {
         switch self {
         case .upsertSetting, .fetchSetting:
             return "/api/v1/users/counselor-settings"
-        case .sendMessage:
+        case .sendMessage,.fetchCounselList:
             return "/api/v1/counsels"
         case .fetchReport:
             return "/api/v1/counsels/report"
         case let .endChat(request):
             return "/api/v1/counsels/\(request.chatRoomId)/summary"
+        case let .fetchCounselDetail(chatRoomId),
+                 let .deleteCounsel(chatRoomId):
+                return "/api/v1/counsels/\(chatRoomId)"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .upsertSetting: return .patch
-        case .fetchSetting: return .get
+        case .upsertSetting,.endChat: return .patch
+        case .fetchSetting,.fetchCounselDetail,.fetchCounselList: return .get
         case .sendMessage,.fetchReport : return .post
-        case .endChat: return .patch
+        case .deleteCounsel: return .delete
         }
     }
 
@@ -46,7 +52,7 @@ extension ChatRouter: APITargetType {
         case let .upsertSetting(request):
             return .requestJSONEncodable(request)
 
-        case .fetchSetting:
+        case .fetchSetting,.fetchCounselList, .fetchCounselDetail, .deleteCounsel:
             return .requestPlain
 
         case let .sendMessage(body):

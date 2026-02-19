@@ -55,3 +55,37 @@ extension Date {
         return formatter.string(from: self)
     }
 }
+
+
+//상담기록
+struct CounselingRecord: Identifiable, Equatable {
+    var id: Int { counselId }
+
+    let counselId: Int
+    let date: String
+    let title: String
+    let userContent: String
+    let aiResponse: String
+
+    // 목록용 매핑 (chatSummary는 null 가능)
+    static func fromListDTO(_ dto: CounselHistoryItemDTO) -> CounselingRecord {
+        .init(
+            counselId: dto.counselId,
+            date: dto.dateTime,
+            title: dto.chatSummary ?? "상담 기록",
+            userContent: "",   // 목록에서는 없음
+            aiResponse: ""     // 목록에서는 없음
+        )
+    }
+
+    // 상세용 매핑
+    static func fromDetailDTO(_ dto: CounselHistoryDetailDTO, dateTime: String? = nil) -> CounselingRecord {
+        .init(
+            counselId: dto.chatRoomId,
+            date: dateTime ?? "", // 목록에서 넘어온 date를 유지하고 싶으면 주입
+            title: dto.chatSummary,
+            userContent: dto.userSummary,
+            aiResponse: dto.aiSummary
+        )
+    }
+}
