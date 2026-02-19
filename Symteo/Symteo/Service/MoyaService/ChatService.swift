@@ -1,3 +1,4 @@
+//
 //  ChatService.swift
 //  Symteo
 //
@@ -14,6 +15,7 @@ protocol CounselServicing {
 
     func sendMessage(chatRoomId: Int?, text: String) -> AnyPublisher<CounselSendResultDTO, APIError>
     func endChat(chatRoomId: Int) -> AnyPublisher<CounselEndResultDTO, APIError>
+
     func fetchReport(chatRoomId: Int?, reportType: String, reportId: Int) -> AnyPublisher<CounselReportResultDTO, APIError>
 }
 
@@ -41,17 +43,20 @@ final class CounselService: CounselServicing {
 
     func endChat(chatRoomId: Int) -> AnyPublisher<CounselEndResultDTO, APIError> {
         provider.requestResult(
-            .endChat(request: .init(counselId: Int64(chatRoomId))),
+            .endChat(request: .init(chatRoomId: Int64(chatRoomId))),
             type: CounselEndResultDTO.self
         )
     }
 
     func fetchReport(chatRoomId: Int?, reportType: String, reportId: Int) -> AnyPublisher<CounselReportResultDTO, APIError> {
-        let query: [String: Any] = [
-            "chatRoomId": chatRoomId ?? 0,
-            "reportType": reportType,
-            "reportId": reportId
-        ]
-        return provider.requestResult(.fetchReport(query: query), type: CounselReportResultDTO.self)
+        let request = CounselReportRequestDTO(
+            chatRoomId: chatRoomId,
+            reportType: reportType,
+            reportId: reportId
+        )
+        return provider.requestResult(
+            .fetchReport(request: request),
+            type: CounselReportResultDTO.self
+        )
     }
 }

@@ -1,3 +1,4 @@
+//
 //  ChatViewModel.swift
 //  Symteo
 //
@@ -15,7 +16,6 @@ final class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var textInput: String = ""
     @Published var isSending: Bool = false
-
     @Published var shouldScrollToBottom: Bool = false
 
     @Published var isShowingEndPopup: Bool = false
@@ -26,6 +26,11 @@ final class ChatViewModel: ObservableObject {
 
     @Published private(set) var isChatStarted: Bool = false
     @Published var isLoadingReport: Bool = false
+
+    @Published var showNoReportModal: Bool = false
+    @Published var noReportModalTitle: String = "저장된 리포트가 없습니다."
+    @Published var noReportModalMessage: String = "진단하러 가시겠습니까?"
+    @Published var pendingDiagnosisDestination: NavigationDestination? = nil
 
     private let service: CounselServicing
     private var cancellables = Set<AnyCancellable>()
@@ -41,23 +46,22 @@ final class ChatViewModel: ObservableObject {
         self.service = CounselService(provider: provider)
     }
 
-    //날짜 포맷터
     var todayDateText: String {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "ko_KR")
-            formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-            formatter.dateFormat = "yyyy년 M월 d일 EEEE"
-            return formatter.string(from: Date())
-        }
-    
-    var currentTime: String{
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = "yyyy년 M월 d일 EEEE"
+        return formatter.string(from: Date())
+    }
+
+    var currentTime: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: Date())
     }
-    
+
     func onAppearIfNeeded() {
         if messages.isEmpty {
             isChatStarted = false
@@ -119,7 +123,7 @@ final class ChatViewModel: ObservableObject {
                     if self.isLastLoadingBubble {
                         self.messages.removeLast()
                     }
-                    self.alertMessage = self.describe(err)
+                    self.handleLoadReportError(err, reportType: reportType)
                 }
             } receiveValue: { [weak self] dto in
                 guard let self else { return }
@@ -132,6 +136,40 @@ final class ChatViewModel: ObservableObject {
                 self.shouldScrollToBottom.toggle()
             }
             .store(in: &cancellables)
+    }
+
+    private func handleLoadReportError(_ error: APIError, reportType: String) {
+        switch error {
+        case let .serverError(code, message):
+            if code == "REPORTS404" || code == "REPORT404" {
+                pendingDiagnosisDestination = Self.diagnosisDestination(for: reportType)
+                showNoReportModal = true
+                return
+            }
+
+            if code == "CHATROOM404" {
+                alertMessage = "\(code): \(message)"
+                return
+            }
+
+            alertMessage = "\(code): \(message)"
+
+        default:
+            alertMessage = "네트워크 오류가 발생했습니다."
+        }
+    }
+
+    static func diagnosisDestination(for reportType: String) -> NavigationDestination? {
+        switch reportType {
+        case "DEPRESSION_ANXIETY_COMPLEX":
+            return .depressionTest
+        case "STRESS_BURNOUT_COMPLEX":
+            return .stressTest
+        case "ATTACHMENT_TEST":
+            return .typeTest
+        default:
+            return nil
+        }
     }
 
     private var isLastLoadingBubble: Bool {
@@ -196,5 +234,10 @@ final class ChatViewModel: ObservableObject {
 
     func clearAlert() {
         alertMessage = nil
+    }
+
+    func clearNoReportModal() {
+        showNoReportModal = false
+        pendingDiagnosisDestination = nil
     }
 }

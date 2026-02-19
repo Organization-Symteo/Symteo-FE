@@ -13,7 +13,7 @@ enum ChatRouter {
     case fetchSetting
     case sendMessage(body: [String: Any])
     case endChat(request: CounselEndRequestDTO)
-    case fetchReport(query: [String: Any])
+    case fetchReport(request: CounselReportRequestDTO)
 }
 
 extension ChatRouter: APITargetType {
@@ -28,15 +28,15 @@ extension ChatRouter: APITargetType {
         case .fetchReport:
             return "/api/v1/counsels/report"
         case let .endChat(request):
-            return "/api/v1/counsels/\(request.counselId)/summary"
+            return "/api/v1/counsels/\(request.chatRoomId)/summary"
         }
     }
 
     var method: Moya.Method {
         switch self {
         case .upsertSetting: return .patch
-        case .fetchSetting, .fetchReport: return .get
-        case .sendMessage: return .post
+        case .fetchSetting: return .get
+        case .sendMessage,.fetchReport : return .post
         case .endChat: return .patch
         }
     }
@@ -55,10 +55,11 @@ extension ChatRouter: APITargetType {
         case let .endChat(request):
             return .requestJSONEncodable(request)
 
-        case let .fetchReport(query):
-            return .requestParameters(parameters: query, encoding: URLEncoding.queryString)
+        case let .fetchReport(request):
+            return .requestJSONEncodable(request)
         }
     }
 
     var sampleData: Data { Data() }
 }
+

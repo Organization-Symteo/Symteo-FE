@@ -11,7 +11,7 @@ import Foundation
 public struct CounselRecordItemDTO: Decodable, Hashable, Sendable {
     public let dateTime: String
     public let chatSummary: String?
-    public let counselId: Int
+    public let chatRoomId: Int
 }
 
 // MARK: - 상담 요약(상담 결과) 상세 조회
