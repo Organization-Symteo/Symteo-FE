@@ -5,6 +5,7 @@
 //  Created by 박병선 on 1/22/26.
 //
 import SwiftUI
+import Combine
 
 // StressReportView에서 심터 처방을 보여주는 하위뷰입니다. 
 struct PrescriptionSection: View {
@@ -16,7 +17,7 @@ struct PrescriptionSection: View {
         VStack(spacing: 24) {
 
             // 타이틀
-            Text("\(sessionManager.userName)을 위한 심터의 처방") 
+            Text("\(sessionManager.userName) 을 위한 심터의 처방")
                 .font(.PretendardSemiBold(size: 20))
                 .foregroundStyle(.gray900)
                 .multilineTextAlignment(.center)
@@ -79,3 +80,4 @@ struct PrescriptionSection: View {
 
     }
 }
+

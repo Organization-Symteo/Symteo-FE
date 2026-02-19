@@ -1,3 +1,4 @@
+//
 //  CounselSettingView.swift
 //  Symteo
 //
@@ -20,6 +21,19 @@ struct CounselSettingView: View {
     var body: some View {
         VStack(spacing: 0) {
             customHeader
+
+            // 상단 로딩 표시 (설정 프리필 조회)
+            if viewModel.isLoading {
+                HStack(spacing: 8) {
+                    ProgressView()
+                    Text("설정을 불러오는 중...")
+                        .font(.PretendardRegular(size: 12))
+                        .foregroundStyle(.gray500)
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+            }
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 32) {
@@ -57,7 +71,8 @@ struct CounselSettingView: View {
         .navigationBarHidden(true)
         .background(Color.white)
         .onAppear {
-            viewModel.loadExistingSettingIfNeeded(usage: usage)
+            // onboarding 포함: 기존 설정이 있으면 프리필
+            viewModel.loadExistingSettingIfNeeded()
         }
         .fullScreenCover(isPresented: $showLoading) {
             LoadingFlowView(
@@ -110,6 +125,8 @@ struct CounselSettingView: View {
                 )
                 .cornerRadius(12)
         }
+        // 프리필 로딩 중에는 조작 막기 (UI 흔들림 방지)
+        .disabled(viewModel.isLoading || viewModel.isSaving)
     }
 
     private var customHeader: some View {
@@ -166,7 +183,7 @@ struct CounselSettingView: View {
             .background(Color.maingreen)
             .cornerRadius(12)
         }
-        .disabled(viewModel.isSaving)
+        .disabled(viewModel.isSaving || viewModel.isLoading)
         .padding(.horizontal, 20)
         .padding(.bottom, 10)
     }

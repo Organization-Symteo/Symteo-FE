@@ -31,17 +31,20 @@ final class SessionManager: ObservableObject {
 
     private let keychain: KeychainService
     private let authAccountService: AuthAccountServicing
+    private let counselService: CounselServicing
+
+    private var cancellables = Set<AnyCancellable>()
 
     init(
         keychain: KeychainService,
-        authAccountService: AuthAccountServicing = AuthAccountService()
+        authAccountService: AuthAccountServicing = AuthAccountService(),
+        counselService: CounselServicing = CounselService()
     ) {
         self.keychain = keychain
         self.authAccountService = authAccountService
+        self.counselService = counselService
     }
-    
 
-    
     var userName: String {
         nickname ?? ""
     }
@@ -63,7 +66,10 @@ final class SessionManager: ObservableObject {
 
             if let accessToken, let refreshToken, !accessToken.isEmpty, !refreshToken.isEmpty {
                 do {
-                    let refreshed = try await authAccountService.refresh(accessToken: accessToken, refreshToken: refreshToken)
+                    let refreshed = try await authAccountService.refresh(
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                    )
                     applyRefreshedSession(
                         accessToken: refreshed.accessToken,
                         refreshToken: refreshed.refreshToken,
@@ -77,6 +83,7 @@ final class SessionManager: ObservableObject {
                 }
             }
 
+            await syncCounselorConfiguredFromServerIfNeeded()
             decideNextFlow()
         } else {
             flow = .loggedOut
@@ -94,7 +101,7 @@ final class SessionManager: ObservableObject {
         userId: Int,
         isRegistered: Bool,
         nickname: String?
-    ) {
+    ) async {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.userId = userId
@@ -106,6 +113,8 @@ final class SessionManager: ObservableObject {
         storedNickname = nickname ?? ""
 
         keychain.saveToken(.init(accessToken: accessToken, refreshToken: refreshToken))
+
+        await syncCounselorConfiguredFromServerIfNeeded()
         decideNextFlow()
     }
 
@@ -184,5 +193,41 @@ final class SessionManager: ObservableObject {
         }
 
         flow = .home
+    }
+
+    private func syncCounselorConfiguredFromServerIfNeeded() async {
+        guard accessToken != nil, userId != nil else { return }
+        guard isRegistered, (nickname?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false) else { return }
+
+        let exists = await fetchCounselorSettingExists()
+        counselorConfigured = exists
+        storedCounselorConfigured = exists
+    }
+
+    private func fetchCounselorSettingExists() async -> Bool {
+        await withCheckedContinuation { continuation in
+            var finished = false
+
+            counselService.fetchSetting()
+                .receive(on: DispatchQueue.main)
+                .sink { completion in
+                    guard !finished else { return }
+
+                    if case let .failure(err) = completion {
+                        if case let .serverError(code, _) = err, code == "COUNSELOR404" {
+                            finished = true
+                            continuation.resume(returning: false)
+                            return
+                        }
+                        finished = true
+                        continuation.resume(returning: false)
+                    }
+                } receiveValue: { _ in
+                    guard !finished else { return }
+                    finished = true
+                    continuation.resume(returning: true)
+                }
+                .store(in: &self.cancellables)
+        }
     }
 }

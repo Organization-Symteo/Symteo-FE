@@ -104,9 +104,7 @@ struct NicknameEditView: View {
                 action: {
                     viewModel.save(
                         onSignupSuccess: { response in
-                            // ✅ 여기만 프로젝트 SessionManager에 맞춰 수정
-                            // 예: sessionManager.saveTokens(access:response.accessToken, refresh:response.refreshToken)
-                            // 예: sessionManager.applyNicknameSaved(response.nickname)
+
                             sessionManager.applyNicknameSaved(response.nickname)
 
                             // 초기 진입 흐름 분기(기존 로직 유지)
