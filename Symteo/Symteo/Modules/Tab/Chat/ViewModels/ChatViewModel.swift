@@ -106,6 +106,14 @@ final class ChatViewModel: ObservableObject {
     func loadReport(buttonTitle: String, reportType: String, reportId: Int = 0) {
         guard !isLoadingReport else { return }
 
+        let resolvedReportId = resolveReportId(reportType: reportType, fallback: reportId)
+
+        guard resolvedReportId > 0 else {
+            pendingDiagnosisDestination = Self.diagnosisDestination(for: reportType)
+            showNoReportModal = true
+            return
+        }
+
         isChatStarted = true
         isLoadingReport = true
 
@@ -113,7 +121,7 @@ final class ChatViewModel: ObservableObject {
         messages.append(.model("불러오는 중..."))
         shouldScrollToBottom.toggle()
 
-        service.fetchReport(chatRoomId: chatRoomId, reportType: reportType, reportId: reportId)
+        service.fetchReport(chatRoomId: chatRoomId, reportType: reportType, reportId: resolvedReportId)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self else { return }
@@ -138,10 +146,16 @@ final class ChatViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+    private func resolveReportId(reportType: String, fallback: Int) -> Int {
+        if fallback > 0 { return fallback }
+        let key = "reportId_\(reportType)"
+        return UserDefaults.standard.integer(forKey: key)
+    }
+
     private func handleLoadReportError(_ error: APIError, reportType: String) {
         switch error {
         case let .serverError(code, message):
-            if code == "REPORTS404" || code == "REPORT404" {
+            if code == "REPORTS404" || code == "REPORT404" || code == "REPORT4041" {
                 pendingDiagnosisDestination = Self.diagnosisDestination(for: reportType)
                 showNoReportModal = true
                 return
