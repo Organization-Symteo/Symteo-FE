@@ -19,7 +19,8 @@ struct BurnoutResultCard: View {
                 .reportCardStyle()
 
             // ai 분석 섹션
-            BurnoutAIInsightSection(insights: viewModel.aiInsights)
+            BurnoutAIInsightSection(insights: viewModel.aiInsights,
+                                    fullContent: viewModel.aiFullContent)
                 .reportCardStyle()
         }
         .padding()
@@ -39,7 +40,7 @@ private struct BurnoutAnalysisSection: View {
                 .font(.PretendardSemiBold(size: 16))
                 .foregroundStyle(.gray900)
 
-            HStack(spacing: 10) {
+            HStack(alignment: .top,spacing: 10) {
 
                 // 정서적 소진
                 BurnoutSignalItem(
@@ -95,6 +96,10 @@ private struct BurnoutSignalItem: View {
                 .font(.PretendardRegular(size: 12))
                 .foregroundStyle(.gray900)
                 .multilineTextAlignment(.center)
+                .frame(height: 40)
+                .fixedSize(horizontal: false, vertical: true)
+            
+            // Spacer() // ← 원형을 항상 아래로 밀어줌
 
             RingProgressView(
                 ratio: ratio,
@@ -136,6 +141,7 @@ private struct RingProgressView: View {
 private struct BurnoutAIInsightSection: View {
     
     let insights: [String]
+    let fullContent: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -146,13 +152,12 @@ private struct BurnoutAIInsightSection: View {
                 .foregroundStyle(.gray900)
 
             
-            ForEach(insights.prefix(3), id: \.self) { insight in
+            // fallback 로직
+            ForEach(displayInsights, id: \.self) { insight in
                 AIInsightRow(text: insight)
-                
-                
             }
-            .padding(24)
         }
+        .padding(24)
     }
     
     /// 순수 UI 컴포넌트
@@ -160,7 +165,7 @@ private struct BurnoutAIInsightSection: View {
         let text: String
         
         var body: some View {
-            HStack(alignment: .top, spacing: 12) { // 아이콘을 텍스트 첫 줄 상단에 맞춤
+            HStack(alignment: .top, spacing: 20) { // 아이콘을 텍스트 첫 줄 상단에 맞춤
                 
                 /// 아이콘: 상단 고정
                 Image("AI_image")
@@ -173,10 +178,23 @@ private struct BurnoutAIInsightSection: View {
                     .font(.PretendardRegular(size: 14))
                     .foregroundStyle(.gray700)
                 
-                Spacer()
+               // Spacer()
                 
             }
             .padding(.vertical, 4) // 행 사이의 간격
         }
     }
+    
+    // 핵심: 보여줄 데이터 결정
+        private var displayInsights: [String] {
+            if !insights.isEmpty {
+                return Array(insights.prefix(3))
+            } else {
+                return fullContent
+                    .components(separatedBy: ". ")
+                    .filter { !$0.isEmpty }
+                    .prefix(3)
+                    .map { $0.hasSuffix(".") ? $0 : $0 + "." }
+            }
+        }
 }

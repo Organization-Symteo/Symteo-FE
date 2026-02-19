@@ -59,7 +59,7 @@ struct StressReportView: View {
                     VStack(spacing: 20) {
 
                         TabView(selection: $currentPage) {
-                            StressResultCard(userName: "따오기", viewModel: viewModel)
+                            StressResultCard(viewModel: viewModel)
                                 .tag(0)
 
                             BurnoutResultCard(viewModel: viewModel)
