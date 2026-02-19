@@ -19,12 +19,12 @@ extension MoyaProvider {
 
         return self.requestPublisher(target)
             .tryMap { moyaResponse -> T in
-                // ✅ 여기서 직접 decode + RAW 출력
+                // 직접 decode + RAW 출력
                 let decoded: APIResponse<T>
                 do {
                     decoded = try JSONDecoder().decode(APIResponse<T>.self, from: moyaResponse.data)
                 } catch {
-                    print("❌ decode error:", error)
+                    print("decode error:", error)
                     print("RAW:", String(data: moyaResponse.data, encoding: .utf8) ?? "nil")
                     throw APIError.decodingError
                 }
@@ -60,12 +60,12 @@ extension MoyaProvider {
 
         return self.requestPublisher(target)
             .tryMap { moyaResponse -> StatusResponseOnly in
-                // ✅ 여기서도 직접 decode + RAW 출력
+                
                 let decoded: StatusResponseOnly
                 do {
                     decoded = try JSONDecoder().decode(StatusResponseOnly.self, from: moyaResponse.data)
                 } catch {
-                    print("❌ decode error:", error)
+                    print("decode error:", error)
                     print("RAW:", String(data: moyaResponse.data, encoding: .utf8) ?? "nil")
                     throw APIError.decodingError
                 }

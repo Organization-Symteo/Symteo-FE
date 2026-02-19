@@ -24,10 +24,10 @@ enum CounselSettingUsage {
 final class CounselSettingViewModel: ObservableObject {
 
     @Published var sections: [CounselSection] = [
-        CounselSection(title: "대화 분위기", options: ["친근함", "따뜻함", "차분함"], isMultiSelect: true),
-        CounselSection(title: "도움방식", options: ["공감 & 경청형", "해결 & 조언형", "팩트형"], isMultiSelect: true),
-        CounselSection(title: "역할", options: ["상담사", "친구", "멘탈 코치"], isMultiSelect: true),
-        CounselSection(title: "답변형식", options: ["짧고 간결", "길고 자세히", "상황에 맞게"], isMultiSelect: true),
+        CounselSection(title: "대화 분위기", options: ["친근함", "따뜻함", "차분함"], isMultiSelect: false),
+        CounselSection(title: "도움방식", options: ["공감 & 경청형", "해결 & 조언형", "팩트형"], isMultiSelect: false),
+        CounselSection(title: "역할", options: ["상담사", "친구", "멘탈 코치"], isMultiSelect: false),
+        CounselSection(title: "답변형식", options: ["짧고 간결", "길고 자세히", "상황에 맞게"], isMultiSelect: false),
         CounselSection(title: "말투", options: ["존댓말", "반말"], isMultiSelect: false)
     ]
 
@@ -50,6 +50,8 @@ final class CounselSettingViewModel: ObservableObject {
         self.service = service
     }
 
+    // MARK: - UI Interaction
+
     func toggleOption(sectionTitle: String, option: String, isMultiSelect: Bool) {
         var currentSet = selections[sectionTitle] ?? []
 
@@ -68,8 +70,11 @@ final class CounselSettingViewModel: ObservableObject {
         selections[sectionTitle]?.contains(option) ?? false
     }
 
-    func loadExistingSettingIfNeeded(usage: CounselSettingUsage) {
-        guard !usage.isOnboarding else { return }
+    // MARK: - Fetch existing setting (프리필)
+
+    /// 서버에 상담사 설정이 있으면 프리필로 화면에 표시
+    /// - onboarding도 포함 (기존 guard 제거)
+    func loadExistingSettingIfNeeded() {
         guard !isLoading else { return }
 
         isLoading = true
@@ -82,6 +87,7 @@ final class CounselSettingViewModel: ObservableObject {
                 self.isLoading = false
 
                 if case let .failure(err) = completion {
+                    // 설정이 없는 경우는 정상 플로우: 기본값 유지
                     if case let .serverError(code, _) = err, code == "COUNSELOR404" {
                         return
                     }
@@ -92,6 +98,8 @@ final class CounselSettingViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+
+    // MARK: - Save
 
     func save(usage: CounselSettingUsage, onSuccess: @escaping () -> Void) {
         guard !isSaving else { return }
@@ -114,6 +122,8 @@ final class CounselSettingViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+
+    // MARK: - Mapping / DTO
 
     private func makeRequestDTO() -> CounselSettingRequestDTO {
         CounselSettingRequestDTO(

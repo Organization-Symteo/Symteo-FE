@@ -1,8 +1,3 @@
-//
-//  LoginViewModel.swift
-//  Symteo
-//
-
 import Foundation
 import Combine
 import SwiftUI
@@ -53,18 +48,20 @@ final class LoginViewModel: ObservableObject {
                         receiveValue: { [weak self] result in
                             guard let self else { return }
 
-                            self.sessionManager.applySocialLoginResult(
-                                accessToken: result.accessToken,
-                                refreshToken: result.refreshToken,
-                                userId: result.userId,
-                                isRegistered: result.isRegistered,
-                                nickname: result.nickname
-                            )
+                            Task { @MainActor in
+                                await self.sessionManager.applySocialLoginResult(
+                                    accessToken: result.accessToken,
+                                    refreshToken: result.refreshToken,
+                                    userId: result.userId,
+                                    isRegistered: result.isRegistered,
+                                    nickname: result.nickname
+                                )
 
-                            if result.isRegistered {
-                                onSuccess()
-                            } else {
-                                self.loginRouter.push(.nickname)
+                                if result.isRegistered {
+                                    onSuccess()
+                                } else {
+                                    self.loginRouter.push(.nickname)
+                                }
                             }
                         }
                     )

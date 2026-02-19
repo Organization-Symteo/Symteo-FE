@@ -66,7 +66,7 @@ final class ChatViewModel: ObservableObject {
         if messages.isEmpty {
             isChatStarted = false
             messages = [
-                .model("안녕하세요! 저는 맞춤형 상담 AI ○○○이에요."),
+                .model("안녕하세요! 저는 맞춤형 상담 AI 심봇이에요."),
                 .model("아래에서 선택하시면 해당하는 서비스를 이용하실 수 있어요.")
             ]
             shouldScrollToBottom.toggle()
