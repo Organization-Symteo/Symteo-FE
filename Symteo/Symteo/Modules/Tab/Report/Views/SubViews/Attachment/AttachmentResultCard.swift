@@ -28,12 +28,15 @@ struct AttachmentResultCard: View {
                         }
 
 
-            AttachmentDescriptionSection(
-                userName: viewModel.userName,
-                attachmentType: viewModel.attachmentType,
-                description: viewModel.description
-            )
+            if let type = viewModel.attachmentType {
+                AttachmentDescriptionSection(
+                    userName: viewModel.userName,
+                    attachmentType: type,
+                    description: viewModel.description
+                )
                 .reportCardStyle()
+            }
+                
         }
         
     }

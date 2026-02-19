@@ -9,11 +9,14 @@ import SwiftUI
 struct ReportNavigationBar: View {
     let userName: String
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var container: DIContainer
 
     var body: some View {
         HStack(spacing: 10) {
 
-            Button(action: { dismiss() }) {
+            Button {
+                container.navigationRouter.push(.mainRpeort)
+            } label: {
                 Image("arrow_left")
                     .resizable()
                     .frame(width: 25, height: 25)

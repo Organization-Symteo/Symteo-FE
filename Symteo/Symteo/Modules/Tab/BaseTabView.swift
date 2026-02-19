@@ -69,7 +69,7 @@ struct BaseTabView: View {
                 MySymteoView()
 
             case .report:
-                MainReportView(userName: "따오기", container: container)
+                MainReportView(container: container)
 
 
         }

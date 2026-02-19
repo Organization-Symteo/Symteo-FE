@@ -19,6 +19,7 @@ enum NavigationDestination: Equatable, Hashable{
     
     
     // 리포트
+    case mainRpeort
     case anxietyReport(reportId: Int) /// 우울&불안 리포트
     case stressReport(reportId: Int) /// 스트레스 리포트
     case attachmentReport(reportId: Int) /// 성향 리포트
