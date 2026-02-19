@@ -38,6 +38,11 @@ struct NavigationRoutingView: View {
                             .environmentObject(container)
                         
                     // MARK: -리포트 화면
+                        
+                    case .mainRpeort:
+                        MainReportView(container: container)
+                            .environmentObject(container)
+                        
                     case let .anxietyReport(reportId):
                         AnxietyReportView(reportId: reportId,container: container)
                             .environmentObject(container)

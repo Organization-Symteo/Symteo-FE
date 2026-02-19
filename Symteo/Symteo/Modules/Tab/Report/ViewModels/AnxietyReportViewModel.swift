@@ -15,8 +15,6 @@ final class AnxietyReportViewModel: ObservableObject {
     // MARK: - UI State
     @Published var isLoading: Bool = false
     @Published var errorToast: CustomToast?
-    
-
 
     // MARK: - Server Raw Data
     @Published private(set) var summary: OverallSummary?
@@ -49,7 +47,6 @@ final class AnxietyReportViewModel: ObservableObject {
 
 
     // MARK: - Derived (View 전용 데이터)
-
     /// 종합 결과 상태 (서버 판단 → UI Enum)
     var overallStatus: OverallResultStatus? {
         guard let label = summary?.statusLabel else { return nil }

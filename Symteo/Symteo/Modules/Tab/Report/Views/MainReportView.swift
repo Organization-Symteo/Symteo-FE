@@ -9,17 +9,13 @@ import SwiftUI
 
 struct MainReportView: View {
     
-
-    let userName: String
     @EnvironmentObject var container: DIContainer
     @StateObject private var viewModel: MainReportViewModel
     
     // MARK: -initializer
     init(
-           userName: String,
            container: DIContainer
        ) {
-           self.userName = userName
            _viewModel = StateObject(
                wrappedValue: MainReportViewModel(container: container)
            )

@@ -10,7 +10,7 @@ import Combine
 
 
 // 이 파일에 있는 API 함수 : getAttachmentReport()
-@MainActor
+
 final class AttachmentReportViewModel: ObservableObject {
     // MARK: - UI State
     @Published var isLoading: Bool = false
@@ -40,12 +40,14 @@ final class AttachmentReportViewModel: ObservableObject {
 // MARK: - Header
 
     var userName: String {
-           report?.userName ?? ""
-        }
+        report?.userName ?? ""
+        
+    }
 
-       var attachmentType: AttachmentType {
-           AttachmentType.from(serverValue: report?.attachmentType)
-       }
+    var attachmentType: AttachmentType? {
+        guard let value = report?.attachmentType else { return nil }
+        return AttachmentType.from(serverValue: value)
+    }
     
     var description: String {
             report?.aiFullContent ?? ""
@@ -97,7 +99,9 @@ final class AttachmentReportViewModel: ObservableObject {
    
     // MARK: - API
     func getAttachmentReport() {
+        report = nil
         isLoading = true
+        
 
         container.useCaseService.reportService
             .getAttachmentReport(reportId: reportId)
