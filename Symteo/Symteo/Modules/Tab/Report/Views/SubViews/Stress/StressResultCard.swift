@@ -9,8 +9,10 @@ import SwiftUI
 // 스트레스 리포트 화면에서 스트레스 결과를 보여주는 하위뷰입니다.
 struct StressResultCard: View {
 
-    let userName: String
     @ObservedObject var viewModel: StressReportViewModel
+    @EnvironmentObject var sessionManager: SessionManager
+
+   
 
     var body: some View {
         VStack(spacing: 20) {
@@ -20,10 +22,10 @@ struct StressResultCard: View {
                 level: viewModel.stressLevel
             )
             .reportCardStyle()
-
+      
             //  설명 섹션
             StressDescriptionSection(
-                userName: userName,
+                userName: sessionManager.userName,
                 level: viewModel.stressLevel,
                 description: viewModel.stressDescriptionText
             )
@@ -79,7 +81,6 @@ private struct StressGaugeSection: View {
 
 
 private struct StressDescriptionSection: View {
-
     let userName: String
     let level: StressLevel
     let description: String?
