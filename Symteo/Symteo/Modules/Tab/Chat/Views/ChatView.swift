@@ -1,9 +1,3 @@
-//  ChatView.swift
-//  Symteo
-//
-//  Created by 김지우 on 2/11/26.
-//
-
 import SwiftUI
 
 struct ChatView: View {
@@ -12,6 +6,12 @@ struct ChatView: View {
 
     var body: some View {
         ZStack {
+            Color.white
+                .ignoresSafeArea()
+                .onTapGesture {
+                    hideKeyboard()
+                }
+
             VStack(spacing: 0) {
                 header
 
@@ -42,7 +42,12 @@ struct ChatView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            hideKeyboard()
+                        }
                     }
+                    .scrollDismissesKeyboard(.interactively)
                     .onChange(of: viewModel.shouldScrollToBottom) { _ in
                         withAnimation(.easeOut(duration: 0.25)) {
                             proxy.scrollTo("BOTTOM", anchor: .bottom)
@@ -247,7 +252,8 @@ struct ChatView: View {
     }
 }
 
-#Preview {
-    ChatView()
-        .environmentObject(DIContainer())
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
 }
