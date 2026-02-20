@@ -17,7 +17,10 @@ struct ReportNavigationBar: View {
         HStack(spacing: 10) {
 
             Button {
-                container.navigationRouter.push(.mainRpeort)
+                
+                dismiss()
+                container.selectedTab = .report
+                
             } label: {
                 Image("arrow_left")
                     .resizable()
