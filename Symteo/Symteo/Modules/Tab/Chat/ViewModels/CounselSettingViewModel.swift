@@ -50,8 +50,6 @@ final class CounselSettingViewModel: ObservableObject {
         self.service = service
     }
 
-    // MARK: - UI Interaction
-
     func toggleOption(sectionTitle: String, option: String, isMultiSelect: Bool) {
         var currentSet = selections[sectionTitle] ?? []
 
@@ -70,11 +68,8 @@ final class CounselSettingViewModel: ObservableObject {
         selections[sectionTitle]?.contains(option) ?? false
     }
 
-    // MARK: - Fetch existing setting (프리필)
-
-    /// 서버에 상담사 설정이 있으면 프리필로 화면에 표시
-    /// - onboarding도 포함 (기존 guard 제거)
-    func loadExistingSettingIfNeeded() {
+    func loadExistingSettingIfNeeded(usage: CounselSettingUsage) {
+        if usage.isOnboarding { return }
         guard !isLoading else { return }
 
         isLoading = true
@@ -87,7 +82,6 @@ final class CounselSettingViewModel: ObservableObject {
                 self.isLoading = false
 
                 if case let .failure(err) = completion {
-                    // 설정이 없는 경우는 정상 플로우: 기본값 유지
                     if case let .serverError(code, _) = err, code == "COUNSELOR404" {
                         return
                     }
@@ -99,8 +93,6 @@ final class CounselSettingViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    // MARK: - Save
-
     func save(usage: CounselSettingUsage, onSuccess: @escaping () -> Void) {
         guard !isSaving else { return }
         isSaving = true
@@ -108,6 +100,16 @@ final class CounselSettingViewModel: ObservableObject {
 
         let request = makeRequestDTO()
 
+        switch usage {
+        case .onboarding:
+            saveByUpsert(request: request, onSuccess: onSuccess)
+
+        case .chatEdit, .myEdit:
+            saveByUpdateThenFallback(request: request, onSuccess: onSuccess)
+        }
+    }
+
+    private func saveByUpsert(request: CounselSettingRequestDTO, onSuccess: @escaping () -> Void) {
         service.upsertSetting(request)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
@@ -123,7 +125,61 @@ final class CounselSettingViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    // MARK: - Mapping / DTO
+    private func saveByUpdateThenFallback(request: CounselSettingRequestDTO, onSuccess: @escaping () -> Void) {
+        service.updateSetting(request)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+
+                if case let .failure(err) = completion {
+                    if self.isMissingUpdateEndpoint(err) {
+                        self.fallbackUpsertAfterUpdateMissing(request: request, onSuccess: onSuccess)
+                        return
+                    }
+
+                    self.isSaving = false
+                    self.alertMessage = self.describe(err)
+                    return
+                }
+            } receiveValue: { [weak self] _ in
+                guard let self else { return }
+                self.isSaving = false
+                onSuccess()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func fallbackUpsertAfterUpdateMissing(request: CounselSettingRequestDTO, onSuccess: @escaping () -> Void) {
+        service.upsertSetting(request)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                guard let self else { return }
+                self.isSaving = false
+
+                if case let .failure(err) = completion {
+                    if case let .serverError(code, message) = err, code == "COUNSELOR409" {
+                        self.alertMessage = "서버가 기존 설정 수정 API를 지원하지 않아 저장할 수 없습니다. 서버에 PATCH /api/v1/users/counselor-settings(또는 PUT upsert) 지원이 필요합니다."
+                        return
+                    }
+                    self.alertMessage = self.describe(err)
+                }
+            } receiveValue: { _ in
+                onSuccess()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func isMissingUpdateEndpoint(_ error: APIError) -> Bool {
+        switch error {
+        case let .serverError(code, message):
+            if code == "404" || code == "405" { return true }
+            if message.lowercased().contains("not found") { return true }
+            if message.lowercased().contains("method not allowed") { return true }
+            return false
+        default:
+            return false
+        }
+    }
 
     private func makeRequestDTO() -> CounselSettingRequestDTO {
         CounselSettingRequestDTO(

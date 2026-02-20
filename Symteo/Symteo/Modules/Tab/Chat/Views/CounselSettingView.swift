@@ -72,7 +72,7 @@ struct CounselSettingView: View {
         .background(Color.white)
         .onAppear {
             // onboarding 포함: 기존 설정이 있으면 프리필
-            viewModel.loadExistingSettingIfNeeded()
+            viewModel.loadExistingSettingIfNeeded(usage: .chatEdit)
         }
         .fullScreenCover(isPresented: $showLoading) {
             LoadingFlowView(

@@ -11,6 +11,7 @@ import Moya
 
 protocol CounselServicing {
     func upsertSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<CounselSettingResultDTO, APIError>
+    func updateSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<CounselSettingResultDTO, APIError>
     func fetchSetting() -> AnyPublisher<CounselSettingResultDTO, APIError>
 
     func sendMessage(chatRoomId: Int?, text: String) -> AnyPublisher<CounselSendResultDTO, APIError>
@@ -20,8 +21,7 @@ protocol CounselServicing {
     func fetchCounselList() -> AnyPublisher<[CounselHistoryItemDTO], APIError>
     func fetchCounselDetail(chatRoomId: Int) -> AnyPublisher<CounselHistoryDetailDTO, APIError>
     func deleteCounsel(chatRoomId: Int) -> AnyPublisher<Int, APIError>
-    
-   }
+}
 
 final class CounselService: CounselServicing {
 
@@ -33,6 +33,10 @@ final class CounselService: CounselServicing {
 
     func upsertSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<CounselSettingResultDTO, APIError> {
         provider.requestResult(.upsertSetting(request: request), type: CounselSettingResultDTO.self)
+    }
+
+    func updateSetting(_ request: CounselSettingRequestDTO) -> AnyPublisher<CounselSettingResultDTO, APIError> {
+        provider.requestResult(.updateSetting(request: request), type: CounselSettingResultDTO.self)
     }
 
     func fetchSetting() -> AnyPublisher<CounselSettingResultDTO, APIError> {
@@ -63,16 +67,16 @@ final class CounselService: CounselServicing {
             type: CounselReportResultDTO.self
         )
     }
-    
+
     func fetchCounselList() -> AnyPublisher<[CounselHistoryItemDTO], APIError> {
-            provider.requestResult(.fetchCounselList, type: [CounselHistoryItemDTO].self)
-        }
+        provider.requestResult(.fetchCounselList, type: [CounselHistoryItemDTO].self)
+    }
 
-        func fetchCounselDetail(chatRoomId: Int) -> AnyPublisher<CounselHistoryDetailDTO, APIError> {
-            provider.requestResult(.fetchCounselDetail(chatRoomId: chatRoomId), type: CounselHistoryDetailDTO.self)
-        }
+    func fetchCounselDetail(chatRoomId: Int) -> AnyPublisher<CounselHistoryDetailDTO, APIError> {
+        provider.requestResult(.fetchCounselDetail(chatRoomId: chatRoomId), type: CounselHistoryDetailDTO.self)
+    }
 
-        func deleteCounsel(chatRoomId: Int) -> AnyPublisher<Int, APIError> {
-            provider.requestResult(.deleteCounsel(chatRoomId: chatRoomId), type: Int.self)
-        }
+    func deleteCounsel(chatRoomId: Int) -> AnyPublisher<Int, APIError> {
+        provider.requestResult(.deleteCounsel(chatRoomId: chatRoomId), type: Int.self)
+    }
 }
