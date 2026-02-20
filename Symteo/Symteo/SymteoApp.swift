@@ -4,14 +4,16 @@
 //
 //  Created by 김지우 on 1/6/26.
 //
+
 import SwiftUI
 import KakaoSDKCommon
+import KakaoSDKAuth
 
 @main
 struct SymteoApp: App {
     @StateObject private var container = DIContainer()
     @StateObject private var sessionManager = SessionManager(keychain: .shared)
-    
+
     init() {
         let bundleId = Bundle.main.bundleIdentifier ?? "nil"
         let appKey = Bundle.main.object(forInfoDictionaryKey: "KAKAO_NATIVE_APP_KEY") as? String
@@ -26,12 +28,16 @@ struct SymteoApp: App {
         }
     }
 
-    
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(container)
                 .environmentObject(sessionManager)
+                .onOpenURL { url in
+                    if AuthApi.isKakaoTalkLoginUrl(url) {
+                        _ = AuthController.handleOpenUrl(url: url)
+                    }
+                }
         }
     }
 }
